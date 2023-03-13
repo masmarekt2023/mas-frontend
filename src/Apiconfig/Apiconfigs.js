@@ -1,4 +1,4 @@
-export let baseURL = "https://node.masplatform.net";
+export let baseURL = "https://mas-server-l32v.onrender.com";
 export let socketURL = "wss://node.masplatform.net";
 
 // if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
