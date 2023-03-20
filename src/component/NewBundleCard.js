@@ -127,7 +127,7 @@ export default function BundleCard({ data }) {
       ? BundleData.userId._id
       : BundleData.userId;
   let userName = BundleData.userId.userName || BundleData.userDetail.userName;
-  let profilePic = BundleData.userId.profilePic || BundleData.userDetail.profilePic ||
+  let profilePic = BundleData?.userId?.profilePic || BundleData?.userDetail?.profilePic ||
     `https://avatars.dicebear.com/api/miniavs/${userName}.svg`;
   let isVideo = BundleData.mediaUrl.includes(".mp4");
 

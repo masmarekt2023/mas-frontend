@@ -101,8 +101,8 @@ export default function SignUp() {
   const user = useContext(UserContext);
 
   const [splash, setSplash] = useState("");
-  
-  
+
+
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
   const [phone, setphone] = useState("");
@@ -136,7 +136,7 @@ export default function SignUp() {
     return (username.length > 2) && isValidEmail(email) && (phone =="" || isValidPhoneNumber(phone)) && isValidPassword(pass);
   }
 
-  const signup = async () => {
+  const sendOtpRegister = async () => {
     if (user.userLoggedIn && (emailVerificationSent || smsVerificationSent)) {
       setTermsPopUp(false);
       setVerifyOTPOpen(true);
@@ -146,42 +146,27 @@ export default function SignUp() {
       setTermsPopUp(false);
       setVerifyOTPOpen(false);
       return;
-    } 
+    }
     setloader(true);
-    await axios({
-      method: "POST",
-      url: Apiconfigs.register,
-      data: {
-        userName: username,
-        password: pass,
-        email: email,
-        phone: phone,
-        referralCode,
-      },
-    }).then(async (res) => {
-        if (res.data.statusCode === 200) {
-          user.updatetoken(res.data.result.token);
-          setTermsPopUp(false);
-          await user.updateUserData();
-          setEmailVerificationSent(res.data.result.email_verification_sent)
-          setSmsVerificationSent(res.data.result.sms_verification_sent)
-          
-          setVerifyOTPOpen(true);
-          setloader(false);
-        } else {
-          toast.error(res.data.responseMessage);
-          setloader(false);
-        }
-    }).catch((error) => {
-        console.log(error.message);
-        if (error.response) {
-          toast.error(error.response.data.responseMessage);
-        } else {
-          toast.error(error.message);
-        }
-        setloader(false);
-    });
-  };
+    try {
+      const res = await axios({
+        method: "POST",
+        url: Apiconfigs.sendOtpRegister,
+        data: {
+          email: email,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        setEmailVerificationSent(res.data.result.email_verification_sent)
+        setSmsVerificationSent(res.data.result.sms_verification_sent)
+        setVerifyOTPOpen(true);
+        setTermsPopUp(false);
+      }
+    } catch (e) {
+      console.log("Error in sendOtpRegister");
+    }
+    setloader(false);
+  }
 
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: !state[event.target.name] });
@@ -195,19 +180,19 @@ export default function SignUp() {
       setSplash(res.data.urls.regular)
     });
     fetchSplash();
-  
+
   },[])
 
   return (
     <Box className={classes.root}>
-    
+
     <Box className={classes.loginBox}>
-    
+
       <Container maxWidth="sm" style={{backgroundColor: "#e5e5f7f8",padding:'20px'}}>
         <Typography variant="h2"  align='center'>
           Create your account
         </Typography>
-        
+
             <Box>
               <label className={classes.labelText}>Username</label>
               <TextField
@@ -247,9 +232,9 @@ export default function SignUp() {
               <label className={classes.labelText}>
                 Phone number
               </label>
-              <MuiTelInput 
+              <MuiTelInput
               defaultCountry="US"
-              disableFormatting 
+              disableFormatting
               required
               error={!phonevalid}
               helperText={!phonevalid && "Please enter valid phone number"}
@@ -263,7 +248,7 @@ export default function SignUp() {
               }}
               onBlur={()=>setphonevalid(phone =="" || isValidPhoneNumber(phone))}
               />
-            </Box>           
+            </Box>
            <Box>
               <label className={classes.labelText}>Password</label>
               <TextField
@@ -293,7 +278,7 @@ export default function SignUp() {
                 className={classes.inputText}
               />
             </Box>
-           
+
             <Box>
               <label className={classes.labelText}>Referral Code</label>
               <TextField
@@ -335,7 +320,7 @@ export default function SignUp() {
               </Button>
               </Box>
             </Box>
-          
+
         <Dialog
           open={termsPopUp}
           keepMounted
@@ -467,7 +452,7 @@ export default function SignUp() {
                 />
                 <label>Read and agree to all.</label>
               </Box>
-              
+
               <Box mt={2} mb={5} pb={3} className={classes.btnBox}>
                 <Button
                   variant="contained"
@@ -487,11 +472,11 @@ export default function SignUp() {
                       state.riskStatment &&
                       state.kycProgram
                     ) {
-                      signup();
+                      sendOtpRegister();
                     }
                   }}
                 >
-                  Continue 
+                  Continue
                 </Button>
               </Box>
             </DialogContentText>
@@ -499,7 +484,7 @@ export default function SignUp() {
         </Dialog>
       <VerifyOtp
         keepMounted
-        open={verifyOTPOpen} 
+        open={verifyOTPOpen}
         handleClose={()=> setVerifyOTPOpen(false)}
         channels={['email']}
         context={'register'}
@@ -510,11 +495,12 @@ export default function SignUp() {
           await user.updateUserData();
           navigate('/profilesettings')
         }}
+        signUpData={{username: username, password: pass, email: email, phone: phone}}
       />
       </Container>
 
     </Box>
-    
+
     <Box className={classes.splash}
         style={{
           padding:"20px",
@@ -535,7 +521,7 @@ export default function SignUp() {
 
 
       </Box>
-    
+
     </Box>
   );
 }

@@ -32,6 +32,7 @@
     "material-ui-search-bar": "^1.0.0",
     "moment": "^2.29.4",
     "mui-tel-input": "^2.0.1",
+    "prettier": "^2.8.4",
     "react": "^17.0.2",
     "react-copy-to-clipboard": "^5.0.4",
     "react-device-detect": "^2.2.2",

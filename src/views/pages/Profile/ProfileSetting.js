@@ -308,8 +308,10 @@ export default function ProfileSettings() {
   const [name, setname] = useState(user.userProfileData?.name);
   const [speciality, setspeciality] = useState(user.userProfileData?.speciality);
   const [bio, setbio] = useState(user.userProfileData?.userbio);
-  const [profilePic, setProfilePic] = useState(user.userProfileData?.userprofilepic);
-  const [cover, setcover] = useState(user.userProfileData?.usercover);
+  const [profilePic, setProfilePic] = useState("");
+  const [profilePicUrl, setProfilePicUrl] = useState(user.userProfileData?.userprofilepic);
+  const [cover, setcover] = useState("");
+  const [coverUrl, setCoverUrl] = useState(user.userProfileData?.usercover);
 
   const [needVerification, setNeedVerification] = useState([]);
 
@@ -329,6 +331,16 @@ export default function ProfileSettings() {
     // if (!name || !bio || !speciality || !profilePic) {
     //   toast.error("Check field Errors !");
     // } else {
+    const formData = new FormData();
+    formData.append("name", name);
+     formData.append("coverPicFile",cover);
+    formData.append("profilePicFile", profilePic);
+    formData.append("speciality",speciality);
+    formData.append("bio", bio);
+    formData.append("facebook", user.link.userfacebook);
+    formData.append("twitter", user.link.usertwitter);
+    formData.append("youtube", user.link.useryoutube);
+    formData.append("telegram", user.link.usertelegram);
 
     setIsloading(true);
     axios({
@@ -336,18 +348,10 @@ export default function ProfileSettings() {
       url: Apiconfigs.updateprofile,
       headers: {
         token: sessionStorage.getItem("token"),
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
-      data: {
-        name: name,
-        speciality: speciality,
-        profilePic: profilePic,
-        coverPic: cover,
-        bio: bio,
-        facebook: user.link.userfacebook,
-        twitter: user.link.usertwitter,
-        youtube: user.link.useryoutube,
-        telegram: user.link.usertelegram,
-      },
+      data: formData,
     }).then(async (res) => {
       if (res.data.statusCode === 200) {
         toast.success("Your profile has been updated successfully");
@@ -403,8 +407,8 @@ export default function ProfileSettings() {
     setname(user.userProfileData?.name);
     setspeciality(user.userProfileData?.speciality);
     setbio(user.userProfileData?.userbio);
-    setProfilePic(user.userProfileData?.userprofilepic);
-    setcover(user.userProfileData?.usercover);
+    setProfilePicUrl(user.userProfileData?.userprofilepic);
+    setCoverUrl(user.userProfileData?.usercover);
   }, [user.userProfileData])
 
 
@@ -415,8 +419,8 @@ export default function ProfileSettings() {
       <Grid className={classes.CoverBox}>
         <Box
           className={classes.Box}
-          style={cover
-            ? { backgroundImage: `url(${cover})`, }
+          style={coverUrl
+            ? { backgroundImage: `url(${coverUrl})`, }
             : null}
         >
         </Box>
@@ -427,10 +431,10 @@ export default function ProfileSettings() {
             style={{ cursor: "pointer" }}
             type="file"
             accept="image/*"
+            multiple
             onChange={(e) => {
-              getBase64(e.target.files[0], (result) => {
-                setcover(result);
-              });
+              setcover(e.target.files[0]);
+              setCoverUrl(URL.createObjectURL(e.target.files[0]));
             }}
           />
         </Box>
@@ -442,25 +446,25 @@ export default function ProfileSettings() {
         {/* Start Profile Img */}
         <Box className={classes.profile}>
           <Box className={classes.profilePic}
-            style={!profilePic ? {
+            style={!profilePicUrl ? {
               border: ""
             } : null}
           >
             <img
-              src={profilePic || "/images/users/profilepic1.svg"}
+              src={profilePicUrl || "/images/users/profilepic1.svg"}
               alt="Edit profile picture"
-              style={profilePic ? { padding: "4px", border: "dotted 2px red", display: "block", width: "fit-content", margin: "auto", } : { border: "dotted 2px red", marginTop: "3px", display: "block", width: "fit-content", margin: "auto", }}
+              style={profilePicUrl ? { padding: "4px", border: "dotted 2px red", display: "block", width: "fit-content", margin: "auto", } : { border: "dotted 2px red", marginTop: "3px", display: "block", width: "fit-content", margin: "auto", }}
             />
             <Box style={{ width: "fit-content", margin: "15px auto" }}>
               <FiEdit style={{ cursor: "pointer" }} /> Add Picture
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 style={{ cursor: "pointer" }}
                 onChange={(e) => {
-                  getBase64(e.target.files[0], (result) => {
-                    setProfilePic(result);
-                  });
+                  setProfilePic(e.target.files[0]);
+                  setProfilePicUrl(URL.createObjectURL(e.target.files[0]));
                 }}
               />
             </Box>

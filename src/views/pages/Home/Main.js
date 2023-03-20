@@ -18,6 +18,7 @@ export default function Main() {
       })
       if (res.data.statusCode === 200) {
         setBannerDetails(res.data.result)
+        console.log("Result: ", res.data.result);
       }
     } catch (error) {
       console.log(error)
