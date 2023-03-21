@@ -12,12 +12,14 @@ import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import { UserContext } from "src/context/User";
 import DataLoading from "src/component/DataLoading";
 import NoDataFound from "src/component/NoDataFound";
+import {Pagination} from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   pageTitle: {
     height: "24.5px",
     textAlign: "center",
     padding: "20px 0px",
+    marginBottom: 20,
     fontFamily: "Poppins",
     fontSize: "21.5px",
     fontWeight: "700",
@@ -59,18 +61,23 @@ const AllBundlesPage = () => {
   const classes = useStyles();
   const auth = useContext(UserContext);
   const [allNFTList, setAllNFTList] = useState([]);
-  console.log("allNFTList", allNFTList);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
   const listAllNftHandler = async () => {
     await axios({
       method: "GET",
       url: Apiconfigs.listAllNft,
+      params: {
+        page: page,
+        limit: 10
+      }
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          console.log(res.data.result);
-          setAllNFTList(res.data.result);
+          setAllNFTList(res.data.result.docs);
+          setPages(res.data.result.pages)
         }
         setIsLoading(false);
       })
@@ -85,7 +92,7 @@ const AllBundlesPage = () => {
     if (auth.userData?._id && auth.userLoggedIn) {
       listAllNftHandler();
     }
-  }, [auth.userLoggedIn, auth.userData]);
+  }, [auth.userLoggedIn, auth.userData, page]);
 
   return (
     <Box className={classes.container}>
@@ -129,6 +136,13 @@ const AllBundlesPage = () => {
                   })}
                 </Grid>
               </Container>
+              <Box mb={2} mt={2} display="flex" justifyContent="center">
+                <Pagination
+                    count={pages}
+                    page={page}
+                    onChange={(e, v) => setPage(v)}
+                />
+              </Box>
             </>
           )}
         </section>

@@ -68,7 +68,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "600",
     borderRadius: 0,
     minWidth: "auto",
-    color: theme.palette.secondary.main,
     height: "30px",
     padding: "0px 7px",
     letterSpacing: "1px",
@@ -156,7 +155,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   containerHeight: {
-    height: "100%",
     background: "white",
     height: "54px",
   },

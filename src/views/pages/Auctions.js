@@ -1,18 +1,15 @@
 import React from "react";
 import {
   Container,
-  Box,
   makeStyles,
-  Typography,
+  Grid, Typography,
 } from "@material-ui/core";
-import { Carousel } from 'react-responsive-carousel';
 import NftCard from "./NftCard";
 import IMG1 from "./img/card 1.jpeg"
 import IMG2 from "./img/card2.jpeg"
 import IMG3 from "./img/card3.jpeg"
 import IMG5 from "./img/card5.jpeg"
 import IMG6 from "./img/card6.jpeg"
-import { isMobile } from 'react-device-detect';
 
 const AuctionPage = () => {
   const useStyles = makeStyles((theme) => ({
@@ -58,52 +55,60 @@ const AuctionPage = () => {
         fontSize: "16px",
       },
     },
+    gridbox: {
+      "@media(max-width:1280px)": {
+        display: "flex",
+        justifyContent: "center",
+      },
+    },
+    heading: {
+      padding: "1.5px 0 0",
+      backgroundColor: "var(--white)",
+      display: "flex",
+      justifyContent: "center",
+    },
+    title: {
+      fontSize: "30px",
+      fontWeight: "600",
+      marginBottom: "10px",
+      textAlign: "center",
+      borderBottom: "solid 1px #e5e3dd",
+      paddingBottom: "10px",
+      color: "#141518",
+      [theme.breakpoints.down("sm")]: {
+        fontSize: "20px",
+      },
+    },
   }))
   const classes = useStyles();
   var dataArray = [IMG1, IMG2, IMG3, IMG5, IMG6];
 
   return (
     <Container maxWidth='100%' style={{ padding: '0px' }} >
-      {/* <Box align="center"
-            style={{
-              margin: '0px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignContent: 'center',
-              alignItems: 'center',
-              minHeight: '300px',
-              mixBlendMode: 'darken',
-              backgroundImage: 'url(/images/home/nft-comingsoon-bg.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: '50% 50%',
-            }}
-            mt={4} mb={5}>
-            <Typography
-              variant="h1"
-              style={{
-                color: '#fffa',
-                textAlign: 'center',
-                fontSize: '10vw',
-                textShadow: 'rgb(81 13 29) 1px 1px 4px'
-              }}
-            >
-              COMING SOON
-            </Typography>
-          </Box> */}
-      <Carousel infiniteLoop={false} centerMode={true} centerSlidePercentage={isMobile ? 80 : 30} numItemsPerView={2}>
-        {dataArray.length > 0 ?
+      <Typography variant="h3" className={classes.title}>
+        {"NFT"}
+      </Typography>
+      <Grid container spacing={2}>
+      {dataArray.length > 0 ?
           dataArray.map((data, i) => {
-            console.log(data)
-            return (
-              <NftCard
-                data={data}
+            return <Grid
+                item
                 key={i}
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                className={classes.gridbox}
+            >
+              <NftCard
+                  data={data}
+                  key={i}
               />
-            );
+            </Grid>
           })
           : <div> no Item</div>
-        }
-      </Carousel>
+      }
+      </Grid>
     </Container>
   );
 };

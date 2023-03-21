@@ -192,6 +192,10 @@ export const VerifyOtp = ({
   };
 
   useEffect(() => {
+    if(context === 'verifyLater') sendOTPHandler('sms');
+  },[])
+
+  useEffect(() => {
     let emailtimeout;
     if (emailResendTimer && emailResendTimer >= 0) {
       emailtimeout = setTimeout(

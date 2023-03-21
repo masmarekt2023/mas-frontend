@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Apiconfigs from "src/Apiconfig/Apiconfigs";
+import Apiconfigs, { pageURL} from "src/Apiconfig/Apiconfigs";
 import { UserContext } from "src/context/User";
 import "./componentStyle.css"
-//import clsx from 'clsx';
 import {
   Typography,
   Box,
@@ -84,7 +83,6 @@ export default function BundleCard({ data }) {
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
   const MyOptions = [
-    "Download",
     "Copy Link",
   ];
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -263,7 +261,12 @@ export default function BundleCard({ data }) {
         {MyOptions.map((option) => (
           <MenuItem
             key={option}
-            onClick={handleClose}>
+            onClick={() => {
+              navigator.clipboard.writeText(`${pageURL}/bundles-details?${BundleData?._id}`);
+              setAnchorEl(false);
+            }}
+            style={{fontSize: 12}}
+          >
             {option}
           </MenuItem>
         ))}
@@ -300,8 +303,8 @@ export default function BundleCard({ data }) {
           auth.userLoggedIn &&
           auth.userData._id !== userId &&
           isSubscribed && (
-            <Button className={classes.expand} onClick={unSubscribeToBundleHandler}>
-              Unsubscribe
+            <Button className={classes.expand} disabled={isSubscribed}>
+              Subscribed
             </Button>
           )}
         {

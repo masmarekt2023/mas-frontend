@@ -1,5 +1,6 @@
 //export let baseURL = "https://node.masplatform.net"
 export let baseURL = "https://mas-server-l32v.onrender.com";
+export let pageURL = "https://mas2023-lhqo.onrender.com"
 export let socketURL = "wss://mas-server-l32v.onrender.com";
 
 /*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {

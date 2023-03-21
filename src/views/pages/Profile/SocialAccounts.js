@@ -29,20 +29,20 @@ export default function SocialAccounts() {
   const [isLoading, setIsloading] = useState(false);
 
   const save = () => {
-
-
+      const formData = new FormData();
+      formData.append("facebook", facebook);
+      formData.append("twitter", twitter);
+      formData.append("youtube", youtube);
+      formData.append("telegram", telegram);
     axios({
       method: "PUT",
       url: Apiconfigs.updateprofile,
       headers: {
         token: sessionStorage.getItem("token"),
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
       },
-      data: {
-        facebook: facebook,
-        twitter: twitter,
-        youtube: youtube,
-        telegram: telegram,
-      },
+      data: formData,
     }).then(async (res) => {
       if (res.data.statusCode === 200) {
         toast.success("Your social links has been updated successfully");

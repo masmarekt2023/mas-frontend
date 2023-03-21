@@ -127,10 +127,14 @@ const AuctionPage = () => {
     await axios({
       method: "GET",
       url: Apiconfigs.listAllNft,
+      params: {
+        page: 1,
+        limit: 10
+      }
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          setAllNFTList(res.data.result);
+          setAllNFTList(res.data.result.docs);
         }
         setIsLoading(false);
         setIsBundlesLoading(false);
