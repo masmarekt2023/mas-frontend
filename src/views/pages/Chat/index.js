@@ -116,8 +116,8 @@ const ChatBox = function ({chat, socket, visible, isOnline}) {
     const [uploading, setUploading] = useState(false);
     const [msg, setMsg] = useState("");
     let contact = chat.users.find(c => c._id != user.userData._id);
-    let photo = contact.profilePic ? contact.profilePic :
-        `https://avatars.dicebear.com/api/miniavs/${contact.userName}.svg`;
+    let photo = contact?.profilePic ? contact?.profilePic :
+        `https://avatars.dicebear.com/api/miniavs/${contact?.userName}.svg`;
 
     const onImagesChange = (imageList) => {
         setImages(imageList);
@@ -266,9 +266,9 @@ const ChatBox = function ({chat, socket, visible, isOnline}) {
 
             {/* Start User`s avatar */}
             <Box display='flex' alignItems='center'>
-                <Avatar alt={contact.userName} src={photo} className={classes.avatar}/>
+                <Avatar alt={contact?.userName} src={photo} className={classes.avatar}/>
                 <Box m={1}>
-                    <Typography component="h5" variant="h5">{contact.userName}</Typography>
+                    <Typography component="h5" variant="h5">{contact?.userName}</Typography>
                     <Typography component="p" variant="body2">
                         {isOnline ? 'Online' : 'Active recently'}
                     </Typography>
@@ -501,17 +501,17 @@ export default function Chat() {
                     {!chatList ? <DataLoading/> :
                         chatList.length > 0 && chatList.map((chat) => {
                             let contact = chat.users.find(c => c._id != user.userData._id);
-                            let photo = contact.profilePic ? contact.profilePic :
-                                `https://avatars.dicebear.com/api/miniavs/${contact.userName}.svg`;
+                            let photo = contact?.profilePic ? contact?.profilePic :
+                                `https://avatars.dicebear.com/api/miniavs/${contact?.userName}.svg`;
 
                             return (
                                 <ListItem button key={chat._id} onClick={() => navigate('/chat/' + chat._id)}>
                                     <ListItemAvatar>
-                                        <Avatar alt={contact.userName} src={photo} className={classes.avatar}/>
+                                        <Avatar alt={contact?.userName} src={photo} className={classes.avatar}/>
                                     </ListItemAvatar>
                                     <ListItemText
-                                        primary={contact.userName}
-                                        secondary={onlineUsers.includes(contact._id) ? 'Online' : 'Active recently'}
+                                        primary={contact?.userName}
+                                        secondary={onlineUsers.includes(contact?._id) ? 'Online' : 'Active recently'}
                                     />
                                     <ListItemSecondaryAction style={{marginRight: '13px'}}>
                                         <Badge color="error" overlap="rectangular"
@@ -542,7 +542,7 @@ export default function Chat() {
                         chat={chat}
                         socket={socket}
                         visible={(chat._id === chatId)}
-                        isOnline={onlineUsers.includes(chat.users.find(c => c._id != user.userData._id)._id)}
+                        isOnline={onlineUsers.includes(chat.users.find(c => c._id != user.userData?._id)?._id)}
                     />
                 })
             }
