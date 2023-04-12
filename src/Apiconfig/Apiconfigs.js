@@ -1,12 +1,12 @@
 //export let baseURL = "https://node.masplatform.net"
-export let baseURL = "https://mas-server-l32v.onrender.com";
+export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageURL = "https://mas2023-lhqo.onrender.com"
-export let socketURL = "wss://mas-server-l32v.onrender.com";
+export let socketURL = "wss://mas-server-lk9j.onrender.com";
 
-/*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
    baseURL = "http://localhost:1865";
    socketURL = "ws://localhost:1865";
-}*/
+}
 const url = `${baseURL}/api/v1`;
 const Apiconfigs = {
     connectWallet: `${url}/user/connectWallet`,
@@ -100,6 +100,10 @@ const Apiconfigs = {
     landingContentList: `${url}/content/landingContentList`,
     staticContentList: `${url}/static/staticContentList`,
     viewStaticPage: `${url}/static/staticContent`,
+
+    story: `${url}/story/`,
+    likeDislikeStory: `${url}/story/likeDislikeStory/`,
+    getAllStories: `${url}/story/getAllStories/`
 };
 
 export default Apiconfigs;
