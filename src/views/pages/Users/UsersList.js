@@ -142,7 +142,7 @@ export default function UsersList() {
         },
       });
       if (res.data.statusCode === 200) {
-        let rankingOrder = res.data.result;
+        let rankingOrder = res.data.result.docs;
         rankingOrder.sort((a, b) => b.masBalance - a.masBalance || b.followers.length - a.followers.length)
         setAllUserList(rankingOrder);
         setIsLoadingData(false);
