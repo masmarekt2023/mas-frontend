@@ -691,7 +691,7 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
                     <Grid item xs={3} align="right">
                       <Typography variant="h5">transactionHash:</Typography>
                       <Typography variant="body2" component="label">
-                        {transactionHash}
+                        {serialNumber}
                       </Typography>
                     </Grid>
                   </Grid>
