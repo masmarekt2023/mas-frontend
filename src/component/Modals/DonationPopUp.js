@@ -681,11 +681,7 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
                       <Typography variant="body2">ماس للحوالات المصرفية</Typography>
                     </Grid>
                     <Grid item xs={6} align="center">
-                      
-                      <span>
-                        
-                        وصل حوالة مالية 
-                      </span>
+                      <span> حوالة مالية رقمية </span>
                     </Grid>
                     <Grid item xs={3} align="right">
                       <Typography variant="h5">transactionHash:</Typography>
