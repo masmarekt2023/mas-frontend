@@ -614,12 +614,12 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
                   <img src="/images/icon.png" />
                   <Typography variant="h6">
                     
-                    C E R T I F I C A T E  O F  D O N A T I O N
+                    وصل استلام
                   </Typography>
                   <img src="/images/icon.png"  alt=""/>
                 </Box>
                 <Box className={classes.body} align="center" mt={3}>
-                  <Typography variant="h5">This is to certify that</Typography>
+                  <Typography variant="h5">المرسل</Typography>
                   <Typography variant="h2">
                     {user?.userData?.name
                       ? user?.userData?.name
@@ -644,11 +644,11 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
                       alignItems: "center",
                     }}
                   >
-                    Has donated
+                    المبلغ المرسل
                     <Typography variant="h2">
                       {donationAmount + ` `}&nbsp;
                     </Typography>
-                    {" " + selectedToken.name} to
+                    {" " + selectedToken.name} الى
                   </Typography>
                   <Typography variant="h2">
                     {userData?.name
@@ -678,14 +678,13 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
                       <Typography variant="h5" style={{ color: "#d15b5b" }}>
                         {CEO_NAME}
                       </Typography>
-                      <Typography variant="body2">MAS founder & CEO</Typography>
+                      <Typography variant="body2">ماس للحوالات المصرفية</Typography>
                     </Grid>
                     <Grid item xs={6} align="center">
                       
                       <span>
                         
-                        This certificate is published one time and can't be
-                        accessed again
+                        وصل حوالة مالية 
                       </span>
                     </Grid>
                     <Grid item xs={3} align="right">
