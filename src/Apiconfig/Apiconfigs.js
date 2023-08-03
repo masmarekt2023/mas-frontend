@@ -1,5 +1,4 @@
-export let baseURL = "http://localhost:1865" // we will run it wit the server in same vps, I do it for more performance
-//export let baseURL = "http://node.masplatform.net:1865"; this is the real baseUrl
+export let baseURL = "http://node.masplatform.net:1865";
 //export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageURL = "https://masplatform.net"
 export let socketURL = "wss://node.masplatform.net";
