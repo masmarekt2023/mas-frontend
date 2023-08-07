@@ -238,7 +238,7 @@ export const VerifyOtp = ({
           variant="body2"
           style={{ color: "#999", marginBottom: "10px", textAlign: "center" }}
         >
-          To secure your account, please complete the following verification.
+          We have sent otp code to your email copy the code and paste it here to confirm
         </Typography>
         <IconButton
           aria-label="close"
