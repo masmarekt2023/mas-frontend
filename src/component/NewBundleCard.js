@@ -158,8 +158,8 @@ export default function BundleCard({ data }) {
         if (res.data.statusCode === 200) {
           setisSubscribed(res.data.result.subscribed == "yes");
           setnbSubscribed(res.data.result.nb);
-
           setOpen2(false);
+          navigate("/bundles-details?" + BundleData?._id)
         } else {
           toast.error(res.data.responseMessage);
         }
