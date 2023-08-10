@@ -28,11 +28,6 @@ const useStyles = makeStyles(() => ({
 }))
 
 export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
-  console.log('privateFeeds', privateFeeds)
-  console.log('allFeed', allFeed)
-
-  console.log('feeds', feeds)
-
   const classes = useStyles()
   return (
     <Box className={classes.LoginBox} mb={5}>
@@ -55,8 +50,8 @@ export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
                 key={i}
                 xs={12}
                 sm={6}
-                md={6}
-                lg={6}
+                md={4}
+                lg={3}
                 className={classes.gridbox}
               >
                 <FeedCard updateList={updateList} data={data} index={i} />
@@ -84,7 +79,7 @@ export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
                 </Grid>
               )
             })}
-          {/* {privateFeeds 
+          {/* {privateFeeds
           &&  <Grid
           item
           xs={12}

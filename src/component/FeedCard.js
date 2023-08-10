@@ -50,14 +50,13 @@ const useStyles = makeStyles(() => ({
     border: "solid 0.5px #c9c7c3",
     width: "270px",
     // backgroundColor: "#fff",
+    height: 400,
     padding: "10px",
     borderRadius: "10px",
     margin: "0 10px",
     position: "relative",
     backgroundImage:
       "linear-gradient(45deg, #eef2f3 90%,#8e9eab 30%, #eef2f3 90%)",
-    margin: "8px",
-    width: "90%",
     "&:hover": {
       transform: "scale(1.03)",
       transition: "all 0.4s ease-in-out 0s",
@@ -112,6 +111,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#a33748",
     borderRadius: "33px",
     color: "white",
+    marginTop: 10,
     "&:hover": {
       backgroundColor: "red",
     },
@@ -205,7 +205,7 @@ export default function UsersCard({ data, index, updateList }) {
               />
             </figure>
             <div>
-              
+
               <Typography
                 style={{
                   width: "auto",
@@ -224,64 +224,67 @@ export default function UsersCard({ data, index, updateList }) {
             </div>
           </Box>
         </Box>
-        <Typography
-          variant="h6"
-          style={{
-            marginBottom: "-10px",
-            fontWeight: 500,
-            width: "auto",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {data?.nftId[0]?.bundleName}
-        </Typography>
-        <Typography
-          variant="h6"
-          style={{
-            marginBottom: "-10px",
-            fontWeight: 500,
-            width: "auto",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {data.title}
-        </Typography>
-        <Typography
-          variant="body1"
-          component="p"
-          style={{
-            fontWeight: 400,
-            fontSize: "13px",
-            color: "#3f3f3",
-            marginTop: "8px",
-            width: "auto",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-          dangerouslySetInnerHTML={{
-            __html: data.details,
-          }}
-        ></Typography>
-
+        <Box style={{height: 50}}>
+          <Typography
+              variant="h6"
+              style={{
+                marginBottom: "-10px",
+                fontWeight: 500,
+                width: "auto",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+          >
+            {data?.nftId[0]?.bundleName}
+          </Typography>
+          <Typography
+              variant="h6"
+              style={{
+                marginBottom: "-10px",
+                fontWeight: 500,
+                width: "auto",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+          >
+            {data.title}
+          </Typography>
+          <Typography
+              variant="body1"
+              component="p"
+              style={{
+                fontWeight: 400,
+                fontSize: "13px",
+                color: "#3f3f3",
+                marginTop: "8px",
+                width: "auto",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              dangerouslySetInnerHTML={{
+                __html: data.details,
+              }}
+          ></Typography>
+        </Box>
         <Box className={classes.feedpost}>
           {isVideo ? (
-            <Box id={`imagecard${data._id}`}>
-              <video controls style={{ width: "100%" }}>
-                <source src={data.mediaUrl} type="video/mp4" />
-              </video>
+            <>
+              <Box id={`imagecard${data._id}`}>
+                <video controls style={{ width: "100%", height: '100%' }}>
+                  <source src={data.mediaUrl} type="video/mp4" />
+                </video>
+              </Box>
               <Button
-                className={classes.downloadButton}
-                fullWidth
-                onClick={downLoadFile}
+                  className={classes.downloadButton}
+                  fullWidth
+                  onClick={downLoadFile}
               >
                 Download
               </Button>
-            </Box>
+            </>
           ) : (
             // <img
             //   className={classes.imageClass}
@@ -293,8 +296,9 @@ export default function UsersCard({ data, index, updateList }) {
               style={{
                 background: "url(" + data.mediaUrl + ")",
               }}
-              
-            ></Box>
+            >
+
+            </Box>
           )}
         </Box>
         <Box>

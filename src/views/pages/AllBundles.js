@@ -115,7 +115,6 @@ const AllBundlesPage = () => {
                 )}
                 <Grid container spacing={2}>
                   {allNFTList.map((data, i) => {
-                   
                     return (
                       <Grid
                         item

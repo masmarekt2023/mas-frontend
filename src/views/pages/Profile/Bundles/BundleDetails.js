@@ -22,6 +22,7 @@ import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import Loader from "src/component/Loader";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import { toast } from "react-toastify";
+import ReactPlayer from "react-player";
 const useStyles = makeStyles((theme) => ({
   root: { padding: "70px 0px" },
   bannerimg: {
@@ -375,6 +376,7 @@ export default function BundleDetails() {
   });
 
   const [bundleDetails, setBundleDetails] = useState({});
+  const [isVideo, setIsVideo] = useState(false);
   const [openBuy, setOpenBuy] = useState(false);
   const [contentList, setContentList] = useState([]);
   const [isLoadingBunldeView, setIsLoadingBundleView] = useState(false);
@@ -475,6 +477,12 @@ export default function BundleDetails() {
       }
     }
   }, [selectedFilter, isFilterTrue]);
+
+  useEffect(() => {
+    if(bundleDetails.mediaUrl){
+      setIsVideo(handleVideo(bundleDetails.mediaUrl));
+    }
+  }, [bundleDetails]);
   const subscribeNowHandler = async (isCheck) => {
     // if (parseFloat(auth?.userData?.masBalance) > 0) {
     setIsloading(true);
@@ -551,10 +559,20 @@ export default function BundleDetails() {
           ></Box>
           <Box className={classes.headbox2}>
             <Box style={{ display: "flex", flexWrap: "wrap" }}>
-              <Box
-                style={{ background: `url(${bundleDetails?.mediaUrl})` }}
-                className={classes.profileimg}
-              ></Box>
+              {isVideo ? <Box>
+                <Box className={classes.profileimg}>
+                  <ReactPlayer
+                      url={bundleDetails?.mediaUrl}
+                      playing
+                      controls
+                      width={"100%"}
+                      height={"100%"}
+                  />
+                </Box>
+              </Box> : <Box
+                  style={{ background: `url(${bundleDetails?.mediaUrl})` }}
+                  className={classes.profileimg}
+              ></Box>}
               <Box className={`${classes.text1} seats`}>
                 <Typography variant="h2">
                   {bundleDetails?.bundleName ? bundleDetails?.bundleName : ""}
@@ -759,4 +777,22 @@ export default function BundleDetails() {
       )}
     </Box>
   );
+
+
+  function handleVideo(url) {
+    const videoFormats = [
+      "mp4",
+      "avi",
+      "wmv",
+      "mov",
+      "mkv",
+      "flv",
+      "webm",
+      "mpeg",
+      "3gp",
+      "ogv",
+    ];
+    const format = url.split(".").slice(-1)[0];
+    return  videoFormats.includes(format);
+  }
 }

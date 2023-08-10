@@ -26,6 +26,7 @@ import NoDataFound from "src/component/NoDataFound";
 import { toast } from "react-toastify";
 import BundleCard from "src/component/NewBundleCard";
 import { tokensDetails } from "src/constants";
+import ReactPlayer from "react-player";
 const useStyles = makeStyles((theme) => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
@@ -209,7 +210,6 @@ export default function Bundles({ bundles, updateList }) {
           {bundles.map((data, i) => {
             return (
               <Grid item key={i} lg={3} md={4} sm={6} xm={12}>
-
                 <BundleCard
                   data={data}
                   index={i}
@@ -242,6 +242,7 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
   const [donation, setdonation] = useState("");
   const [image, setimage] = useState("");
   const [imageurl, setimageurl] = useState("");
+  const [isVideo, setIsVideo] = useState(false);
   const [details, setdetails] = useState("");
   const [process, setprocess] = useState(false);
   const [message, setmessage] = useState("");
@@ -489,20 +490,27 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
               <Box className={classes.UploadBox}>
                 <label htmlFor="raised-button-file">
                   <input
-                    accept="image/*,video/mp4"
+                    accept="image/*,video/*"
                     style={{ display: "none" }}
                     className={classes.input}
                     id="contained-button-file-add-bun"
                     multiple
                     onChange={(e) => {
                       setimage(e.target.files[0]);
+                      setIsVideo(e.target.files[0].type.includes("video"));
                       setimageurl(URL.createObjectURL(e.target.files[0]));
                     }}
                     type="file"
                   />
                   {imageurl ? (
                     <>
-                      <img src={imageurl} alt="" width="200px" />
+                      {isVideo ? <ReactPlayer
+                          url={imageurl}
+                          playing
+                          controls
+                          width={"200px"}
+                          height={"100%"}
+                      /> : <img src={imageurl} alt="" width="200px" />}
                       <Box textAlign="center">
                         <Button
                           color="primary"

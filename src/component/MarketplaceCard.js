@@ -21,6 +21,7 @@ import {
 import { MdEmail } from 'react-icons/md'
 import { GiCancel } from 'react-icons/gi'
 import moment from 'moment'
+import ReactPlayer from "react-player";
 const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
@@ -217,19 +218,30 @@ function ExploreCard(props) {
   return (
     <>
       <Paper className={classes.root}>
-        <Box
-          id={`imagecard${index}`}
-          className={classes.mainimg}
-          style={
-            data.postType === 'PRIVATE' &&
-            auth?.userData?._id !== bundleDetails?.userId
-              ? {
-                  background: 'url(' + data?.mediaUrl + ')',
-                  filter: 'blur(8px)',
-                }
-              : { background: 'url(' + data?.mediaUrl + ')' }
-          }
-        ></Box>
+        {handleVideo(data?.mediaUrl) ? <Box
+            id={`imagecard${index}`}
+            className={classes.mainimg}
+        >
+          <ReactPlayer
+              url={data?.mediaUrl}
+              playing
+              muted
+              width={"100%"}
+              height={"100%"}
+          />
+        </Box> : <Box
+            id={`imagecard${index}`}
+            className={classes.mainimg}
+            style={
+              data.postType === 'PRIVATE' &&
+              auth?.userData?._id !== bundleDetails?.userId
+                  ? {
+                    background: 'url(' + data?.mediaUrl + ')',
+                    filter: 'blur(8px)',
+                  }
+                  : { background: 'url(' + data?.mediaUrl + ')' }
+            }
+        ></Box>}
         <Box>
           <Box p={2}>
             <Box
@@ -306,7 +318,7 @@ function ExploreCard(props) {
                 </>
               )}
 
-              
+
             </Box>
           </Box>
         </Box>
@@ -363,17 +375,23 @@ function ExploreCard(props) {
           open={viewContent}
           onClose={() => setViewContent(false)}
           aria-labelledby="max-width-dialog-title"
-         
+
         >
           <DialogContent
 
           >
             <Box className={classes.PhotoBox}>
-              <img
-                src={data?.mediaUrl}
-                alt=""
-                style={{ height: '368px', width: '553px' }}
-              />
+              {handleVideo(data?.mediaUrl) ? <ReactPlayer
+                  url={data?.mediaUrl}
+                  playing
+                  controls
+                  width={"100%"}
+                  height={300}
+              /> : <img
+                  src={data?.mediaUrl}
+                  alt=""
+                  style={{ height: '300px', width: '100%' }}
+              />}
             </Box>
             <Box mt={3} className={classes.bundleText} textAlign="center">
               <Typography variant="h4">
@@ -382,7 +400,7 @@ function ExploreCard(props) {
             </Box>
 
             <Box mt={2} className={classes.deskiText}>
-              <Grid container spacing={2}>
+              <Grid container spacing={2} style={{alignItems: "center"}}>
                 <Grid item xs={12} md={3} lg={2}>
                   <Typography
                     variant="h4"
@@ -446,6 +464,23 @@ function ExploreCard(props) {
       </Paper>
     </>
   )
+
+  function handleVideo(url) {
+    const videoFormats = [
+      "mp4",
+      "avi",
+      "wmv",
+      "mov",
+      "mkv",
+      "flv",
+      "webm",
+      "mpeg",
+      "3gp",
+      "ogv",
+    ];
+    const format = url.split(".").slice(-1)[0];
+    return  videoFormats.includes(format);
+  }
 }
 
 export default ExploreCard

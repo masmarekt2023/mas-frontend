@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Apiconfigs, { pageURL} from "src/Apiconfig/Apiconfigs";
+import Apiconfigs, { pageURL } from "src/Apiconfig/Apiconfigs";
 import { UserContext } from "src/context/User";
-import "./componentStyle.css"
+import "./componentStyle.css";
 import {
   Typography,
   Box,
@@ -20,50 +20,51 @@ import {
   Avatar,
   IconButton,
   Button,
-
 } from "@material-ui/core";
 
 import { Link } from "react-router-dom";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { red } from "@material-ui/core/colors";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import ButtonCircularProgress from "./ButtonCircularProgress";
 import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu"
+import Menu from "@material-ui/core/Menu";
+import ReactPlayer from "react-player";
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
+    width: "100%",
     maxWidth: 300,
     maxHeight: 420,
     margin: 10,
-    textAlign: 'left'
+    textAlign: "left",
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
+    paddingTop: "56.25%", // 16:9
     cursor: "pointer",
   },
   expand: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     border: 0,
     borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
-    padding: '0 10px',
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    color: "white",
+    padding: "0 10px",
+    transform: "rotate(0deg)",
+    marginLeft: "auto",
+    transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
   },
   avatar: {
     backgroundColor: red[500],
-    cursor: 'pointer',
+    cursor: "pointer",
   },
 }));
 
@@ -82,9 +83,7 @@ export default function BundleCard({ data }) {
   const [open1, setOpen1] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
-  const MyOptions = [
-    "Copy Link",
-  ];
+  const MyOptions = ["Copy Link"];
   const [anchorEl, setAnchorEl] = React.useState(null);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -120,14 +119,30 @@ export default function BundleCard({ data }) {
   };
   let userId =
     typeof BundleData.userId === "object" &&
-      !Array.isArray(BundleData.userId) &&
-      BundleData.userId !== null
+    !Array.isArray(BundleData.userId) &&
+    BundleData.userId !== null
       ? BundleData.userId._id
       : BundleData.userId;
+  const isUserBundle = auth.userData._id === userId;
   let userName = BundleData.userId.userName || BundleData.userDetail.userName;
-  let profilePic = BundleData?.userId?.profilePic || BundleData?.userDetail?.profilePic ||
+  let profilePic =
+    BundleData?.userId?.profilePic ||
+    BundleData?.userDetail?.profilePic ||
     `https://avatars.dicebear.com/api/miniavs/${userName}.svg`;
-  let isVideo = BundleData.mediaUrl.includes(".mp4");
+  const videoFormats = [
+    "mp4",
+    "avi",
+    "wmv",
+    "mov",
+    "mkv",
+    "flv",
+    "webm",
+    "mpeg",
+    "3gp",
+    "ogv",
+  ];
+  const bundleMediaFormat = BundleData.mediaUrl.split(".").slice(-1)[0];
+  let isVideo = videoFormats.includes(bundleMediaFormat);
 
   const subscribeToBundleHandler = async () => {
     setIsloading(true);
@@ -141,7 +156,6 @@ export default function BundleCard({ data }) {
       .then(async (res) => {
         setIsloading(false);
         if (res.data.statusCode === 200) {
-
           setisSubscribed(res.data.result.subscribed == "yes");
           setnbSubscribed(res.data.result.nb);
 
@@ -190,7 +204,7 @@ export default function BundleCard({ data }) {
         });
         if (res.data.statusCode === 200) {
           setisLike((liked) => !liked);
-          setnbLike((nb) => isLike ? nb - 1 : nb + 1)
+          setnbLike((nb) => (isLike ? nb - 1 : nb + 1));
         } else {
           setisLike(false);
           toast.error(res.data.responseMessage);
@@ -198,7 +212,6 @@ export default function BundleCard({ data }) {
       } catch (error) {
         console.log("ERROR", error);
       }
-
     } else {
       toast.error("Please login");
     }
@@ -215,7 +228,7 @@ export default function BundleCard({ data }) {
       setisLike(BundleData.likesUsers?.includes(auth.userData._id));
       setisSubscribed(BundleData.subscribers?.includes(auth.userData._id));
     }
-  }, [])
+  }, []);
 
   return (
     <Card className={classes.root}>
@@ -227,7 +240,7 @@ export default function BundleCard({ data }) {
             src={profilePic}
             className={classes.avatar}
             onClick={() => {
-              navigate("/user-profile/" + userName)
+              navigate("/user-profile/" + userName);
             }}
           />
         }
@@ -239,33 +252,60 @@ export default function BundleCard({ data }) {
             aria-controls="long-menu"
           >
             <MoreVertIcon />
-
           </IconButton>
-
         }
-        title={BundleData.bundleName}
-        subheader={new Date(BundleData.createdAt).toLocaleDateString('en-us', { year: "numeric", month: "numeric", day: "numeric" })}
+        title={<p style={{fontWeight: 'bold', margin: 0}}>{BundleData.bundleName}</p>}
+        subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        })}
       />
-      <CardMedia
-        className={classes.media}
-        image={BundleData.mediaUrl}
-        title={BundleData.bundleName}
-        onClick={() =>
-          navigate("/bundles-details?" + BundleData?._id)
-        }
-      />
+      {isVideo ? (
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() =>
+            isSubscribed || isUserBundle
+              ? navigate("/bundles-details?" + BundleData?._id)
+              : handleClickOpen2()
+          }
+        >
+          <ReactPlayer
+            url={BundleData.mediaUrl}
+            muted
+            playing
+            width="100%"
+            height={"166px"}
+          />
+        </div>
+      ) : (
+        <CardMedia
+          className={classes.media}
+          image={BundleData.mediaUrl}
+          title={BundleData.bundleName}
+          onClick={() =>
+            isSubscribed || isUserBundle
+              ? navigate("/bundles-details?" + BundleData?._id)
+              : handleClickOpen2()
+          }
+        />
+      )}
       <Menu
         anchorEl={anchorEl}
-        keepMounted onClose={handleCloseMenu}
-        open={openMenu}>
+        keepMounted
+        onClose={handleCloseMenu}
+        open={openMenu}
+      >
         {MyOptions.map((option) => (
           <MenuItem
             key={option}
             onClick={() => {
-              navigator.clipboard.writeText(`${pageURL}/bundles-details?${BundleData?._id}`);
+              navigator.clipboard.writeText(
+                `${pageURL}/bundles-details?${BundleData?._id}`
+              );
               setAnchorEl(false);
             }}
-            style={{fontSize: 12}}
+            style={{ fontSize: 12 }}
           >
             {option}
           </MenuItem>
@@ -275,10 +315,13 @@ export default function BundleCard({ data }) {
         <Typography
           variant="h5"
           component="h5"
-          style={{ color: "#000", fontWeight: "400" }}
+          style={{ color: "#000", fontWeight: "bold" }}
         >
-          {BundleData?.donationAmount ? BundleData?.donationAmount : "Any amount"}
-          {BundleData && BundleData.coinName ? BundleData.coinName : "MAS"} {" for "}
+          {BundleData?.donationAmount
+            ? BundleData?.donationAmount
+            : "Any amount"}
+          {BundleData && BundleData.coinName ? BundleData.coinName : "MAS"}{" "}
+          {" for "}
           {BundleData?.duration ? BundleData?.duration : "Ever"}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
@@ -286,17 +329,23 @@ export default function BundleCard({ data }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites"
+        <IconButton
+          aria-label="add to favorites"
           onClick={() => likeDislikeNfthandler(BundleData._id)}
         >
-          <FavoriteIcon style={isLike ? { color: red[800] } : { color: red[200] }} />
+          <FavoriteIcon
+            style={isLike ? { color: red[800] } : { color: red[200] }}
+          />
         </IconButton>
         <span>{nbLike}</span>
         {auth.userData &&
           auth.userLoggedIn &&
           auth.userData._id !== userId &&
           isSubscribed && (
-            <Button className={classes.expand} onClick={handleClickOpen2}> Renew </Button>
+            <Button className={classes.expand} onClick={handleClickOpen2}>
+              {" "}
+              Renew{" "}
+            </Button>
           )}
 
         {auth.userData &&
@@ -307,25 +356,19 @@ export default function BundleCard({ data }) {
               Subscribed
             </Button>
           )}
-        {
-          auth?.userData?._id !== userId && !isSubscribed && (
-            <Button className={classes.expand} onClick={handleClickOpen2}>
-              Subscribe
-            </Button>
-          )
-        }
-        {auth.userData &&
-          auth.userLoggedIn &&
-          auth.userData._id === userId && (
-            <Button
-              className={classes.expand}
-              onClick={() =>
-                navigate("/bundles-details?" + BundleData?._id)
-              }
-            >
-              View
-            </Button>
-          )}
+        {auth?.userData?._id !== userId && !isSubscribed && (
+          <Button className={classes.expand} onClick={handleClickOpen2}>
+            Subscribe
+          </Button>
+        )}
+        {auth.userData && auth.userLoggedIn && auth.userData._id === userId && (
+          <Button
+            className={classes.expand}
+            onClick={() => navigate("/bundles-details?" + BundleData?._id)}
+          >
+            View
+          </Button>
+        )}
       </CardActions>
 
       {/* edit */}
@@ -455,7 +498,6 @@ export default function BundleCard({ data }) {
               align="center"
               style={{ color: "#000", borderBottom: "solid 0.5px #e5e3dd" }}
             >
-
               My basic supporter
             </Typography>
 
@@ -480,9 +522,7 @@ export default function BundleCard({ data }) {
                 component="h6"
                 style={{ color: "#000", fontWeight: "400" }}
               >
-                <span style={{ color: "#707070" }}>
-                  Number of subscribers:
-                </span>
+                <span style={{ color: "#707070" }}>Number of subscribers:</span>
                 100
               </Typography>
             </Box>
@@ -518,9 +558,15 @@ export default function BundleCard({ data }) {
           <Box className={classes.PhotoBox}>
             {isVideo ? (
               <div>
-                <video width="100%" controls>
-                  <source src={BundleData.mediaUrl} type="video/mp4" />
-                </video>
+                <ReactPlayer
+                  url={BundleData.mediaUrl}
+                  controls
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "300px",
+                    height: "50%",
+                  }}
+                />
                 {auth.userData &&
                   auth.userLoggedIn &&
                   auth.userData._id !== userId &&
@@ -549,13 +595,12 @@ export default function BundleCard({ data }) {
               <img
                 src={BundleData.mediaUrl}
                 alt=""
+                style={{ width: "100%", height: "50%" }}
               />
             )}
           </Box>
           <Box mt={3} className={classes.bundleText} textAlign="center">
-            <Typography variant="h4">
-              {BundleData.bundleTitle}
-            </Typography>
+            <Typography variant="h4">{BundleData.bundleTitle}</Typography>
           </Box>
 
           <Box mt={2} className={classes.deskiText}>
@@ -575,11 +620,7 @@ export default function BundleCard({ data }) {
                 </Typography>
               </Grid>
               <Grid item xs={12} md={9} lg={10}>
-                <Typography
-                  variant="body2"
-                  align="left"
-                  color="textSecondary"
-                >
+                <Typography variant="body2" align="left" color="textSecondary">
                   {BundleData?.details}
                 </Typography>
               </Grid>
@@ -587,7 +628,6 @@ export default function BundleCard({ data }) {
           </Box>
           {!auth.userLoggedIn && (
             <Box mt={3} mb={3} textAlign="center">
-
               <Button className={classes.LoginButton} onClick={handleClose2}>
                 Cancel
               </Button>
@@ -626,7 +666,6 @@ export default function BundleCard({ data }) {
                       color="secondary"
                       size="large"
                       onClick={subscribeToBundleHandler}
-
                       disabled={isLoading}
                     >
                       {isLoading ? "pending..." : "Subscribe now"}
@@ -634,8 +673,6 @@ export default function BundleCard({ data }) {
                     </Button>
                   )}
               </Box>
-
-
             )}
         </DialogContent>
       </Dialog>
@@ -658,19 +695,13 @@ export default function BundleCard({ data }) {
                 placeholder="300"
                 className={classes.input_fild2}
                 endAdornment={
-                  <InputAdornment position="end">
-                    Select a token
-                  </InputAdornment>
+                  <InputAdornment position="end">Select a token</InputAdornment>
                 }
               />
             </Box>
 
             <Box mt={4}>
-              <Typography
-                variant="h4"
-                align="center"
-                style={{ color: "#000" }}
-              >
+              <Typography variant="h4" align="center" style={{ color: "#000" }}>
                 Send a message
               </Typography>
               <TextField
@@ -683,11 +714,7 @@ export default function BundleCard({ data }) {
               />
             </Box>
             <Box mt={2} mb={4}>
-              <Button
-                variant="contained"
-                size="large"
-                color="secondary"
-              >
+              <Button variant="contained" size="large" color="secondary">
                 Donate now
               </Button>
             </Box>
@@ -695,7 +722,6 @@ export default function BundleCard({ data }) {
           </DialogContentText>
         </DialogContent>
       </Dialog>
-
     </Card>
   );
 }

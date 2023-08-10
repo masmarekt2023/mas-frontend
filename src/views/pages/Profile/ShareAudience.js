@@ -19,10 +19,11 @@ import { useNavigate } from "react-router";
 import { AddBundlePopup } from "./Bundles";
 import { toast } from "react-toastify";
 import JoditEditor from "jodit-react";
+import ReactPlayer from "react-player";
 const useStyles = makeStyles(() => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
-    
+
     border: " solid 0.5px #e5e3dd",
     color: "#141518",
     width: "100%",
@@ -122,6 +123,7 @@ export default function ShareAudience() {
   const [details, setDetails] = useState("");
   const [img, setImg] = useState("");
   const [image, setImage] = useState("");
+  const [isVideo, setIsVideo] = useState("");
   const [loader, setloader] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [activities, setActivities] = useState("");
@@ -217,7 +219,7 @@ export default function ShareAudience() {
         <Box className>
           <Box mt={5}>
             <Grid container spacing={1}>
-              
+
               <Grid item xs={12} md={5}>
                 <label className={classes.name}> Title:</label>
                 <TextField
@@ -255,7 +257,7 @@ export default function ShareAudience() {
                     // setdetails(temp)
                   }}
                 />
-                
+
               </Grid>
             </Grid>
           </Box>
@@ -273,13 +275,20 @@ export default function ShareAudience() {
                       multiple
                       onChange={(e) => {
                         setImg(e.target.files[0]);
+                        setIsVideo(e.target.files[0].type.includes("video"));
                         setImage(URL.createObjectURL(e.target.files[0]));
                       }}
                       type="file"
                     />
                     {image ? (
                       <>
-                        <img src={image} alt="" width="200px" />
+                        {isVideo ? <ReactPlayer
+                            url={image}
+                            playing
+                            controls
+                            width={"200px"}
+                            height={"100%"}
+                        /> : <img src={image} alt="" width="200px" />}
                         <Box textAlign="center">
                           <Button
                             color="primary"

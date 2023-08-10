@@ -81,6 +81,7 @@ export const VerifyOtp = ({
             user.updatetoken(res.data.result.token);
             await user.updateUserData();
             setEmailVerified(true);
+            handleClose();
           } else {
             toast.error(res.data.responseMessage);
           }
@@ -129,6 +130,7 @@ export const VerifyOtp = ({
             channel === "email"
               ? setEmailVerified(true)
               : setPhoneVerified(true);
+            handleClose();
           } else {
             toast.error(res.data.responseMessage);
             setvalidatecode({
@@ -151,7 +153,7 @@ export const VerifyOtp = ({
   };
 
   useEffect(() => {
-    if (emailVerified) {
+    if (emailVerified || phoneVerified) {
       setTimeout(() => successCallback(), 1000);
     }
   }, [emailVerified, phoneVerified]);
@@ -191,9 +193,33 @@ export const VerifyOtp = ({
     }
   };
 
+  const sendOtpRegister = async () => {
+    setloader(true);
+    console.log(signUpData.email);
+    try {
+      const res = await axios({
+        method: "POST",
+        url: Apiconfigs.sendOtpRegister,
+        data: {
+          email: signUpData.email,
+        },
+      });
+      if (res.data.statusCode === 200) {
+        setloader(false);
+        setemailResendTimer(60);
+        toast.success(res.data.responseMessage);
+      }
+    } catch (e) {
+      console.log("Error in sendOtpRegister");
+    }
+    setloader(false);
+  }
+
   useEffect(() => {
-    if(context === 'verifyLater') sendOTPHandler('sms');
-  },[])
+    console.log("in Register")
+    if (context === "verifyLater") sendOTPHandler("sms").catch(console.error);
+    if(context === "register") sendOtpRegister().catch(console.error)
+  }, []);
 
   useEffect(() => {
     let emailtimeout;
@@ -221,6 +247,10 @@ export const VerifyOtp = ({
     }
   });
 
+  const verificationMessage = `We have sent otp code to your ${
+    channels[0] === "email" ? "email" : "phone"
+  } copy the code and paste it here to confirm`;
+
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={() => handleClose}>
       <DialogTitle>
@@ -238,7 +268,7 @@ export const VerifyOtp = ({
           variant="body2"
           style={{ color: "#999", marginBottom: "10px", textAlign: "center" }}
         >
-          We have sent otp code to your email copy the code and paste it here to confirm
+          {verificationMessage}
         </Typography>
         <IconButton
           aria-label="close"

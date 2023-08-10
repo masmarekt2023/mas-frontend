@@ -261,12 +261,12 @@ export function copyTextById(id) {
   alert(`Copied ${copyText.value}`);
 }
 
-const VerificationAlert = ({ verify }) => {
+const VerificationAlert = ({ verify, setVerify }) => {
   const user = useContext(UserContext);
 
   const [verifyOTPOpen, setVerifyOTPOpen] = useState(false);
   return (
-    <Box style={{ width: "340px", marginLeft: "17px", marginBottom: "10px" }} >
+    <Box style={{ width: "340px", marginLeft: "17px", marginBottom: "10px" }}>
       <Alert severity="warning" variant="outlined">
         <AlertTitle>Security Verification</AlertTitle>
         To secure your account and enjoy full MAS Platform features please verify
@@ -292,6 +292,7 @@ const VerificationAlert = ({ verify }) => {
         successCallback={() => {
           setVerifyOTPOpen(false);
           user.updateUserData();
+          setVerify([]);
           toast.success("Security Verification complete!");
         }}
       />
@@ -606,7 +607,7 @@ export default function ProfileSettings() {
         </Box>
         {/* End Phone Number */}
 
-        {needVerification.length == 1 && <VerificationAlert verify={needVerification} />}
+        {needVerification.length == 1 && <VerificationAlert verify={needVerification} setVerify={setNeedVerification} />}
 
         {/* Start profile URL */}
         <Box mt={0}>

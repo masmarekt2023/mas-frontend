@@ -25,7 +25,6 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Apiconfigs from "src/Apiconfig/Apiconfigs.js";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
-import { toast } from "react-toastify";
 import {VerifyOtp} from "src/component/Modals/VerifyOtp"
 import {isMobile} from 'react-device-detect';
 
@@ -159,8 +158,8 @@ export default function SignUp() {
       if (res.data.statusCode === 200) {
         setEmailVerificationSent(res.data.result.email_verification_sent)
         setSmsVerificationSent(res.data.result.sms_verification_sent)
-        setVerifyOTPOpen(true);
-        setTermsPopUp(false);
+        //setVerifyOTPOpen(true);
+        //setTermsPopUp(false);
       }
     } catch (e) {
       console.log("Error in sendOtpRegister");
@@ -473,6 +472,8 @@ export default function SignUp() {
                       state.kycProgram
                     ) {
                       sendOtpRegister();
+                      setVerifyOTPOpen(true);
+                      setTermsPopUp(false);
                     }
                   }}
                 >
