@@ -6,30 +6,29 @@ import {
   Button,
   TextField,
   makeStyles,
-  InputAdornment
+  InputAdornment,
 } from "@material-ui/core";
-import {
-  Alert,
-  AlertTitle
-} from "@material-ui/lab";
-import { green, red } from '@material-ui/core/colors';
+import { Alert, AlertTitle } from "@material-ui/lab";
+import { green, red } from "@material-ui/core/colors";
 import "./style.css";
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from "@material-ui/core/Tooltip";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import { UserContext } from "src/context/User";
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import { FiCopy, FiEdit } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import SocialAccounts from "./SocialAccounts";
-import { VerifyOtp } from "src/component/Modals/VerifyOtp"
+import { VerifyOtp } from "src/component/Modals/VerifyOtp";
 import { useNavigate } from "react-router-dom";
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
-import { isMobile } from 'react-device-detect';
+import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles((theme) => ({
   LoginBox: {
@@ -82,8 +81,6 @@ const useStyles = makeStyles((theme) => ({
       // fontSize:"16px",
       width: "120px",
       padding: "5px 16px",
-
-
     },
   },
   name: {
@@ -104,8 +101,6 @@ const useStyles = makeStyles((theme) => ({
     width: "10s0%",
     height: "120px",
     borderRadius: "120px",
-
-
   },
   profile: {
     display: "flex",
@@ -113,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
     // marginTop: "-75px",
     width: "fit-content",
     padding: "5px 20px",
-    marginBottom: "10px"
+    marginBottom: "10px",
   },
   coverpic: {
     width: "100%",
@@ -146,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer!important",
     },
     "& svg": {
-      marginLeft: "7px"
+      marginLeft: "7px",
     },
   },
   profilePic: {
@@ -197,32 +192,32 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
     borderBottom: "1px solid #ddd",
     borderRadius: "10px",
-    color: "#878484"
+    color: "#878484",
   },
   parentOfInput: {
     // width: "80%",
     marginLeft: "20px",
     marginTop: "25px",
     "& div:before": {
-      width: "0px"
+      width: "0px",
     },
     "& div:after": {
       width: "91%",
       left: "18px",
       borderRadius: "20px",
-    }
+    },
   },
   parentOfInput1: {
     marginLeft: "0px",
     marginTop: "0px",
     "& div:before": {
-      width: "0px"
+      width: "0px",
     },
     "& div:after": {
       width: "91%",
       left: "18px",
       borderRadius: "20px",
-    }
+    },
   },
   phoneEmail: {
     width: "97%",
@@ -231,7 +226,7 @@ const useStyles = makeStyles((theme) => ({
     "& div": {
       borderRadius: "15px",
       padding: "10px",
-    }
+    },
   },
   linkBox: {
     width: "95%",
@@ -249,10 +244,11 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "15px",
     "& span": {
       color: "#777",
-      fontSize: "13px"
-    }
-  }
+      fontSize: "13px",
+    },
+  },
 }));
+
 export function copyTextById(id) {
   var copyText = document.getElementById(id);
   copyText.select();
@@ -269,11 +265,10 @@ const VerificationAlert = ({ verify, setVerify }) => {
     <Box style={{ width: "340px", marginLeft: "17px", marginBottom: "10px" }}>
       <Alert severity="warning" variant="outlined">
         <AlertTitle>Security Verification</AlertTitle>
-        To secure your account and enjoy full MAS Platform features please verify
-        {' '}
-        {verify.includes('email') && 'your email address '}
-        {verify.length > 1 && ' and '}
-        {verify.includes('sms') && 'your phone number '}
+        To secure your account and enjoy full MAS Platform features please
+        verify {verify.includes("email") && "your email address "}
+        {verify.length > 1 && " and "}
+        {verify.includes("sms") && "your phone number "}
         <Button
           variant="text"
           onClick={() => setVerifyOTPOpen(true)}
@@ -282,23 +277,25 @@ const VerificationAlert = ({ verify, setVerify }) => {
           Click here!
         </Button>
       </Alert>
-      <VerifyOtp
-        open={verifyOTPOpen}
-        handleClose={() => setVerifyOTPOpen(false)}
-        channels={verify}
-        context={'verifyLater'}
-        emailVerificationSent={false}
-        smsVerificationSent={false}
-        successCallback={() => {
-          setVerifyOTPOpen(false);
-          user.updateUserData();
-          setVerify([]);
-          toast.success("Security Verification complete!");
-        }}
-      />
+      {verifyOTPOpen && (
+        <VerifyOtp
+          open={verifyOTPOpen}
+          handleClose={() => setVerifyOTPOpen(false)}
+          channels={verify}
+          context={"verifyLater"}
+          emailVerificationSent={false}
+          smsVerificationSent={false}
+          successCallback={() => {
+            setVerifyOTPOpen(false);
+            user.updateUserData();
+            setVerify([]);
+            toast.success("Security Verification complete!");
+          }}
+        />
+      )}
     </Box>
-  )
-}
+  );
+};
 
 export default function ProfileSettings() {
   const user = useContext(UserContext);
@@ -307,10 +304,14 @@ export default function ProfileSettings() {
 
   const [isLoading, setIsloading] = useState(false);
   const [name, setname] = useState(user.userProfileData?.name);
-  const [speciality, setspeciality] = useState(user.userProfileData?.speciality);
+  const [speciality, setspeciality] = useState(
+    user.userProfileData?.speciality
+  );
   const [bio, setbio] = useState(user.userProfileData?.userbio);
   const [profilePic, setProfilePic] = useState("");
-  const [profilePicUrl, setProfilePicUrl] = useState(user.userProfileData?.userprofilepic);
+  const [profilePicUrl, setProfilePicUrl] = useState(
+    user.userProfileData?.userprofilepic
+  );
   const [cover, setcover] = useState("");
   const [coverUrl, setCoverUrl] = useState(user.userProfileData?.usercover);
 
@@ -328,15 +329,14 @@ export default function ProfileSettings() {
   };
 
   const updateProfile = async () => {
-
     // if (!name || !bio || !speciality || !profilePic) {
     //   toast.error("Check field Errors !");
     // } else {
     const formData = new FormData();
     formData.append("name", name);
-     formData.append("coverPicFile",cover);
+    formData.append("coverPicFile", cover);
     formData.append("profilePicFile", profilePic);
-    formData.append("speciality",speciality);
+    formData.append("speciality", speciality);
     formData.append("bio", bio);
     formData.append("facebook", user.link.userfacebook);
     formData.append("twitter", user.link.usertwitter);
@@ -353,16 +353,17 @@ export default function ProfileSettings() {
         "Content-Type": "multipart/form-data",
       },
       data: formData,
-    }).then(async (res) => {
-      if (res.data.statusCode === 200) {
-        toast.success("Your profile has been updated successfully");
-        user.updateUserData();
-        navigate("/profile");
-      } else {
-        toast.error(res.data.responseMessage);
-      }
-      setIsloading(false);
     })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          toast.success("Your profile has been updated successfully");
+          user.updateUserData();
+          navigate("/profile");
+        } else {
+          toast.error(res.data.responseMessage);
+        }
+        setIsloading(false);
+      })
       .catch((error) => {
         setIsloading(false);
 
@@ -377,18 +378,19 @@ export default function ProfileSettings() {
 
   useEffect(() => {
     let timer1;
+
     function checkechecko() {
       if (user.isLogin && user.userData._id) {
         let verify = new Set(needVerification);
         if (user.userData.emailVerification === false) {
-          verify.add('email')
+          verify.add("email");
         } else {
-          verify.delete('email')
+          verify.delete("email");
         }
         if (user.userData.phoneVerification === false) {
-          verify.add('sms');
+          verify.add("sms");
         } else {
-          verify.delete('sms')
+          verify.delete("sms");
         }
         setNeedVerification([...verify]);
 
@@ -397,11 +399,12 @@ export default function ProfileSettings() {
         };
       } else {
         timer1 = setTimeout(() => {
-          checkechecko()
+          checkechecko();
         }, 500);
       }
     }
-    checkechecko()
+
+    checkechecko();
   }, []);
 
   useEffect(() => {
@@ -410,9 +413,7 @@ export default function ProfileSettings() {
     setbio(user.userProfileData?.userbio);
     setProfilePicUrl(user.userProfileData?.userprofilepic);
     setCoverUrl(user.userProfileData?.usercover);
-  }, [user.userProfileData])
-
-
+  }, [user.userProfileData]);
 
   return (
     <Box className={classes.LoginBox}>
@@ -420,12 +421,12 @@ export default function ProfileSettings() {
       <Grid className={classes.CoverBox}>
         <Box
           className={classes.Box}
-          style={coverUrl
-            ? { backgroundImage: `url(${coverUrl})`, }
-            : null}
+          style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : null}
+        ></Box>
+        <Box
+          className={classes.coverEdit}
+          style={{ cursor: "pointer!important" }}
         >
-        </Box>
-        <Box className={classes.coverEdit} style={{ cursor: "pointer!important" }}>
           Edit Cover
           <FiEdit />
           <input
@@ -443,19 +444,44 @@ export default function ProfileSettings() {
       {/* End Cover */}
 
       <Container maxWidth="sm">
-
         {/* Start Profile Img */}
         <Box className={classes.profile}>
-          <Box className={classes.profilePic}
-            style={!profilePicUrl ? {
-              border: ""
-            } : null}
+          <Box
+            className={classes.profilePic}
+            style={
+              !profilePicUrl
+                ? {
+                    border: "",
+                  }
+                : null
+            }
           >
             <img
               src={profilePicUrl || "/images/users/profilepic1.svg"}
               alt="Edit profile picture"
-              style={profilePicUrl ? { padding: "4px", border: "dotted 2px red", display: "block", width: "fit-content", margin: "auto", } : { border: "dotted 2px red", marginTop: "3px", display: "block", width: "fit-content", margin: "auto", }}
+              style={
+                profilePicUrl
+                  ? {
+                      padding: "4px",
+                      border: "dotted 2px red",
+                      display: "block",
+                      width: "fit-content",
+                      margin: "auto",
+                    }
+                  : {
+                      border: "dotted 2px red",
+                      marginTop: "3px",
+                      display: "block",
+                      width: "fit-content",
+                      margin: "auto",
+                    }
+              }
             />
+            {/*{profilePic && <ReactCrop
+                src={profilePicUrl}
+                onChange={(file) => setProfilePicUrl(URL.createObjectURL(file))}
+                //onComplete={handleCropComplete}
+            />}*/}
             <Box style={{ width: "fit-content", margin: "15px auto" }}>
               <FiEdit style={{ cursor: "pointer" }} /> Add Picture
               <input
@@ -474,7 +500,7 @@ export default function ProfileSettings() {
         {/* End Profile Img */}
         {/* Start Name */}
         <Box mt={0} style={{ marginTop: "-15px" }}>
-          <Grid container spacing={1} alignItems="center" >
+          <Grid container spacing={1} alignItems="center">
             <Grid item xs={12} md={3}>
               <label className={classes.title}>Name</label>
             </Grid>
@@ -506,7 +532,6 @@ export default function ProfileSettings() {
                 onChange={(e) => setspeciality(e.target.value)}
                 className={classes.input_fild2}
               />
-
             </Grid>
           </Grid>
         </Box>
@@ -515,12 +540,11 @@ export default function ProfileSettings() {
         {/* Start About Me */}
         <Box mt={0}>
           <Grid container spacing={1} style={{ alignItems: "center" }}>
-            <Grid item xs={12} style={{ marginBottom: "15px" }} >
+            <Grid item xs={12} style={{ marginBottom: "15px" }}>
               <label className={classes.title}>About me</label>
             </Grid>
 
             <Grid item xs={12} className={classes.parentOfInput1}>
-
               <TextField
                 id="outlined-multiline-static"
                 value={bio}
@@ -532,7 +556,12 @@ export default function ProfileSettings() {
                 onChange={(e) => setbio(e.target.value)}
                 className={classes.input_fild2}
                 rows={2}
-                style={{ border: "1px solid #DDD", borderRadius: "14px", width: "95%", marginLeft: "20px" }}
+                style={{
+                  border: "1px solid #DDD",
+                  borderRadius: "14px",
+                  width: "95%",
+                  marginLeft: "20px",
+                }}
               />
             </Grid>
           </Grid>
@@ -541,10 +570,14 @@ export default function ProfileSettings() {
 
         {/* Start Email */}
         <Box mt={0} mb={0} style={{ width: "93%!important" }}>
-          <Grid container style={{ display: "block" }} spacing={2}
+          <Grid
+            container
+            style={{ display: "block" }}
+            spacing={2}
             direction="row"
             justifyContent="center"
-            alignItems="center">
+            alignItems="center"
+          >
             <Grid item xs={12} md={0}>
               <label className={classes.title}>Email</label>
             </Grid>
@@ -560,12 +593,21 @@ export default function ProfileSettings() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      {user.userData?.emailVerification ? <CheckCircleOutlineIcon fontSize="16" style={{ color: green[500] }} /> :
+                      {user.userData?.emailVerification ? (
+                        <CheckCircleOutlineIcon
+                          fontSize="16"
+                          style={{ color: green[500] }}
+                        />
+                      ) : (
                         <Tooltip title="Email not verified" placement="right">
-                          <ErrorOutlineIcon fontSize="16" style={{ color: red[500] }} />
-                        </Tooltip>}
+                          <ErrorOutlineIcon
+                            fontSize="16"
+                            style={{ color: red[500] }}
+                          />
+                        </Tooltip>
+                      )}
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Grid>
@@ -573,13 +615,16 @@ export default function ProfileSettings() {
         </Box>
         {/* End Email */}
 
-
         {/*Start  Phone Number */}
         <Box mt={0}>
-          <Grid container style={{ display: "block" }} spacing={2}
+          <Grid
+            container
+            style={{ display: "block" }}
+            spacing={2}
             direction="row"
             justifyContent="center"
-            alignItems="center">
+            alignItems="center"
+          >
             <Grid item xs={12} md={0}>
               <label className={classes.title}>Phone Number</label>
             </Grid>
@@ -594,12 +639,24 @@ export default function ProfileSettings() {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      {user.userData?.phoneVerification ? <CheckCircleOutlineIcon fontSize="16" style={{ color: green[500] }} /> :
-                        <Tooltip title="Phone number not verified" placement="right">
-                          <ErrorOutlineIcon fontSize="16" style={{ color: red[500] }} />
-                        </Tooltip>}
+                      {user.userData?.phoneVerification ? (
+                        <CheckCircleOutlineIcon
+                          fontSize="16"
+                          style={{ color: green[500] }}
+                        />
+                      ) : (
+                        <Tooltip
+                          title="Phone number not verified"
+                          placement="right"
+                        >
+                          <ErrorOutlineIcon
+                            fontSize="16"
+                            style={{ color: red[500] }}
+                          />
+                        </Tooltip>
+                      )}
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Grid>
@@ -607,23 +664,33 @@ export default function ProfileSettings() {
         </Box>
         {/* End Phone Number */}
 
-        {needVerification.length == 1 && <VerificationAlert verify={needVerification} setVerify={setNeedVerification} />}
+        {needVerification.length == 1 && (
+          <VerificationAlert
+            verify={needVerification}
+            setVerify={setNeedVerification}
+          />
+        )}
 
         {/* Start profile URL */}
         <Box mt={0}>
-          <Grid container style={{ display: "block" }} spacing={2}
+          <Grid
+            container
+            style={{ display: "block" }}
+            spacing={2}
             direction="row"
             justifyContent="center"
-            alignItems="center">
+            alignItems="center"
+          >
             <Grid item xs={12} md={4}>
               <label className={classes.title}>Profile URL</label>
             </Grid>
-            <Grid item xs={12} md={8} className={classes.linkBox} >
-              <span >
+            <Grid item xs={12} md={8} className={classes.linkBox}>
+              <span>
                 https://masplatform.net/user-profile/{user?.userData?.userName}
-              </span>  &nbsp;
+              </span>{" "}
+              &nbsp;
               <CopyToClipboard
-                style={{ cursor: "pointer", }}
+                style={{ cursor: "pointer" }}
                 text={`https://masplatform.net/user-profile/${user.userData?.userName}`}
               >
                 <FiCopy onClick={() => toast.info("Profile url Copied")} />
@@ -635,19 +702,19 @@ export default function ProfileSettings() {
 
         {/* Start Wllet Addrss */}
         <Box mt={4}>
-          <Grid container spacing={2}
+          <Grid
+            container
+            spacing={2}
             direction="row"
             justifyContent="center"
             alignItems="center"
             display="block"
           >
-            <Grid item xs={12} >
+            <Grid item xs={12}>
               <label className={classes.title}>Wallet Address</label>
             </Grid>
-            <Grid item xs={12} className={classes.linkBox} >
-              <span >
-                {user.userData?.ethAccount?.address}
-              </span> &nbsp;
+            <Grid item xs={12} className={classes.linkBox}>
+              <span>{user.userData?.ethAccount?.address}</span> &nbsp;
               <CopyToClipboard
                 style={{ cursor: "pointer" }}
                 text={user.userData?.ethAccount?.address}
@@ -665,14 +732,13 @@ export default function ProfileSettings() {
             <Grid item xs={12} md={4}>
               <label className={classes.title}>Referral</label>
             </Grid>
-            <Grid item xs={12} md={4} className={classes.linkBox} >
-              <span >{user.userData?.referralCode}</span>
+            <Grid item xs={12} md={4} className={classes.linkBox}>
+              <span>{user.userData?.referralCode}</span>
               &nbsp;
               <CopyToClipboard text={user.userData?.referralCode}>
                 <FiCopy onClick={() => toast.info("Referral Code Copied")} />
               </CopyToClipboard>
             </Grid>
-
           </Grid>
         </Box>
         {/* End Referral */}
@@ -682,7 +748,6 @@ export default function ProfileSettings() {
           <SocialAccounts />
         </Box>
         {/* End Social Medya */}
-
 
         {/* Start buttons */}
         <Box>

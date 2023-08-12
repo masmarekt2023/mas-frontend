@@ -3,10 +3,10 @@ export let baseURL = "https://node.masplatform.net";
 export let pageURL = "https://masplatform.net"
 export let socketURL = "wss://node.masplatform.net";
 
-/*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
    baseURL = "http://localhost:1865";
    socketURL = "ws://localhost:1865";
-}*/
+}
 
 const url = `${baseURL}/api/v1`;
 const Apiconfigs = {
@@ -104,7 +104,8 @@ const Apiconfigs = {
 
     story: `${url}/story/`,
     likeDislikeStory: `${url}/story/likeDislikeStory/`,
-    getAllStories: `${url}/story/getAllStories/`
+    getAllStories: `${url}/story/getAllStories/`,
+    getSubscription: `${url}/user/getSubscription`
 };
 
 export default Apiconfigs;

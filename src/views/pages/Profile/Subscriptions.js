@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
   },
   input_fild: {
     backgroundColor: "#ffffff6e",
-    
+
     border: " solid 0.5px #e5e3dd",
     color: "#141518",
     height: "48px",
@@ -114,8 +114,8 @@ export default function Subscriptions({
           <Typography variant="h6">Bundles</Typography>
         </Box>
         <Box>
-          
-          <Carousel centerMode={true} centerSlidePercentage={25} numItemsPerView={4}>
+
+          <Carousel centerMode={true} centerSlidePercentage={25} numItemsPerView={4} showThumbs={false} showStatus={false} showIndicators={false} >
             {subscriptions.map((data, i) => {
               return (
                 <BundleCard

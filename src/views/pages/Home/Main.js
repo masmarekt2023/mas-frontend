@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import AuctionPage from './AuctionPage'
 import BannerSection from './BannerSection'
 import HowItWorks from './HowItWorks'
@@ -18,7 +18,6 @@ export default function Main() {
       })
       if (res.data.statusCode === 200) {
         setBannerDetails(res.data.result)
-        console.log("Result: ", res.data.result);
       }
     } catch (error) {
       console.log(error)

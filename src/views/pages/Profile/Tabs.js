@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
   Padding_Top: {
     paddingTop: isMobile ? "15px" : "30px",
     backgroundColor: "#fff",
-    minHeight: "100vh"
+    minHeight: "100vh",
   },
   PageHeading: {
     fontWeight: "500",
@@ -35,7 +35,6 @@ const useStyles = makeStyles(() => ({
     borderRadius: "15px",
     color: "#FFF",
     background: "linear-gradient(180deg, #480048 0%, #c04848 100%)",
-
   },
 }));
 
@@ -56,8 +55,6 @@ export default function Activity() {
   const [donateUserList, setDonorUserList] = useState([]);
   const [soldOrderList, setSoldOrderList] = useState([]);
   const [buyOrderList, setBuyOrderList] = useState([]);
-
-
 
   const myFollowersHandler = async () => {
     await axios({
@@ -339,9 +336,7 @@ export default function Activity() {
                 Bought Auctions NFT
               </Button>
               <Button
-                className={
-                  tabview === "DonateList" ? classes.active : " "
-                }
+                className={tabview === "DonateList" ? classes.active : " "}
                 onClick={() => setTabView("DonateList")}
               >
                 Donate Transaction
@@ -366,10 +361,7 @@ export default function Activity() {
                 />
               )}
               {tabview === "subscribe" && (
-                <UserDetails
-                  userList={followers}
-                  type="subscribers"
-                />
+                <UserDetails userList={followers} type="subscribers" />
               )}
               {tabview === "feed" && (
                 <Feed
@@ -402,23 +394,13 @@ export default function Activity() {
                 />
               )}
               {tabview === "bids" && (
-                <MyBids
-                  auction={myBidList}
-                  updateList={myBidListHandler}
-                />
+                <MyBids auction={myBidList} updateList={myBidListHandler} />
               )}
               {tabview === "donor" && (
-                <UserDetails
-                  userList={followers}
-                  type="donor"
-                />
+                <UserDetails userList={followers} type="donor" />
               )}
-              {tabview === "DonateList" && (
-                <DonationsList />
-              )}
-              {tabview === "TransactionHistory" && (
-                <TransactionHistory />
-              )}
+              {tabview === "DonateList" && <DonationsList />}
+              {tabview === "TransactionHistory" && <TransactionHistory />}
             </Box>
           </Container>
         )}

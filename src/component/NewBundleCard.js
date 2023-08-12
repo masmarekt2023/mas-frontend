@@ -77,6 +77,7 @@ export default function BundleCard({ data }) {
   const [nbLike, setnbLike] = useState(0);
   const [openSubscribe, setOpenSubscribe] = useState(false);
   const [isSubscribed, setisSubscribed] = useState(false);
+  const [activeSubscribe, setActiveSubscribe] = useState(false);
   const [nbSubscribed, setnbSubscribed] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -144,6 +145,23 @@ export default function BundleCard({ data }) {
   const bundleMediaFormat = BundleData.mediaUrl.split(".").slice(-1)[0];
   let isVideo = videoFormats.includes(bundleMediaFormat);
 
+  const getSubscription = async () => {
+    try {
+      const data = await axios({
+        method: "GET",
+        url: `${Apiconfigs.getSubscription}/${auth.userData._id}/${BundleData._id}`,
+        headers: {
+          token: sessionStorage.getItem("token"),
+        },
+      });
+      if (data.status === 200) {
+        setActiveSubscribe(data.data.result.subscriptionStatus === "ACTIVE");
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   const subscribeToBundleHandler = async () => {
     setIsloading(true);
     await axios({
@@ -158,8 +176,10 @@ export default function BundleCard({ data }) {
         if (res.data.statusCode === 200) {
           setisSubscribed(res.data.result.subscribed == "yes");
           setnbSubscribed(res.data.result.nb);
+          setActiveSubscribe(true);
           setOpen2(false);
-          navigate("/bundles-details?" + BundleData?._id)
+          toast.success("Subscribe Successfully");
+          navigate("/bundles-details?" + BundleData?._id);
         } else {
           toast.error(res.data.responseMessage);
         }
@@ -228,6 +248,9 @@ export default function BundleCard({ data }) {
       setisLike(BundleData.likesUsers?.includes(auth.userData._id));
       setisSubscribed(BundleData.subscribers?.includes(auth.userData._id));
     }
+    if (auth.userData._id && BundleData._id) {
+      getSubscription().catch(console.error);
+    }
   }, []);
 
   return (
@@ -254,7 +277,11 @@ export default function BundleCard({ data }) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={<p style={{fontWeight: 'bold', margin: 0}}>{BundleData.bundleName}</p>}
+        title={
+          <p style={{ fontWeight: "bold", margin: 0 }}>
+            {BundleData.bundleName}
+          </p>
+        }
         subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
           year: "numeric",
           month: "numeric",
@@ -284,7 +311,7 @@ export default function BundleCard({ data }) {
           image={BundleData.mediaUrl}
           title={BundleData.bundleName}
           onClick={() =>
-            isSubscribed || isUserBundle
+            (isSubscribed && activeSubscribe) || isUserBundle
               ? navigate("/bundles-details?" + BundleData?._id)
               : handleClickOpen2()
           }
@@ -342,18 +369,12 @@ export default function BundleCard({ data }) {
           auth.userLoggedIn &&
           auth.userData._id !== userId &&
           isSubscribed && (
-            <Button className={classes.expand} onClick={handleClickOpen2}>
-              {" "}
-              Renew{" "}
-            </Button>
-          )}
-
-        {auth.userData &&
-          auth.userLoggedIn &&
-          auth.userData._id !== userId &&
-          isSubscribed && (
-            <Button className={classes.expand} disabled={isSubscribed}>
-              Subscribed
+            <Button
+              className={classes.expand}
+              disabled={isSubscribed && activeSubscribe}
+              onClick={() => (activeSubscribe ? {} : handleClickOpen2())}
+            >
+              {activeSubscribe ? 'Subscribed' : 'Renew'}
             </Button>
           )}
         {auth?.userData?._id !== userId && !isSubscribed && (

@@ -216,7 +216,6 @@ export const VerifyOtp = ({
   }
 
   useEffect(() => {
-    console.log("in Register")
     if (context === "verifyLater") sendOTPHandler("sms").catch(console.error);
     if(context === "register") sendOtpRegister().catch(console.error)
   }, []);

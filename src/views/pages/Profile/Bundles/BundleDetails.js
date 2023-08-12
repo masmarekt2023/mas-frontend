@@ -251,11 +251,9 @@ const useStyles = makeStyles((theme) => ({
     "@media(max-width:800px)": { marginTop: "20px", marginBottom: "20px" },
   },
   profileimg: {
-    marginTop: "-140px",
+    backgroundColor: '#fafafa',
+    marginTop: "-130px",
     overflow: "hidden",
-    backgroundPosition: "center !important",
-    backgroundSize: "100% !important",
-    backgroundRepeat: " no-repeat !important",
     width: "175px",
     height: "175px",
     borderRadius: "10px",
@@ -497,7 +495,6 @@ export default function BundleDetails() {
         setIsloading(false);
         if (res.data.statusCode === 200) {
           auth.updateUserData();
-
           toast.success("You have subscribed successfully");
           getBundleDetailsHandler(bunfleId);
           // if (callbackFn) {
@@ -535,8 +532,8 @@ export default function BundleDetails() {
         if (res.data.statusCode === 200) {
           setIsloading(false);
           auth.updateUserData();
+          setIsSubscribed(false);
           toast.success("You have unsubscribed successfully.");
-
           getBundleDetailsHandler(bunfleId);
         } else {
           toast.error("Something went wrong");
@@ -561,18 +558,20 @@ export default function BundleDetails() {
             <Box style={{ display: "flex", flexWrap: "wrap" }}>
               {isVideo ? <Box>
                 <Box className={classes.profileimg}>
-                  <ReactPlayer
-                      url={bundleDetails?.mediaUrl}
-                      playing
-                      controls
-                      width={"100%"}
-                      height={"100%"}
-                  />
+                    <ReactPlayer
+                        url={bundleDetails?.mediaUrl}
+                        playing
+                        controls
+                        width={"100%"}
+                        height={"100%"}
+                    />
                 </Box>
               </Box> : <Box
-                  style={{ background: `url(${bundleDetails?.mediaUrl})` }}
+                  //style={{ background: `url(${bundleDetails?.mediaUrl})` }}
                   className={classes.profileimg}
-              ></Box>}
+              >
+                <img src={bundleDetails?.mediaUrl} style={{width: '100%', height: '100%'}}/>
+              </Box>}
               <Box className={`${classes.text1} seats`}>
                 <Typography variant="h2">
                   {bundleDetails?.bundleName ? bundleDetails?.bundleName : ""}
