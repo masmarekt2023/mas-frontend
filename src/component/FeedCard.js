@@ -206,7 +206,7 @@ export default function UsersCard({ data, index, updateList }) {
             </figure>
             <div>
 
-              <Typography
+              {/*<Typography
                 style={{
                   width: "auto",
                   overflow: "hidden",
@@ -216,7 +216,7 @@ export default function UsersCard({ data, index, updateList }) {
               >
                 {data?.userId?.name}
                 <img src="/images/blue-check.png" className={classes.img} />
-              </Typography>
+              </Typography>*/}
               &nbsp;
               <Typography variant="body" component="small">
                 since {moment(data.createdAt).format("DD-MM-YYYY HH:mm")}

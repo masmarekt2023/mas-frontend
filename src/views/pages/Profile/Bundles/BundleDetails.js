@@ -366,6 +366,7 @@ export default function BundleDetails() {
   const auth = useContext(UserContext);
   const location = useLocation();
   const classes = useStyles();
+  const isLogin = !!sessionStorage.getItem("token");
   const [selectedFilter, setSelectedFilter] = useState({
     startDate: "",
     endDate: "",
@@ -404,18 +405,15 @@ export default function BundleDetails() {
       setIsLoadingBundleView(true);
       const res = await axios({
         method: "GET",
-        url: Apiconfigs.bundlePostList + id,
-        headers: {
-          token: sessionStorage.getItem("token"),
-        },
+        url: Apiconfigs.mynft + id,
       });
       if (res.data.statusCode === 200) {
-        console.log("responseBundleDeatils-----", res.data.result[0]);
-        setBundleDetails(res?.data?.result[0]);
-        getBundleContentListHandler(res?.data?.result[0]?._id);
+        console.log("responseBundleDeatils-----", res.data.result);
+        setBundleDetails(res.data.result);
+        getBundleContentListHandler(res.data.result._id);
         setIsLoadingBundleView(false);
         const filterFunForCurrentSubscriber =
-          res?.data?.result[0]?.subscribers?.filter((value) => {
+          res.data.result.subscribers?.filter((value) => {
             return value === auth?.userData?._id;
           });
         console.log("responseFilter---->>>", filterFunForCurrentSubscriber);
@@ -621,10 +619,13 @@ export default function BundleDetails() {
                         size="large"
                         variant="contained"
                         onClick={() => {
+                          if(isLogin) {
                           if (isSubscribed) {
                             unSubscribeNowHandler();
                           } else {
                             subscribeNowHandler();
+                          }} else {
+                            navigate("/login");
                           }
                         }}
                         disabled={isLoading}
@@ -741,7 +742,7 @@ export default function BundleDetails() {
                         size="large"
                         variant="contained"
                         style={{ marginRight: "10px" }}
-                        onClick={() => setIsFilterTrue(true)}
+                        onClick={() => isLogin ? setIsFilterTrue(true) : navigate("/login")}
                       >
                         Apply
                       </Button>
@@ -749,7 +750,7 @@ export default function BundleDetails() {
                         variant="contained"
                         size="large"
                         color="primary"
-                        onClick={clearFilterHandler}
+                        onClick={() => isLogin ? clearFilterHandler() : navigate("/login")}
                       >
                         Clear
                       </Button>

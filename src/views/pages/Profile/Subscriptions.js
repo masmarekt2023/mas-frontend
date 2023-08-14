@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, makeStyles, Grid } from "@material-ui/core";
 import BundleCard from "src/component/NewBundleCard";
 import UserDetailsCard from "src/component/UserCard";
-import { Carousel } from 'react-responsive-carousel';
+import axios from "axios";
+import Apiconfigs from "../../../Apiconfig/Apiconfigs";
+import {Pagination} from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   subscriptionBox: {
@@ -58,54 +60,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Subscriptions({
-  subscriptions,
-  userList,
-}) {
+export default function Subscriptions({ userList }) {
   const classes = useStyles();
+  const [state, setState] = useState({
+    subscriptions: [],
+    subsPage: 1,
+    subsPages: 1,
+  });
+  const { subscriptions, subsPage, subsPages } = state;
+  const updateState = (data) =>
+    setState((prevState) => ({ ...prevState, ...data }));
 
-  const settings = {
-    dots: false,
-    slidesToShow: 4,
-    slidesToScroll: 4,
-    arrows: true,
-    centerMode: false,
-    autoplay: false,
-    autoplaySpeed: 3000,
-    infinite: false,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          centerMode: false,
-          centerPadding: "0",
-          autoplay: false,
-        },
-      },
-      {
-        breakpoint: 800,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          centerMode: false,
-          centerPadding: "0",
-          autoplay: false,
-        },
-      },
-      {
-        breakpoint: 450,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          centerMode: false,
-          centerPadding: "0",
-          autoplay: false,
-        },
-      },
-    ],
-  };
+  useEffect(() => {
+    getBundleSubscriptionListHandler();
+  }, [state.subsPage]);
 
   return (
     <div className={classes.subscriptionBox}>
@@ -114,19 +82,31 @@ export default function Subscriptions({
           <Typography variant="h6">Bundles</Typography>
         </Box>
         <Box>
-
-          <Carousel centerMode={true} centerSlidePercentage={25} numItemsPerView={4} showThumbs={false} showStatus={false} showIndicators={false} >
+          <Grid container>
             {subscriptions.map((data, i) => {
               return (
-                <BundleCard
-                  data={data}
-                  key={i}
-                  index={i}
-                />
+                <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+                  <BundleCard data={data.nftId} key={i} index={i} />
+                </Grid>
               );
             })}
-          </Carousel>
+          </Grid>
         </Box>
+        {subsPages > 1 && (
+            <Box
+                mb={2}
+                mt={2}
+                display="flex"
+                justifyContent="center"
+                style={{ marginTop: 40 }}
+            >
+              <Pagination
+                  count={subsPages}
+                  page={subsPage}
+                  onChange={(e, v) => updateState({subsPage: v})}
+              />
+            </Box>
+        )}
       </Box>
       <Box className={classes.LoginBox} mb={5}>
         <Box className={classes.masBoxFlex}>
@@ -137,10 +117,7 @@ export default function Subscriptions({
             {userList.map((data, i) => {
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                  <UserDetailsCard
-                    data={data}
-                    index={i}
-                  />
+                  <UserDetailsCard data={data} index={i} />
                 </Grid>
               );
             })}
@@ -149,4 +126,29 @@ export default function Subscriptions({
       </Box>
     </div>
   );
+
+  async function getBundleSubscriptionListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.mysubscription,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        limit: 4,
+        page: subsPage
+      }
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          updateState({
+            subscriptions: res.data.result.docs,
+            subsPages: res.data.result.pages,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
 }

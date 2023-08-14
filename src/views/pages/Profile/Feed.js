@@ -1,34 +1,50 @@
-import React from 'react'
-import { Box, Typography, makeStyles, Grid } from '@material-ui/core'
+import React from "react";
+import { Box, Typography, makeStyles, Grid } from "@material-ui/core";
 
-import FeedCard from 'src/component/FeedCard'
-import FeedCardPrivate from 'src/component/FeedCardPrivate'
+import FeedCard from "src/component/FeedCard";
+import FeedCardPrivate from "src/component/FeedCardPrivate";
 
-import NoDataFound from 'src/component/NoDataFound'
+import NoDataFound from "src/component/NoDataFound";
+import { useMediaQuery } from "react-responsive";
+import { Carousel } from "react-responsive-carousel";
+
 const useStyles = makeStyles(() => ({
   LoginBox: {
-    paddingTop: '20px',
-    '& h6': {
-      fontWeight: 'bold',
-      marginBottom: '10px',
-      fontSize: '20px',
-      color: '#1b1a1a',
-      '& span': {
-        fontWeight: '300',
+    paddingTop: "20px",
+    "& h6": {
+      fontWeight: "bold",
+      marginBottom: "10px",
+      fontSize: "20px",
+      color: "#1b1a1a",
+      "& span": {
+        fontWeight: "300",
       },
     },
   },
 
   masBoxFlex: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '30px',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "30px",
   },
-}))
+}));
 
 export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
-  const classes = useStyles()
+  const classes = useStyles();
+  const isMaxScreen = useMediaQuery({ query: "(min-width: 1200px)" });
+  const isLargeScreen = useMediaQuery({ query: "(min-width: 992px)" });
+  const isMediumScreen = useMediaQuery({ query: "(min-width: 768px)" });
+
+  let numItemsToShow = 1;
+  if (isMaxScreen) {
+    numItemsToShow = 4;
+  } else if (isLargeScreen) {
+    numItemsToShow = 3;
+  } else if (isMediumScreen) {
+    numItemsToShow = 2;
+  }
+
   return (
     <Box className={classes.LoginBox} mb={5}>
       <Box className={classes.masBoxFlex}>
@@ -40,59 +56,37 @@ export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
             <NoDataFound />
           </Box>
         ) : (
-          ''
+          ""
         )}
-        <Grid container spacing={1}>
-          {feeds?.map((data, i) => {
-            return (
-              <Grid
-                item
-                key={i}
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                className={classes.gridbox}
-              >
-                <FeedCard updateList={updateList} data={data} index={i} />
-              </Grid>
-            )
-          })}
-          {privateFeeds &&
-            privateFeeds?.map((data, i) => {
-              return (
-                <Grid
-                  item
+        <div style={{marginLeft: 10, marginRight: 10}}>
+          <Carousel
+            centerMode={true}
+            centerSlidePercentage={100 / numItemsToShow}
+            infiniteLoop={false}
+          >
+            {feeds?.map((data, i) => (
+              <FeedCard updateList={updateList} data={data} index={i} key={i} />
+            ))}
+          </Carousel>
+          {privateFeeds && (
+            <Carousel
+              centerMode={true}
+              centerSlidePercentage={100 / numItemsToShow}
+              infiniteLoop={false}
+            >
+              {privateFeeds?.map((data, i) => (
+                <FeedCardPrivate
+                  allFeed={allFeed}
+                  updateList={updateList}
+                  data={data}
+                  index={i}
                   key={i}
-                  xs={12}
-                  sm={6}
-                  md={6}
-                  lg={6}
-                  className={classes.gridbox}
-                >
-                  <FeedCardPrivate
-                    allFeed={allFeed}
-                    updateList={updateList}
-                    data={data}
-                    index={i}
-                  />
-                </Grid>
-              )
-            })}
-          {/* {privateFeeds
-          &&  <Grid
-          item
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
-          className={classes.gridbox}
-        >
-
-          <FeedCardPrivate updateList={updateList} data={privateFeeds}  />
-        </Grid>} */}
-        </Grid>
+                />
+              ))}
+            </Carousel>
+          )}
+        </div>
       </Box>
     </Box>
-  )
+  );
 }

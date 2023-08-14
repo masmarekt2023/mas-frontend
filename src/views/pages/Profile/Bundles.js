@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import {
   Box,
   Button,
@@ -27,6 +27,8 @@ import { toast } from "react-toastify";
 import BundleCard from "src/component/NewBundleCard";
 import { tokensDetails } from "src/constants";
 import ReactPlayer from "react-player";
+import { Pagination } from "@material-ui/lab";
+
 const useStyles = makeStyles((theme) => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
@@ -169,9 +171,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Bundles({ bundles, updateList }) {
+export default function Bundles() {
   const [OpenAuction, setOpenAuction] = useState(false);
+  const [bundleList, setBundleList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const classes = useStyles();
+  useEffect(() => {
+    getBundleListHandler();
+  }, [page]);
+
   return (
     <Box className={classes.LoginBox} mb={5}>
       <Box className={classes.masBoxFlex}>
@@ -198,7 +207,7 @@ export default function Bundles({ bundles, updateList }) {
         </Box>
       </Box>
       <Box>
-        {!bundles[0] ? (
+        {!bundleList[0] ? (
           <Box align="center" mt={4} mb={5}>
             <NoDataFound />
           </Box>
@@ -207,18 +216,29 @@ export default function Bundles({ bundles, updateList }) {
         )}
 
         <Grid container spacing={1} className={classes.bunbox}>
-          {bundles.map((data, i) => {
+          {bundleList.map((data, i) => {
             return (
               <Grid item key={i} lg={3} md={4} sm={6} xm={12}>
-                <BundleCard
-                  data={data}
-                  index={i}
-                  isDays={true}
-                />
+                <BundleCard data={data} index={i} isDays={true} />
               </Grid>
             );
           })}
         </Grid>
+        {pages > 1 && (
+          <Box
+            mb={2}
+            mt={2}
+            display="flex"
+            justifyContent="center"
+            style={{ marginTop: 40 }}
+          >
+            <Pagination
+              count={pages}
+              page={page}
+              onChange={(e, v) => setPage(v)}
+            />
+          </Box>
+        )}
       </Box>
 
       {/* add bundle */}
@@ -227,11 +247,34 @@ export default function Bundles({ bundles, updateList }) {
         <AddBundlePopup
           open={OpenAuction}
           handleClose={() => setOpenAuction(false)}
-          callbackFun={updateList}
+          callbackFun={setBundleList}
         />
       )}
     </Box>
   );
+
+  async function getBundleListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.myNftList,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        page,
+        limit: 8,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          setBundleList(res.data.result.docs);
+          setPages(res.data.result.pages);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
 }
 
 export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
@@ -304,7 +347,6 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
           setprocess(false);
           toast.error("error");
         }
-
       } catch (err) {
         console.log(err);
       }
@@ -335,7 +377,9 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
                 placeholder="Bundles 1"
                 className={classes.input_fild2}
                 onChange={(e) => settitle(e.target.value)}
-                error={isSubmit && title === "" || isSubmit && title.length > 9}
+                error={
+                  (isSubmit && title === "") || (isSubmit && title.length > 9)
+                }
                 helperText={
                   isSubmit && title === "" && "Please enter valid title"
                 }
@@ -425,9 +469,7 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
                         }}
                         className={classes.tokenList}
                       >
-                        <Typography variant="h3" >
-                          {data.name}
-                        </Typography>
+                        <Typography variant="h3">{data.name}</Typography>
                         <img
                           src={data.img}
                           style={{ height: 20, width: 20 }}
@@ -504,13 +546,17 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
                   />
                   {imageurl ? (
                     <>
-                      {isVideo ? <ReactPlayer
+                      {isVideo ? (
+                        <ReactPlayer
                           url={imageurl}
                           playing
                           controls
                           width={"200px"}
                           height={"100%"}
-                      /> : <img src={imageurl} alt="" width="200px" />}
+                        />
+                      ) : (
+                        <img src={imageurl} alt="" width="200px" />
+                      )}
                       <Box textAlign="center">
                         <Button
                           color="primary"
@@ -560,7 +606,7 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
                   multiline
                   maxRows={6}
                   rows={6}
-                  style={{ padding: '0px 10px' }}
+                  style={{ padding: "0px 10px" }}
                 />
                 {/* <JoditEditor
                   className={classes.input_fild22}
@@ -582,7 +628,6 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
               </Box>
               {isSubmit && details === "" && (
                 <FormHelperText error>
-
                   Please enter valid details
                 </FormHelperText>
               )}

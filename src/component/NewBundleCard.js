@@ -96,7 +96,7 @@ export default function BundleCard({ data }) {
     setAnchorEl(null);
   };
 
-  let BundleData = data.bundleDetails || data;
+  let BundleData = data;
 
   const handleClose = () => {
     setOpen(false);

@@ -32,6 +32,7 @@ export const routes = [
   {
     path: "/user-list",
     layout: HomeLayout,
+    guard: true,
     element: lazy(() => import("src/views/pages/Users/UsersList")),
   },
   {
@@ -79,7 +80,7 @@ export const routes = [
   {
     path: "/bundles-details",
     layout: HomeLayout,
-    guard: true,
+    //guard: true,
     element: lazy(() =>
       import("src/views/pages/Profile/Bundles/BundleDetails")
     ),

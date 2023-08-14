@@ -92,29 +92,6 @@ export default function Activity() {
       });
   };
 
-  const getBundleListHandler = async () => {
-    setIsLoading(true);
-    await axios({
-      method: "GET",
-      url: Apiconfigs.myauction,
-      headers: {
-        token: sessionStorage.getItem("token"),
-      },
-    })
-      .then(async (res) => {
-        setIsLoading(false);
-
-        if (res.data.statusCode === 200) {
-          setBundles(res.data.result);
-        }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-
-        console.log(err.message);
-      });
-  };
-
   const getBundlesubscriptionListHandler = async () => {
     await axios({
       method: "GET",
@@ -125,7 +102,7 @@ export default function Activity() {
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          setSubscription(res.data.result);
+          setSubscription(res.data.result.docs);
         }
       })
       .catch((err) => {
@@ -246,7 +223,6 @@ export default function Activity() {
 
   useEffect(() => {
     if (auth?.userData?.userType !== "User") {
-      getBundleListHandler();
       donorUserListtHandler();
       setTabView("bundles");
     } else {
@@ -352,11 +328,10 @@ export default function Activity() {
             </Box>
             <Box>
               {tabview === "bundles" && (
-                <Bundles bundles={bundles} updateList={getBundleListHandler} />
+                <Bundles />
               )}
               {tabview === "subscriptions" && (
                 <Subscriptions
-                  subscriptions={subscriptions}
                   userList={following}
                 />
               )}
