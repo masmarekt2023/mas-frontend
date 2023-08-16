@@ -17,6 +17,7 @@ const Apiconfigs = {
     verifyOtp: `${url}/user/verify-otp`,
     profile: `${url}/user/profile`,
     myfeed: `${url}/user/myFeed`,
+    getMyfeed: `${url}/user/getMyFeed`,
     myauction: `${url}/nft/listNFT`,
     mynft: `${url}/nft/nft/`,
     bundleList: `${url}/nft/bundleList`,

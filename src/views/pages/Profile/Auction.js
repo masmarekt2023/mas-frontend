@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {
   Box,
   Button,
@@ -22,12 +22,12 @@ import { UserContext } from "src/context/User";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import NoDataFound from "src/component/NoDataFound";
 import { toast } from "react-toastify";
-
+import {Pagination} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
-    
+
     border: " solid 0.5px #e5e3dd",
     color: "#141518",
     height: "48px",
@@ -120,9 +120,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login({ auction, updateList }) {
+export default function Login() {
   const classes = useStyles();
   const auth = useContext(UserContext);
+  const [auction, setAction] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [OpenAuction, setOpenAuction] = useState(false);
   const [name, setname] = useState("");
   const [date, setdate] = useState(moment().format("YYYY-MM-DDThh:mm"));
@@ -161,15 +164,11 @@ export default function Login({ auction, updateList }) {
       const formdataipfsupload = new FormData();
       formdataipfsupload.append("file", image);
 
-      const res = await axios.post(
-        Apiconfigs.ipfsupload,
-        formdataipfsupload,
-        {
-          headers: {
-            token: sessionStorage.getItem("token"),
-          },
-        }
-      );
+      const res = await axios.post(Apiconfigs.ipfsupload, formdataipfsupload, {
+        headers: {
+          token: sessionStorage.getItem("token"),
+        },
+      });
 
       if (res.data.statusCode === 200) {
         const createNFTBody = {
@@ -223,7 +222,7 @@ export default function Login({ auction, updateList }) {
           }).then(async (res) => {
             if (res.data.statusCode === 200) {
               auth.updateUserData();
-              updateList();
+              myAuctionNftListHandler().catch(console.error);
               setprocess(false);
               toast.success("Your order has been placed successfully");
               setfire(!fire);
@@ -251,6 +250,10 @@ export default function Login({ auction, updateList }) {
     }
   };
 
+  useEffect(() => {
+    myAuctionNftListHandler().catch(console.error);
+  }, [page]);
+
   return (
     <Box className={classes.LoginBox} mb={5}>
       <Box className={classes.masBoxFlex}>
@@ -266,7 +269,6 @@ export default function Login({ auction, updateList }) {
             >
               Make a new auction
             </Button>
-           
           </Box>
         )}
       </Box>
@@ -281,13 +283,24 @@ export default function Login({ auction, updateList }) {
         )}
         <Grid container spacing={4}>
           {auction.map((data, i) => {
-            return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                
-              </Grid>
-            );
+            return <Grid item xs={12} sm={6} md={4} lg={3} key={i}></Grid>;
           })}
         </Grid>
+        {pages > 1 && (
+            <Box
+                mb={2}
+                mt={2}
+                display="flex"
+                justifyContent="center"
+                style={{ marginTop: 40 }}
+            >
+              <Pagination
+                  count={pages}
+                  page={page}
+                  onChange={(e, v) => setPage(v)}
+              />
+            </Box>
+        )}
       </Box>
       {OpenAuction && (
         <Dialog
@@ -311,7 +324,6 @@ export default function Login({ auction, updateList }) {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12}>
                   <label style={{ margin: "0px", padding: "0px" }}>
-                    
                     Title:
                   </label>
                   <TextField
@@ -330,7 +342,6 @@ export default function Login({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <Box className={classes.UploadBox}>
-                   
                     <label htmlFor="raised-button-file">
                       <input
                         accept="image/*,video/mp4"
@@ -481,7 +492,6 @@ export default function Login({ auction, updateList }) {
                 {!process ? "Place Auction" : message}
                 {process && <ButtonCircularProgress />}
               </Button>
-              
             </Box>
           </DialogActions>
         </Dialog>
@@ -507,7 +517,6 @@ export default function Login({ auction, updateList }) {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12}>
                   <label style={{ margin: "0px", padding: "0px" }}>
-                    
                     Title:
                   </label>
                   <TextField
@@ -519,7 +528,6 @@ export default function Login({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <label style={{ margin: "0px", padding: "0px" }}>
-                    
                     Contract Adress:
                   </label>
                   <TextField
@@ -531,7 +539,6 @@ export default function Login({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <label style={{ margin: "0px", padding: "0px" }}>
-                    
                     Token id:
                   </label>
                   <TextField
@@ -543,7 +550,6 @@ export default function Login({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <label style={{ margin: "0px", padding: "0px" }}>
-                    
                     NFT URL:
                   </label>
                   <TextField
@@ -562,7 +568,6 @@ export default function Login({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <Box className={classes.UploadBox}>
-                    
                     <label htmlFor="raised-button-file">
                       <input
                         accept="image/*,video/mp4"
@@ -710,4 +715,27 @@ export default function Login({ auction, updateList }) {
       )}
     </Box>
   );
+
+  async function myAuctionNftListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.listorder,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        limit: 4,
+        page: page,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          setAction(res.data.result.docs);
+          setPages(res.data.result.pages);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
 }

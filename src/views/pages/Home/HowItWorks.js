@@ -12,6 +12,7 @@ import parse from 'html-react-parser';
 const useStyles = makeStyles(() => ({
   mainSection: {
     backgroundImage: 'linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%)',
+    background: 'blue',
   },
   rightSection: {
     color: '#fafafa',
@@ -45,10 +46,12 @@ const useStyles = makeStyles(() => ({
   leftSection: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    padding: 10,
+    marginRight: 60,
     '& img': {
       width: '100%',
-      maxWidth: '450px',
+      maxWidth: '500px',
     },
   },
 }))
@@ -62,13 +65,13 @@ export default function HowItWorks({ howItWorks }) {
       }}>
         <Grid container spacing={3}>
           <Grid item lg={6} sm={6} md={6} xs={12}>
-            <Box className={classes.leftSection}>
+            <Box className={classes.leftSection} style={{alignItems: 'flex-start', justifyContent: 'flex-start'}}>
               <img
                 style={{ borderRadius: "12px" }}
                 src={
                   howItWorks?.contentFile
                     ? howItWorks?.contentFile
-                    : 'images/home/banner2.png'
+                    : ''
                 }
                 alt=""
               />

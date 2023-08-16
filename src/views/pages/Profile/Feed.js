@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, makeStyles, Grid } from "@material-ui/core";
 
 import FeedCard from "src/component/FeedCard";
-import FeedCardPrivate from "src/component/FeedCardPrivate";
 
 import NoDataFound from "src/component/NoDataFound";
-import { useMediaQuery } from "react-responsive";
-import { Carousel } from "react-responsive-carousel";
+import axios from "axios";
+import Apiconfigs from "../../../Apiconfig/Apiconfigs";
+import { Pagination } from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   LoginBox: {
@@ -30,20 +30,23 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
-  const classes = useStyles();
-  const isMaxScreen = useMediaQuery({ query: "(min-width: 1200px)" });
-  const isLargeScreen = useMediaQuery({ query: "(min-width: 992px)" });
-  const isMediumScreen = useMediaQuery({ query: "(min-width: 768px)" });
+export default function Login() {
+  const [state, setState] = useState({
+    allFeed: [],
+    page: 1,
+    pages: 1,
+  });
+  const { allFeed, page, pages } = state;
+  const updateState = (data) =>
+    setState((prevState) => ({ ...prevState, ...data }));
 
-  let numItemsToShow = 1;
-  if (isMaxScreen) {
-    numItemsToShow = 4;
-  } else if (isLargeScreen) {
-    numItemsToShow = 3;
-  } else if (isMediumScreen) {
-    numItemsToShow = 2;
-  }
+  const privateFeeds = allFeed.filter((i) => i.postType === "PRIVATE");
+
+  const classes = useStyles();
+
+  useEffect(() => {
+    getFeedListHandler().catch(console.error);
+  }, [state.page]);
 
   return (
     <Box className={classes.LoginBox} mb={5}>
@@ -51,42 +54,61 @@ export default function Login({ allFeed, feeds, updateList, privateFeeds }) {
         <Typography variant="h6">My feed</Typography>
       </Box>
       <Box>
-        {feeds && feeds.length === 0 ? (
+        {allFeed && allFeed.length === 0 ? (
           <Box align="center" mt={4} mb={5}>
             <NoDataFound />
           </Box>
         ) : (
           ""
         )}
-        <div style={{marginLeft: 10, marginRight: 10}}>
-          <Carousel
-            centerMode={true}
-            centerSlidePercentage={100 / numItemsToShow}
-            infiniteLoop={false}
-          >
-            {feeds?.map((data, i) => (
-              <FeedCard updateList={updateList} data={data} index={i} key={i} />
-            ))}
-          </Carousel>
-          {privateFeeds && (
-            <Carousel
-              centerMode={true}
-              centerSlidePercentage={100 / numItemsToShow}
-              infiniteLoop={false}
-            >
-              {privateFeeds?.map((data, i) => (
-                <FeedCardPrivate
-                  allFeed={allFeed}
-                  updateList={updateList}
+        <Grid container>
+          {allFeed?.map((data, i) => {
+            return (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+                <FeedCard
+                  updateList={getFeedListHandler}
                   data={data}
                   index={i}
                   key={i}
                 />
-              ))}
-            </Carousel>
-          )}
-        </div>
+              </Grid>
+            );
+          })}
+        </Grid>
+        {pages > 1 && (
+          <Box
+            mb={2}
+            mt={2}
+            display="flex"
+            justifyContent="center"
+            style={{ marginTop: 40 }}
+          >
+            <Pagination
+              count={pages}
+              page={page}
+              onChange={(e, v) => updateState({ page: v })}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );
+
+  async function getFeedListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.getMyfeed,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          updateState({ allFeed: res.data.result.docs });
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
 }

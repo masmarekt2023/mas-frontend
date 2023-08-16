@@ -62,6 +62,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
     '& img': {
       width: '100%',
       height: '500px',
@@ -95,7 +96,7 @@ export default function OurSolutions({ ourSolutions }) {
                 src={
                   ourSolutions?.contentFile
                     ? ourSolutions?.contentFile
-                    : 'images/home/banner1.png'
+                    : ''
                 }
                 alt=""
               />

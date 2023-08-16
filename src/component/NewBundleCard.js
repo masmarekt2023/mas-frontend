@@ -126,6 +126,7 @@ export default function BundleCard({ data }) {
       : BundleData.userId;
   const isUserBundle = auth.userData._id === userId;
   let userName = BundleData.userId.userName || BundleData.userDetail.userName;
+  let userSpeciality = BundleData.userId?.speciality || BundleData.userDetail?.speciality;
   let profilePic =
     BundleData?.userId?.profilePic ||
     BundleData?.userDetail?.profilePic ||
@@ -279,14 +280,15 @@ export default function BundleCard({ data }) {
         }
         title={
           <p style={{ fontWeight: "bold", margin: 0 }}>
-            {BundleData.bundleName}
+            {userName}
           </p>
         }
-        subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
+        /*subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
           year: "numeric",
           month: "numeric",
           day: "numeric",
-        })}
+        })}*/
+        subheader={<p style={{margin: 0, color: 'black'}}>{userSpeciality}</p>}
       />
       {isVideo ? (
         <div
@@ -340,19 +342,26 @@ export default function BundleCard({ data }) {
       </Menu>
       <CardContent>
         <Typography
+            variant="h5"
+            component="h5"
+            style={{ color: "#000", fontWeight: "bold" }}
+        >
+          {BundleData.bundleName}
+        </Typography>
+        <Typography
           variant="h5"
           component="h5"
-          style={{ color: "#000", fontWeight: "bold" }}
+          style={{ color: "#000", fontWeight: "bold", marginTop: 5 }}
         >
-          {BundleData?.donationAmount
+          {"( "}{BundleData?.donationAmount
             ? BundleData?.donationAmount
-            : "Any amount"}
+            : "Any amount"} {" )"} {" "}
           {BundleData && BundleData.coinName ? BundleData.coinName : "MAS"}{" "}
           {" for "}
           {BundleData?.duration ? BundleData?.duration : "Ever"}
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {BundleData.description}
+        <Typography variant="body2" color="textSecondary" component="p" style={{marginTop: 5}}>
+          {BundleData?.details}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -379,7 +388,7 @@ export default function BundleCard({ data }) {
           )}
         {auth?.userData?._id !== userId && !isSubscribed && (
           <Button className={classes.expand} onClick={handleClickOpen2}>
-            Subscribe
+            Details
           </Button>
         )}
         {auth.userData && auth.userLoggedIn && auth.userData._id === userId && (

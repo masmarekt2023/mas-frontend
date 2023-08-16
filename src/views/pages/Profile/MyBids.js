@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Box,
   Button,
@@ -21,11 +21,12 @@ import { UserContext } from "src/context/User";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import NoDataFound from "src/component/NoDataFound";
 import { toast } from "react-toastify";
+import { Pagination } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
-    
+
     border: " solid 0.5px #e5e3dd",
     color: "#141518",
     height: "48px",
@@ -116,9 +117,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MyBids({ auction, updateList }) {
+export default function MyBids() {
   const classes = useStyles();
   const auth = useContext(UserContext);
+  const [auction, setAction] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [OpenAuction, setOpenAuction] = useState(false);
   const [name, setname] = useState("");
   const [date, setdate] = useState(moment().format("YYYY-MM-DDThh:mm"));
@@ -183,7 +187,7 @@ export default function MyBids({ auction, updateList }) {
         .then(async (res) => {
           if (res.data.statusCode === 200) {
             auth.updateUserData();
-            updateList();
+            myBidListHandler().catch(console.error);
             console.log(res);
             setprocess(false);
             toast.success("Order Placed");
@@ -211,11 +215,14 @@ export default function MyBids({ auction, updateList }) {
     }
   };
 
+  useEffect(() => {
+    myBidListHandler().catch(console.error);
+  }, [page]);
+
   return (
     <Box className={classes.LoginBox} mb={5}>
       <Box className={classes.masBoxFlex}>
         <Typography variant="h6">My Bids</Typography>
-        
       </Box>
 
       <Box maxWidth="lg">
@@ -228,12 +235,24 @@ export default function MyBids({ auction, updateList }) {
         )}
         <Grid container spacing={2}>
           {auction.map((data, i) => {
-            return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-              </Grid>
-            );
+            return <Grid item xs={12} sm={6} md={4} lg={3} key={i}></Grid>;
           })}
         </Grid>
+        {pages > 1 && (
+          <Box
+            mb={2}
+            mt={2}
+            display="flex"
+            justifyContent="center"
+            style={{ marginTop: 40 }}
+          >
+            <Pagination
+              count={pages}
+              page={page}
+              onChange={(e, v) => setPage(v)}
+            />
+          </Box>
+        )}
       </Box>
       {OpenAuction && (
         <Dialog
@@ -269,9 +288,7 @@ export default function MyBids({ auction, updateList }) {
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <Box className={classes.UploadBox}>
-                   
                     <label htmlFor="raised-button-file">
-                     
                       <input
                         accept="image/*"
                         style={{ display: "none" }}
@@ -408,7 +425,7 @@ export default function MyBids({ auction, updateList }) {
               {process && <ButtonCircularProgress />}
             </Button>
             {/* {!process ? (
-             
+
             ) : (
               <>
                 <CircularProgress />
@@ -420,4 +437,27 @@ export default function MyBids({ auction, updateList }) {
       )}
     </Box>
   );
+
+  async function myBidListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.myBid,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        limit: 4,
+        page: page,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          setAction(res.data.result.docs);
+          setPages(res.data.result.pages);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
 }

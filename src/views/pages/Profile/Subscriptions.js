@@ -4,7 +4,7 @@ import BundleCard from "src/component/NewBundleCard";
 import UserDetailsCard from "src/component/UserCard";
 import axios from "axios";
 import Apiconfigs from "../../../Apiconfig/Apiconfigs";
-import {Pagination} from "@material-ui/lab";
+import { Pagination } from "@material-ui/lab";
 
 const useStyles = makeStyles(() => ({
   subscriptionBox: {
@@ -60,20 +60,28 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Subscriptions({ userList }) {
+export default function Subscriptions() {
   const classes = useStyles();
   const [state, setState] = useState({
     subscriptions: [],
     subsPage: 1,
     subsPages: 1,
+    userList: [],
+    userPage: 1,
+    userPages: 1,
   });
-  const { subscriptions, subsPage, subsPages } = state;
+  const { subscriptions, subsPage, subsPages, userList, userPage, userPages } =
+    state;
   const updateState = (data) =>
     setState((prevState) => ({ ...prevState, ...data }));
 
   useEffect(() => {
-    getBundleSubscriptionListHandler();
+    getBundleSubscriptionListHandler().catch(console.error);
   }, [state.subsPage]);
+
+  useEffect(() => {
+    myFollowingHandler().catch(console.error);
+  }, [state.userPage]);
 
   return (
     <div className={classes.subscriptionBox}>
@@ -93,19 +101,19 @@ export default function Subscriptions({ userList }) {
           </Grid>
         </Box>
         {subsPages > 1 && (
-            <Box
-                mb={2}
-                mt={2}
-                display="flex"
-                justifyContent="center"
-                style={{ marginTop: 40 }}
-            >
-              <Pagination
-                  count={subsPages}
-                  page={subsPage}
-                  onChange={(e, v) => updateState({subsPage: v})}
-              />
-            </Box>
+          <Box
+            mb={2}
+            mt={2}
+            display="flex"
+            justifyContent="center"
+            style={{ marginTop: 40 }}
+          >
+            <Pagination
+              count={subsPages}
+              page={subsPage}
+              onChange={(e, v) => updateState({ subsPage: v })}
+            />
+          </Box>
         )}
       </Box>
       <Box className={classes.LoginBox} mb={5}>
@@ -122,6 +130,21 @@ export default function Subscriptions({ userList }) {
               );
             })}
           </Grid>
+          {userPages > 1 && (
+            <Box
+              mb={2}
+              mt={2}
+              display="flex"
+              justifyContent="center"
+              style={{ marginTop: 40 }}
+            >
+              <Pagination
+                count={userPages}
+                page={userPage}
+                onChange={(e, v) => updateState({ userPage: v })}
+              />
+            </Box>
+          )}
         </Box>
       </Box>
     </div>
@@ -136,14 +159,39 @@ export default function Subscriptions({ userList }) {
       },
       params: {
         limit: 4,
-        page: subsPage
-      }
+        page: subsPage,
+      },
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
           updateState({
             subscriptions: res.data.result.docs,
             subsPages: res.data.result.pages,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
+  async function myFollowingHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.profileFollowingList,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        limit: 4,
+        page: userPage,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          updateState({
+            userList: res.data.result.docs,
+            userPages: res.data.result.pages,
           });
         }
       })

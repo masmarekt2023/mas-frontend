@@ -163,7 +163,7 @@ export default function BannerSection({ bannerDetails }) {
                       muted
                       loop
                       width="100%"
-                      style={{ borderRadius: '20px', borderRadius: "12px" }}
+                      style={{ borderRadius: "12px" }}
 
                     >
                       <source
