@@ -1,34 +1,34 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add YourPackageHere --network-timeout 100000
+  C:\Program Files\nodejs\node.exe C:\Users\moham\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @hookform/resolvers/yup
 
 PATH: 
-  C:\Python310\Scripts\;C:\Python310\;C:\ProgramData\Boxstarter;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\nodejs\;C:\Ruby27-x64\bin;C:\Users\hp\AppData\Local\Microsoft\WindowsApps;;C:\Users\hp\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\hp\AppData\Local\Yarn\bin;C:\Users\hp\AppData\Roaming\npm
+  C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Program Files\MongoDB\Server\6.0\bin;C:\Users\moham\AppData\Local\Microsoft\WindowsApps;C:\Users\moham\AppData\Roaming\npm;C:\adb;C:\Program Files (x86)\Microsoft SQL Server\160\Tools\Binn\;C:\Program Files\Microsoft SQL Server\160\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files (x86)\Microsoft SQL Server\160\DTS\Binn\;C:\Program Files\Azure Data Studio\bin;C:\Program Files\PuTTY\;C:\Users\moham\AppData\Local\Microsoft\WindowsApps;C:\Users\moham\AppData\Roaming\npm;C:\Users\moham\AppData\Local\Android\Sdk\platform-tools;C:\Users\moham\AppData\Local\Android\Sdk;;C:\Program Files\JetBrains\IntelliJ IDEA 2023.1.2\bin;;C:\Program Files\Azure Data Studio\bin;C:\MyFiles\My Work\Mas\mas-frontend\node_modules\.bin
 
 Yarn version: 
-  1.22.4
+  1.22.19
 
 Node version: 
-  14.0.0
+  18.16.0
 
 Platform: 
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/YourPackageHere: Not found
-      at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:66096:18)
-      at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:140748:22)
-      at Request.emit (events.js:315:20)
-      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141720:10)
-      at Request.emit (events.js:315:20)
-      at IncomingMessage.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:141642:12)
-      at Object.onceWrapper (events.js:421:28)
-      at IncomingMessage.emit (events.js:327:22)
-      at endReadableNT (_stream_readable.js:1218:12)
-      at processTicksAndRejections (internal/process/task_queues.js:84:21)
+  Error: https://registry.yarnpkg.com/@hookform%2fresolvers/yup: Request "https://registry.yarnpkg.com/@hookform%2fresolvers/yup" returned a 405
+      at params.callback [as _callback] (C:\Users\moham\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66154:18)
+      at self.callback (C:\Users\moham\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
+      at Request.emit (node:events:513:28)
+      at Request.<anonymous> (C:\Users\moham\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141862:10)
+      at Request.emit (node:events:513:28)
+      at IncomingMessage.<anonymous> (C:\Users\moham\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141784:12)
+      at Object.onceWrapper (node:events:627:28)
+      at IncomingMessage.emit (node:events:525:35)
+      at endReadableNT (node:internal/streams/readable:1359:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
 
 npm manifest: 
   {
-    "name": "masplatform.net",
+    "name": "mas2023",
     "version": "0.1.1",
     "private": true,
     "scripts": {
@@ -61,6 +61,7 @@ npm manifest:
       "material-ui-search-bar": "^1.0.0",
       "moment": "^2.29.4",
       "mui-tel-input": "^2.0.1",
+      "prettier": "^2.8.4",
       "react": "^17.0.2",
       "react-copy-to-clipboard": "^5.0.4",
       "react-device-detect": "^2.2.2",
@@ -68,13 +69,17 @@ npm manifest:
       "react-emoji": "^0.5.0",
       "react-feather": "^2.0.9",
       "react-helmet": "^6.1.0",
+      "react-hook-form": "^7.45.4",
       "react-icons": "^4.2.0",
+      "react-image-crop": "^10.1.5",
       "react-images-uploading": "^3.1.7",
       "react-input-emoji": "^4.2.0",
       "react-perfect-scrollbar": "^1.5.8",
       "react-phone-input-2": "^2.15.1",
       "react-phone-number-input": "^3.2.11",
+      "react-player": "^2.12.0",
       "react-remove-scroll-bar": "^2.3.4",
+      "react-responsive": "^9.0.2",
       "react-responsive-carousel": "^3.2.23",
       "react-router-dom": "^6.3.0",
       "react-scripts": "5.0.1",
@@ -3779,6 +3784,11 @@ Lockfile:
       postcss-value-parser "^4.2.0"
       semver "^7.3.5"
   
+  css-mediaquery@^0.1.2:
+    version "0.1.2"
+    resolved "https://registry.yarnpkg.com/css-mediaquery/-/css-mediaquery-0.1.2.tgz#6a2c37344928618631c54bd33cedd301da18bea0"
+    integrity sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q==
+  
   css-minimizer-webpack-plugin@^3.2.0:
     version "3.4.1"
     resolved "https://registry.yarnpkg.com/css-minimizer-webpack-plugin/-/css-minimizer-webpack-plugin-3.4.1.tgz#ab78f781ced9181992fe7b6e4f3422e76429878f"
@@ -3998,6 +4008,11 @@ Lockfile:
     version "0.1.4"
     resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.4.tgz#a6f2dce612fadd2ef1f519b73551f17e85199831"
     integrity sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==
+  
+  deepmerge@^4.0.0:
+    version "4.3.1"
+    resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.3.1.tgz#44b5f2147cd3b00d4b56137685966f26fd25dd4a"
+    integrity sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==
   
   deepmerge@^4.2.2:
     version "4.2.2"
@@ -5466,7 +5481,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
     integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
   
-  hyphenate-style-name@^1.0.3:
+  hyphenate-style-name@^1.0.0, hyphenate-style-name@^1.0.3:
     version "1.0.4"
     resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
     integrity sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==
@@ -6610,6 +6625,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
     integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
   
+  load-script@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/load-script/-/load-script-1.0.0.tgz#0491939e0bee5643ee494a7e3da3d2bac70c6ca4"
+    integrity sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==
+  
   loader-runner@^4.2.0:
     version "4.3.0"
     resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-4.3.0.tgz#c1b4a163b99f614830353b16755e7149ac2314e1"
@@ -6743,6 +6763,13 @@ Lockfile:
     dependencies:
       tmpl "1.0.5"
   
+  matchmediaquery@^0.3.0:
+    version "0.3.1"
+    resolved "https://registry.yarnpkg.com/matchmediaquery/-/matchmediaquery-0.3.1.tgz#8247edc47e499ebb7c58f62a9ff9ccf5b815c6d7"
+    integrity sha512-Hlk20WQHRIm9EE9luN1kjRjYXAQToHOIAHPJn9buxBwuhfTHoKUcX+lXBbxc85DVQfXYbEQ4HcwQdd128E3qHQ==
+    dependencies:
+      css-mediaquery "^0.1.2"
+  
   material-ui-dropzone@^3.5.0:
     version "3.5.0"
     resolved "https://registry.yarnpkg.com/material-ui-dropzone/-/material-ui-dropzone-3.5.0.tgz#2d7f36032db96c24ce97b42e4d0053f94e91a9fc"
@@ -6789,6 +6816,11 @@ Lockfile:
     integrity sha512-ygaiUSNalBX85388uskeCyhSAoOSgzBbtVCr9jA2RROssFL9Q19/ZXFqS+2Th2sr1ewNIWgFdLzLC3Yl1Zv+lw==
     dependencies:
       fs-monkey "^1.0.3"
+  
+  memoize-one@^5.1.1:
+    version "5.2.1"
+    resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
+    integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
   
   merge-descriptors@1.0.1:
     version "1.0.1"
@@ -7901,6 +7933,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
     integrity sha512-ESF23V4SKG6lVSGZgYNpbsiaAkdab6ZgOxe52p7+Kid3W3u3bxR4Vfd/o21dmN7jSt0IwgZ4v5MUd26FEtXE9w==
   
+  prettier@^2.8.4:
+    version "2.8.4"
+    resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.4.tgz#34dd2595629bfbb79d344ac4a91ff948694463c3"
+    integrity sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==
+  
   pretty-bytes@^5.3.0, pretty-bytes@^5.4.1:
     version "5.6.0"
     resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.6.0.tgz#356256f643804773c82f64723fe78c92c62beaeb"
@@ -8142,6 +8179,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.11.tgz#92835de5841c5cf08ba00ddd2d677b6d17ff9adb"
     integrity sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==
   
+  react-fast-compare@^3.0.1:
+    version "3.2.2"
+    resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz#929a97a532304ce9fee4bcae44234f1ce2c21d49"
+    integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
+  
   react-fast-compare@^3.1.1:
     version "3.2.0"
     resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-3.2.0.tgz#641a9da81b6a6320f270e89724fb45a0b39e43bb"
@@ -8164,10 +8206,22 @@ Lockfile:
       react-fast-compare "^3.1.1"
       react-side-effect "^2.1.0"
   
+  react-hook-form@^7.45.4:
+    version "7.45.4"
+    resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.45.4.tgz#73d228b704026ae95d7e5f7b207a681b173ec62a"
+    integrity sha512-HGDV1JOOBPZj10LB3+OZgfDBTn+IeEsNOKiq/cxbQAIbKaiJUe/KV8DBUzsx0Gx/7IG/orWqRRm736JwOfUSWQ==
+  
   react-icons@^4.2.0:
     version "4.4.0"
     resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.4.0.tgz#a13a8a20c254854e1ec9aecef28a95cdf24ef703"
     integrity sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg==
+  
+  react-image-crop@^10.1.5:
+    version "10.1.5"
+    resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-10.1.5.tgz#60f9d81405b01b6925629cae235e8406616fc0e5"
+    integrity sha512-BL8Rd/UHCE4O5GcYQiWDKVh5JOJb0Ic/Gde2W171v5nY7RyQzFLM1cxIzlYfESLO/lNgBVhDHuEV9RHnqALMkA==
+    dependencies:
+      clsx "^1.2.1"
   
   react-images-uploading@^3.1.7:
     version "3.1.7"
@@ -8227,6 +8281,17 @@ Lockfile:
       libphonenumber-js "^1.10.13"
       prop-types "^15.8.1"
   
+  react-player@^2.12.0:
+    version "2.12.0"
+    resolved "https://registry.yarnpkg.com/react-player/-/react-player-2.12.0.tgz#2fc05dbfec234c829292fbca563b544064bd14f0"
+    integrity sha512-rymLRz/2GJJD+Wc01S7S+i9pGMFYnNmQibR2gVE3KmHJCBNN8BhPAlOPTGZtn1uKpJ6p4RPLlzPQ1OLreXd8gw==
+    dependencies:
+      deepmerge "^4.0.0"
+      load-script "^1.0.0"
+      memoize-one "^5.1.1"
+      prop-types "^15.7.2"
+      react-fast-compare "^3.0.1"
+  
   react-property@2.0.0:
     version "2.0.0"
     resolved "https://registry.yarnpkg.com/react-property/-/react-property-2.0.0.tgz#2156ba9d85fa4741faf1918b38efc1eae3c6a136"
@@ -8253,6 +8318,16 @@ Lockfile:
       classnames "^2.2.5"
       prop-types "^15.5.8"
       react-easy-swipe "^0.0.21"
+  
+  react-responsive@^9.0.2:
+    version "9.0.2"
+    resolved "https://registry.yarnpkg.com/react-responsive/-/react-responsive-9.0.2.tgz#34531ca77a61e7a8775714016d21241df7e4205c"
+    integrity sha512-+4CCab7z8G8glgJoRjAwocsgsv6VA2w7JPxFWHRc7kvz8mec1/K5LutNC2MG28Mn8mu6+bu04XZxHv5gyfT7xQ==
+    dependencies:
+      hyphenate-style-name "^1.0.0"
+      matchmediaquery "^0.3.0"
+      prop-types "^15.6.1"
+      shallow-equal "^1.2.1"
   
   react-router-dom@^6.3.0:
     version "6.3.0"
@@ -8818,6 +8893,11 @@ Lockfile:
     version "1.2.0"
     resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
     integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
+  
+  shallow-equal@^1.2.1:
+    version "1.2.1"
+    resolved "https://registry.yarnpkg.com/shallow-equal/-/shallow-equal-1.2.1.tgz#4c16abfa56043aa20d050324efa68940b0da79da"
+    integrity sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==
   
   shebang-command@^2.0.0:
     version "2.0.0"

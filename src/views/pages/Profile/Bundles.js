@@ -28,6 +28,7 @@ import BundleCard from "src/component/NewBundleCard";
 import { tokensDetails } from "src/constants";
 import ReactPlayer from "react-player";
 import { Pagination } from "@material-ui/lab";
+import AddBundleDialog from "../../../component/AddBundleDialog";
 
 const useStyles = makeStyles((theme) => ({
   input_fild: {
@@ -243,11 +244,17 @@ export default function Bundles() {
 
       {/* add bundle */}
 
-      {OpenAuction && (
+      {/*{OpenAuction && (
         <AddBundlePopup
           open={OpenAuction}
           handleClose={() => setOpenAuction(false)}
-          callbackFun={setBundleList}
+        />
+      )}*/}
+
+      {OpenAuction && (
+        <AddBundleDialog
+          show={open}
+          handleClose={() => setOpenAuction(false)}
         />
       )}
     </Box>
