@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Box, Container, makeStyles, Button } from "@material-ui/core";
 import { UserContext } from "src/context/User";
-import Loader from "src/component/Loader";
-
 import Page from "src/component/Page";
 import Auction from "./Auction";
 import Bundles from "./Bundles";
@@ -40,7 +38,6 @@ export default function Activity() {
   const auth = useContext(UserContext);
   const classes = useStyles();
   const [tabview, setTabView] = useState("bundles");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (auth?.userData?.userType !== "User") {
@@ -53,106 +50,102 @@ export default function Activity() {
   return (
     <Page title="">
       <Box className={classes.Padding_Top}>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <Container maxWidth="xl">
-            <Box>
-              {auth?.userData?.userType !== "User" && (
-                <Button
-                  className={tabview === "bundles" ? classes.active : " "}
-                  onClick={() => setTabView("bundles")}
-                >
-                  My Bundles
-                </Button>
-              )}
+        <Container maxWidth="xl">
+          <Box>
+            {auth?.userData?.userType !== "User" && (
               <Button
-                className={tabview === "subscriptions" ? classes.active : " "}
-                onClick={() => setTabView("subscriptions")}
+                className={tabview === "bundles" ? classes.active : " "}
+                onClick={() => setTabView("bundles")}
               >
-                My subscriptions
+                My Bundles
               </Button>
+            )}
+            <Button
+              className={tabview === "subscriptions" ? classes.active : " "}
+              onClick={() => setTabView("subscriptions")}
+            >
+              My subscriptions
+            </Button>
+            <Button
+              className={tabview === "feed" ? classes.active : " "}
+              onClick={() => setTabView("feed")}
+            >
+              My feed
+            </Button>
+            {auth?.userData?.userType !== "User" && (
               <Button
-                className={tabview === "feed" ? classes.active : " "}
-                onClick={() => setTabView("feed")}
+                className={tabview === "auctions" ? classes.active : " "}
+                onClick={() => setTabView("auctions")}
               >
-                My feed
+                My auctions
               </Button>
-              {auth?.userData?.userType !== "User" && (
-                <Button
-                  className={tabview === "auctions" ? classes.active : " "}
-                  onClick={() => setTabView("auctions")}
-                >
-                  My auctions
-                </Button>
-              )}
+            )}
+            <Button
+              className={tabview === "bids" ? classes.active : " "}
+              onClick={() => setTabView("bids")}
+            >
+              My Bids
+            </Button>
+            {auth?.userData?.userType !== "User" && (
               <Button
-                className={tabview === "bids" ? classes.active : " "}
-                onClick={() => setTabView("bids")}
+                className={tabview === "subscribe" ? classes.active : " "}
+                onClick={() => setTabView("subscribe")}
               >
-                My Bids
+                Subscribers
               </Button>
-              {auth?.userData?.userType !== "User" && (
-                <Button
-                  className={tabview === "subscribe" ? classes.active : " "}
-                  onClick={() => setTabView("subscribe")}
-                >
-                  Subscribers
-                </Button>
-              )}
+            )}
 
-              {auth?.userData?.userType !== "User" && (
-                <Button
-                  className={tabview === "donor" ? classes.active : " "}
-                  onClick={() => setTabView("donor")}
-                >
-                  Supporter List
-                </Button>
-              )}
-              {auth?.userData?.userType !== "User" && (
-                <Button
-                  className={tabview === "soldAuctions" ? classes.active : " "}
-                  onClick={() => setTabView("soldAuctions")}
-                >
-                  Sold Auctions NFT
-                </Button>
-              )}
+            {auth?.userData?.userType !== "User" && (
               <Button
-                className={tabview === "BoughtAuctions" ? classes.active : " "}
-                onClick={() => setTabView("BoughtAuctions")}
+                className={tabview === "donor" ? classes.active : " "}
+                onClick={() => setTabView("donor")}
               >
-                Bought Auctions NFT
+                Supporter List
               </Button>
+            )}
+            {auth?.userData?.userType !== "User" && (
               <Button
-                className={tabview === "DonateList" ? classes.active : " "}
-                onClick={() => setTabView("DonateList")}
+                className={tabview === "soldAuctions" ? classes.active : " "}
+                onClick={() => setTabView("soldAuctions")}
               >
-                Donate Transaction
+                Sold Auctions NFT
               </Button>
-              <Button
-                className={
-                  tabview === "TransactionHistory" ? classes.active : " "
-                }
-                onClick={() => setTabView("TransactionHistory")}
-              >
-                Transaction History
-              </Button>
-            </Box>
-            <Box>
-              {tabview === "bundles" && <Bundles />}
-              {tabview === "subscriptions" && <Subscriptions />}
-              {tabview === "subscribe" && <UserDetails type="subscribers" />}
-              {tabview === "feed" && <Feed />}
-              {tabview === "auctions" && <Auction />}
-              {tabview === "BoughtAuctions" && <SoldBuyList type="bought" />}
-              {tabview === "soldAuctions" && <SoldBuyList type="sold" />}
-              {tabview === "bids" && <MyBids />}
-              {tabview === "donor" && <UserDetails type="donor" />}
-              {tabview === "DonateList" && <DonationsList />}
-              {tabview === "TransactionHistory" && <TransactionHistory />}
-            </Box>
-          </Container>
-        )}
+            )}
+            <Button
+              className={tabview === "BoughtAuctions" ? classes.active : " "}
+              onClick={() => setTabView("BoughtAuctions")}
+            >
+              Bought Auctions NFT
+            </Button>
+            <Button
+              className={tabview === "DonateList" ? classes.active : " "}
+              onClick={() => setTabView("DonateList")}
+            >
+              Donate Transaction
+            </Button>
+            <Button
+              className={
+                tabview === "TransactionHistory" ? classes.active : " "
+              }
+              onClick={() => setTabView("TransactionHistory")}
+            >
+              Transaction History
+            </Button>
+          </Box>
+          <Box>
+            {tabview === "bundles" && <Bundles />}
+            {tabview === "subscriptions" && <Subscriptions />}
+            {tabview === "subscribe" && <UserDetails type="subscribers" />}
+            {tabview === "feed" && <Feed />}
+            {tabview === "auctions" && <Auction />}
+            {tabview === "BoughtAuctions" && <SoldBuyList type="bought" />}
+            {tabview === "soldAuctions" && <SoldBuyList type="sold" />}
+            {tabview === "bids" && <MyBids />}
+            {tabview === "donor" && <UserDetails type="donor" />}
+            {tabview === "DonateList" && <DonationsList />}
+            {tabview === "TransactionHistory" && <TransactionHistory />}
+          </Box>
+        </Container>
       </Box>
     </Page>
   );

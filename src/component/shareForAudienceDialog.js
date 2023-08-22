@@ -17,30 +17,31 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import Apiconfigs from "../Apiconfig/Apiconfigs";
-import { tokensDetails } from "../constants/index";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ReactPlayer from "react-player";
 import { toast } from "react-toastify";
+import { Pagination } from "@material-ui/lab";
 
-const AddBundleDialog = ({ show, handleClose, bundleData }) => {
-  const [isEdit, setIsEdit] = useState(!!bundleData);
+const ShareForAudienceDialog = ({ show, handleClose }) => {
   const classes = useStyles();
-  const [mediaUrl, setMediaUrl] = useState(isEdit ? bundleData.mediaUrl : "");
-  const [uploadCounter, setUploadCounter] = useState(0);
+  const [state, setState] = useState({
+    mediaUrl: "",
+    uploadCounter: 0,
+    bundleList: [],
+    page: 1,
+    pages: 1,
+  });
+  const { mediaUrl, uploadCounter, page, pages, bundleList } = state;
+  const updateState = (data) =>
+    setState((prevState) => ({ ...prevState, ...data }));
 
   // Yup inputs validation
   const schema = yup.object({
     file: yup.mixed().required("File is required"),
-    bundleTitle: yup.string().required("Enter title please"),
-    bundleName: yup.string().required("Enter name please"),
-    details: yup.string().required("Enter description please"),
-    duration: yup.number().min(1, "Select a ending date"),
-    donationAmount: yup
-      .number()
-      .min(1, "Enter donation amount please")
-      .positive("the price should be positive number"),
-    coinName: yup.string().required("Enter coin name"),
+    title: yup.string().min(3, "Enter title please"),
+    details: yup.string().min(3, "Enter description please"),
+    bundleIds: yup.array().min(1, "Select 1 bundle at least"),
   });
 
   // React hook form for handle form data
@@ -49,24 +50,22 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     watch,
     setValue,
     handleSubmit,
-    formState: { errors, dirtyFields },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    reValidateMode: "onChange",
+    reValidateMode: "onSubmit",
     defaultValues: {
       file: null,
-      bundleTitle: isEdit ? bundleData.bundleTitle : "",
-      bundleName: isEdit ? bundleData.bundleName : "",
-      donationAmount: isEdit ? bundleData.donationAmount : 0,
-      duration: isEdit ? +bundleData.duration.split(" ")[0] : 0,
-      details: isEdit ? bundleData.details : "",
-      coinName: isEdit ? bundleData.coinName : "MAS",
+      title: "",
+      details: "",
+      type: "PUBLIC",
+      bundleIds: [],
     },
   });
 
   useEffect(() => {
-    setMediaUrl(isEdit ? bundleData.mediaUrl : "");
-  }, [show]);
+    getBundleListHandler().catch(console.error);
+  }, [page]);
 
   /* Main Return */
 
@@ -81,9 +80,9 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
       <DialogTitle
         style={{ textAlign: "center", color: "black", fontWeight: "bold" }}
       >
-        {isEdit ? "Edit Bundle" : "Create a bundle"}
+        Share For Audience
       </DialogTitle>
-      <DialogContent style={{ padding: 40 }}>
+      <DialogContent style={{ padding: 40, paddingTop: 10 }}>
         <Grid container spacing={5}>
           {InputList()}
           <Grid item xs={12} sm={5}>
@@ -99,16 +98,12 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
   /* Main Return */
 
   function MediaBox() {
-    const { name } = watch("file") ? watch("file") : { type: "", name: "" };
-
-    const isVideo = watch("file")
-      ? watch("file")?.type?.split("/")[0] !== "image"
-      : isEdit
-      ? isVideoType(mediaUrl)
-      : false;
-
+    const { type, name } = watch("file")
+      ? watch("file")
+      : { type: "", name: "" };
+    const isVideo = type?.split("/")[0] !== "image";
     const onRemove = () => {
-      setMediaUrl("");
+      updateState({ mediaUrl: "" });
       setValue("file", null);
     };
 
@@ -178,7 +173,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
 
   function FormButtons() {
     const onSubmit = handleSubmit(
-      (data) => isEdit ? editBundle(data) : createBundle(data),
+      (data) => shareForAudience(data),
       () => console.log(errors)
     );
 
@@ -197,9 +192,8 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
           onClick={onSubmit}
           size="large"
           className={classes.submitButton}
-          disabled={isEdit && !dirtyFields.file}
         >
-          {isEdit ? "Edit" : "Create"}
+          Share
         </Button>
       </Grid>
     );
@@ -226,7 +220,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
           multiple
           onChange={(e) => {
             onChange(e.target.files[0]);
-            setMediaUrl(URL.createObjectURL(e.target.files[0]));
+            updateState({ mediaUrl: URL.createObjectURL(e.target.files[0]) });
           }}
           ref={ref}
           name={name}
@@ -257,47 +251,27 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     return (
       <Grid item xs={12} sm={7}>
         <CustomInput
-          name={"bundleTitle"}
+          name={"title"}
           control={control}
-          title={"Bundle Title"}
-          placeholder={"Enter Bundle Title"}
-          disabled={isEdit}
+          title={"Title"}
+          placeholder={"Enter Title"}
         />
         <CustomInput
-          name={"bundleName"}
+          name={"type"}
           control={control}
-          title={"Bundle Name"}
-          placeholder={"Enter Bundle Name"}
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"donationAmount"}
-          control={control}
-          title={"Donation Amount"}
-          placeholder={"Enter Donation Amount"}
-          type={"number"}
-          endAdornment={CoinSelector()}
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"duration"}
-          control={control}
-          title={"Duration"}
-          placeholder={"Enter Duration"}
-          type={"number"}
-          endAdornment={
-            <p style={{ margin: "0px 10px", fontSize: 14 }}>days</p>
-          }
-          disabled={isEdit}
+          title={"Type"}
+          placeholder={"Enter Type"}
+          disabled={true}
+          endAdornment={<TypeSelector />}
         />
         <CustomInput
           name={"details"}
           control={control}
           title={"Details"}
-          placeholder={"Enter a details about your bundle"}
+          placeholder={"Enter details"}
           multiline={true}
-          disabled={isEdit}
         />
+        <BundleSelector />
       </Grid>
     );
   }
@@ -352,18 +326,17 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     );
   }
 
-  function CoinSelector() {
+  function TypeSelector() {
     return (
       <InputAdornment position="end">
         <Select
           className={classes.select}
-          value={watch("coinName")}
-          onChange={(event) => setValue("coinName", event.target.value)}
-          disabled={isEdit}
+          value={watch("type")}
+          onChange={(event) => setValue("type", event.target.value)}
         >
-          {tokensDetails.map((item, index) => (
-            <MenuItem key={index} value={item.name}>
-              {item.name}
+          {["PUBLIC", "PRIVATE"].map((item, index) => (
+            <MenuItem key={index} value={item}>
+              {item}
             </MenuItem>
           ))}
         </Select>
@@ -371,78 +344,124 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     );
   }
 
-  async function createBundle(data) {
-    try {
-      const formData = new FormData();
-      formData.append("file", data.file);
-      formData.append("tokenName", data.bundleName);
-      formData.append("bundleTitle", data.bundleTitle);
-      formData.append(
-        "duration",
-        `${data.duration} ${data.duration > 1 ? "days" : "day"}`
-      );
-      formData.append("bundleName", data.bundleName);
-      formData.append("details", data.details);
-      formData.append("donationAmount", data.donationAmount);
-      formData.append("coinName", data.coinName);
-
-      const res = await axios({
-        method: "POST",
-        url: Apiconfigs.addNft,
-        data: formData,
-        headers: {
-          token: sessionStorage.getItem("token"),
-        },
-        onUploadProgress: (progressEvent) => onUploadProgress(progressEvent),
-      });
-
-      if (res.data.statusCode === 200) {
-        toast.success("Bundle created");
-        handleClose();
+  function BundleSelector() {
+    const formBundles = watch("bundleIds");
+    const selectItem = (id) => {
+      if (formBundles.includes(id)) {
+        setValue(
+          "bundleIds",
+          formBundles.filter((i) => i !== id)
+        );
+      } else {
+        setValue("bundleIds", [...formBundles, id]);
       }
-    } catch (err) {
-      console.log(err);
-    }
+    };
+
+    return (
+      <div style={{ margin: 10 }}>
+        <p className={classes.selectorTitleStyle}>
+          Chose Bundles To Share with
+        </p>
+        <Grid container spacing={2}>
+          {bundleList.map((item) => {
+            const isChosen = formBundles.includes(item._id);
+            return (
+              <Grid item key={item._id} lg={3} md={4} sm={6} xm={12}>
+                <div
+                  className={classes.bundleCardStyle}
+                  style={{ borderColor: isChosen ? "rgb(192, 72, 72)" : "#ddd" }}
+                  onClick={() => selectItem(item._id)}
+                >
+                  <p style={{ textAlign: "center" }}>{item.bundleName}</p>
+                </div>
+              </Grid>
+            );
+          })}
+        </Grid>
+        {errors?.bundleIds && (
+          <p style={{ color: "red" }}>{errors.bundleIds?.message}</p>
+        )}
+        {pages > 0 && (
+          <Box
+            mb={2}
+            mt={2}
+            display="flex"
+            justifyContent="center"
+            style={{ marginTop: 40 }}
+          >
+            <Pagination
+              count={pages}
+              page={page}
+              onChange={(e, v) => updateState({ page: v })}
+            />
+          </Box>
+        )}
+      </div>
+    );
   }
 
-  async function editBundle(data) {
+  async function shareForAudience(data) {
     const formData = new FormData();
-    formData.append("_id", bundleData._id);
     formData.append("mediaUrl", data.file);
+    formData.append("title", data.title);
+    formData.append("details", data.details);
+    formData.append("postType", data.type);
+    formData.append("nftIds", JSON.stringify(data.bundleIds));
     try {
       const res = await axios({
-        method: "PUT",
-        url: Apiconfigs.editNft,
+        method: "POST",
+        url: Apiconfigs.share,
         data: formData,
         headers: {
+          token: sessionStorage.getItem("token"),
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
-          token: sessionStorage.getItem("token"),
         },
         onUploadProgress: (progressEvent) => onUploadProgress(progressEvent),
       });
       if (res.data.statusCode === 200) {
-        toast.success("Bundle edited successfully");
+        toast.success(res.data?.responseMessage);
         handleClose();
+      } else {
+        toast.error(res.data.responseMessage);
       }
     } catch (e) {
       console.log(e);
     }
   }
 
+  async function getBundleListHandler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.myNftList,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+      params: {
+        page,
+        limit: 4,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          updateState({ bundleList: res.data.result.docs });
+          updateState({ pages: res.data.result.pages });
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
   function onUploadProgress(progressEvent) {
     const percentCompleted = Math.round(
       (progressEvent.loaded * 100) / progressEvent.total
     );
-    setUploadCounter(percentCompleted);
-  }
-
-  function isVideoType(url) {
-    return url.includes("video");
+    updateState({ uploadCounter: percentCompleted });
   }
 };
 
-export default AddBundleDialog;
+export default ShareForAudienceDialog;
 
 const useStyles = makeStyles(() => ({
   inputContainer: {
@@ -557,6 +576,23 @@ const useStyles = makeStyles(() => ({
     position: "absolute",
     marginBottom: 20,
     animation: "$upAndDown 2s ease-in-out infinite",
+  },
+
+  selectorTitleStyle: {
+    fontWeight: "500",
+    color: "black",
+    fontSize: 16,
+    margin: "20px 0px",
+  },
+
+  bundleCardStyle: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    border: "2px #ddd solid",
   },
 
   "@keyframes upAndDown": {

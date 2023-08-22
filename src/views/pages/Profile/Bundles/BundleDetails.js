@@ -10,6 +10,7 @@ import {
   Input,
   MenuItem,
   Select,
+  Collapse,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React, { useState, useEffect, useContext } from "react";
@@ -20,9 +21,9 @@ import All from "./All";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import Loader from "src/component/Loader";
-import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import { toast } from "react-toastify";
 import ReactPlayer from "react-player";
+
 const useStyles = makeStyles((theme) => ({
   root: { padding: "70px 0px" },
   bannerimg: {
@@ -247,11 +248,12 @@ const useStyles = makeStyles((theme) => ({
   },
   btnhead: {
     display: "flex",
-    marginTop: "-170px",
+    flexDirection: "column",
+    marginTop: "-100px",
     "@media(max-width:800px)": { marginTop: "20px", marginBottom: "20px" },
   },
   profileimg: {
-    backgroundColor: '#fafafa',
+    backgroundColor: "#fafafa",
     marginTop: "-130px",
     overflow: "hidden",
     width: "175px",
@@ -384,6 +386,7 @@ export default function BundleDetails() {
   const [bunfleId, setBundleId] = useState("");
   const [isLoading, setIsloading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const _onInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -475,7 +478,7 @@ export default function BundleDetails() {
   }, [selectedFilter, isFilterTrue]);
 
   useEffect(() => {
-    if(bundleDetails.mediaUrl){
+    if (bundleDetails.mediaUrl) {
       setIsVideo(handleVideo(bundleDetails.mediaUrl));
     }
   }, [bundleDetails]);
@@ -554,22 +557,29 @@ export default function BundleDetails() {
           ></Box>
           <Box className={classes.headbox2}>
             <Box style={{ display: "flex", flexWrap: "wrap" }}>
-              {isVideo ? <Box>
-                <Box className={classes.profileimg}>
+              {isVideo ? (
+                <Box>
+                  <Box className={classes.profileimg}>
                     <ReactPlayer
-                        url={bundleDetails?.mediaUrl}
-                        playing
-                        controls
-                        width={"100%"}
-                        height={"100%"}
+                      url={bundleDetails?.mediaUrl}
+                      playing
+                      controls
+                      width={"100%"}
+                      height={"100%"}
                     />
+                  </Box>
                 </Box>
-              </Box> : <Box
+              ) : (
+                <Box
                   //style={{ background: `url(${bundleDetails?.mediaUrl})` }}
                   className={classes.profileimg}
-              >
-                <img src={bundleDetails?.mediaUrl} style={{width: '100%', height: '100%'}}/>
-              </Box>}
+                >
+                  <img
+                    src={bundleDetails?.mediaUrl}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </Box>
+              )}
               <Box className={`${classes.text1} seats`}>
                 <Typography variant="h2">
                   {bundleDetails?.bundleName ? bundleDetails?.bundleName : ""}
@@ -608,7 +618,7 @@ export default function BundleDetails() {
                       {bundleDetails?.duration ? bundleDetails?.duration : "0"}
                     </Typography>
                   </Box>
-                  {auth?.userData?._id !== bundleDetails?.userId && (
+                  {/*{auth?.userData?._id !== bundleDetails?.userId && (
                     <Box
                       display="flex"
                       alignItems="center"
@@ -634,7 +644,7 @@ export default function BundleDetails() {
                         {isLoading && <ButtonCircularProgress />}
                       </Button>
                     </Box>
-                  )}
+                  )}*/}
                 </Box>
               </Box>
             </Box>
@@ -650,116 +660,128 @@ export default function BundleDetails() {
                 </Typography>
                 <Typography variant="h5">Subscribers</Typography>
               </Box>
+              <Button
+                onClick={() => setShowSearch((prevState) => !prevState)}
+                style={{ marginTop: 10 }}
+              >
+                <SearchIcon fontSize={"large"} />
+              </Button>
             </Box>
           </Box>
-
-          <Box className={classes.whitebox}>
-            <Container>
-              <Box className={classes.idtxt}>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={8} className={classes.dlflex}>
-                    <label>Start date:</label>
-                    <TextField
-                      id="datetime-local"
-                      onChange={_onInputChange}
-                      name="startDate"
-                      value={selectedFilter.startDate}
-                      type="datetime-local"
-                      defaultValue="2021-09-12T23:08"
-                      className={classes.textField}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      fullWidth
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={8} className={classes.dlflex}>
-                    <label>End date:</label>
-                    <TextField
-                      id="datetime-local"
-                      onChange={_onInputChange}
-                      value={selectedFilter.endDate}
-                      name="endDate"
-                      type="datetime-local"
-                      defaultValue="2021-09-12T23:08"
-                      className={classes.textField}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      fullWidth
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={8} className={classes.dlflex}>
-                    <label>Search</label>
-                    <Input
-                      placeholder="Search by title"
-                      className={classes.input_fild2}
-                      value={selectedFilter.searchKey}
-                      fullWidth
-                      type="text"
-                      name="searchKey"
-                      onChange={_onInputChange}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton>
-                            <SearchIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={8} className={classes.dlflex}>
-                    <label> Select post type </label>
-                    <Box>
-                      <Select
-                        fullWidth
-                        value={selectedFilter.type}
-                        name="type"
+          <Collapse in={showSearch}>
+            <Box className={classes.whitebox}>
+              <Container>
+                <Box className={classes.idtxt}>
+                  <Grid container spacing={0}>
+                    <Grid item xs={12} md={8} className={classes.dlflex}>
+                      <label>Start date:</label>
+                      <TextField
+                        id="datetime-local"
                         onChange={_onInputChange}
-                      >
-                        {currencies.map((data, i) => {
-                          return (
-                            <MenuItem key={data.value} value={data.value}>
-                              {data.label}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </Box>
+                        name="startDate"
+                        value={selectedFilter.startDate}
+                        type="datetime-local"
+                        defaultValue="2021-09-12T23:08"
+                        className={classes.textField}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        fullWidth
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={8} className={classes.dlflex}>
-                    <Box className={classes.buttonBox}>
-                      <Button
-                        color="secondary"
-                        size="large"
-                        variant="contained"
-                        style={{ marginRight: "10px" }}
-                        onClick={() => isLogin ? setIsFilterTrue(true) : navigate("/login")}
-                      >
-                        Apply
-                      </Button>
-                      <Button
-                        variant="contained"
-                        size="large"
-                        color="primary"
-                        onClick={() => isLogin ? clearFilterHandler() : navigate("/login")}
-                      >
-                        Clear
-                      </Button>
-                    </Box>
+                  <Grid container spacing={0}>
+                    <Grid item xs={12} md={8} className={classes.dlflex}>
+                      <label>End date:</label>
+                      <TextField
+                        id="datetime-local"
+                        onChange={_onInputChange}
+                        value={selectedFilter.endDate}
+                        name="endDate"
+                        type="datetime-local"
+                        defaultValue="2021-09-12T23:08"
+                        className={classes.textField}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        fullWidth
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-              </Box>
-            </Container>
-          </Box>
+                  <Grid container spacing={0}>
+                    <Grid item xs={12} md={8} className={classes.dlflex}>
+                      <label>Search</label>
+                      <Input
+                        placeholder="Search by title"
+                        className={classes.input_fild2}
+                        value={selectedFilter.searchKey}
+                        fullWidth
+                        type="text"
+                        name="searchKey"
+                        onChange={_onInputChange}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton>
+                              <SearchIcon />
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <Grid container spacing={0}>
+                    <Grid item xs={12} md={8} className={classes.dlflex}>
+                      <label> Select post type </label>
+                      <Box>
+                        <Select
+                          fullWidth
+                          value={selectedFilter.type}
+                          name="type"
+                          onChange={_onInputChange}
+                        >
+                          {currencies.map((data, i) => {
+                            return (
+                              <MenuItem key={data.value} value={data.value}>
+                                {data.label}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                  <Grid container spacing={0}>
+                    <Grid item xs={12} md={8} className={classes.dlflex}>
+                      <Box className={classes.buttonBox}>
+                        <Button
+                          color="secondary"
+                          size="large"
+                          variant="contained"
+                          style={{ marginRight: "10px" }}
+                          onClick={() =>
+                            isLogin ? setIsFilterTrue(true) : navigate("/login")
+                          }
+                        >
+                          Apply
+                        </Button>
+                        <Button
+                          variant="contained"
+                          size="large"
+                          color="primary"
+                          onClick={() =>
+                            isLogin ? clearFilterHandler() : navigate("/login")
+                          }
+                        >
+                          Clear
+                        </Button>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Container>
+            </Box>
+          </Collapse>
           <Grid container spacing={3}>
             <Grid item md={12} sm={12} xs={12} lg={12}>
               <Box>
@@ -778,7 +800,6 @@ export default function BundleDetails() {
     </Box>
   );
 
-
   function handleVideo(url) {
     const videoFormats = [
       "mp4",
@@ -793,6 +814,6 @@ export default function BundleDetails() {
       "ogv",
     ];
     const format = url.split(".").slice(-1)[0];
-    return  videoFormats.includes(format);
+    return videoFormats.includes(format);
   }
 }

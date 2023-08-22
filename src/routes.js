@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import HomeLayout from "./layouts";
 
 export const routes = [
-
   {
     path: "/",
     layout: HomeLayout,
@@ -12,21 +11,15 @@ export const routes = [
 
   {
     path: "/login",
-    element: lazy(() =>
-      import("src/views/pages/UserSignUp/login")
-    ),
+    element: lazy(() => import("src/views/pages/UserSignUp/login")),
   },
   {
     path: "/profile",
-    element: lazy(() =>
-      import("src/views/pages/Profile/index")
-    ),
+    element: lazy(() => import("src/views/pages/Profile/index")),
   },
   {
     path: "/create-account",
-    element: lazy(() =>
-      import("src/views/pages/UserSignUp/register")
-    ),
+    element: lazy(() => import("src/views/pages/UserSignUp/register")),
   },
 
   {
@@ -97,7 +90,6 @@ export const routes = [
     guard: true,
     element: lazy(() => import("src/views/pages/Profile/ShareAudience")),
   },
-
 
   {
     path: "/refferal",

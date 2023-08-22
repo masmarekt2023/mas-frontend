@@ -11,8 +11,6 @@ import {
   Input,
 } from "@material-ui/core";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-
-import { Link } from "react-router-dom";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -29,6 +27,7 @@ import { tokensDetails } from "src/constants";
 import ReactPlayer from "react-player";
 import { Pagination } from "@material-ui/lab";
 import AddBundleDialog from "../../../component/AddBundleDialog";
+import ShareForAudienceDialog from "../../../component/shareForAudienceDialog";
 
 const useStyles = makeStyles((theme) => ({
   input_fild: {
@@ -173,13 +172,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Bundles() {
-  const [OpenAuction, setOpenAuction] = useState(false);
-  const [bundleList, setBundleList] = useState([]);
-  const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
+  const [state, setState] = useState({
+    OpenAuction: false,
+    openShareAudience: false,
+    bundleList: [],
+    page: 1,
+    pages: 1,
+  });
+  const { OpenAuction, bundleList, page, pages, openShareAudience } = state;
+  const updateState = (data) =>
+    setState((prevState) => ({ ...prevState, ...data }));
+
   const classes = useStyles();
+
   useEffect(() => {
-    getBundleListHandler();
+    getBundleListHandler().catch(console.error);
   }, [page]);
 
   return (
@@ -191,9 +198,8 @@ export default function Bundles() {
             variant="contained"
             size="large"
             color="primary"
-            component={Link}
             style={{ marginRight: "10px" }}
-            to="/share-audience"
+            onClick={() => updateState({ openShareAudience: true })}
           >
             share for audience
           </Button>
@@ -201,7 +207,7 @@ export default function Bundles() {
             variant="contained"
             size="large"
             color="secondary"
-            onClick={() => setOpenAuction(true)}
+            onClick={() => updateState({ OpenAuction: true })}
           >
             add a bundle
           </Button>
@@ -236,7 +242,7 @@ export default function Bundles() {
             <Pagination
               count={pages}
               page={page}
-              onChange={(e, v) => setPage(v)}
+              onChange={(e, v) => updateState({ page: v })}
             />
           </Box>
         )}
@@ -244,17 +250,18 @@ export default function Bundles() {
 
       {/* add bundle */}
 
-      {/*{OpenAuction && (
-        <AddBundlePopup
-          open={OpenAuction}
-          handleClose={() => setOpenAuction(false)}
-        />
-      )}*/}
-
       {OpenAuction && (
         <AddBundleDialog
           show={open}
-          handleClose={() => setOpenAuction(false)}
+          handleClose={() => updateState({ OpenAuction: false })}
+        />
+      )}
+
+      {/* Share For Audience */}
+      {openShareAudience && (
+        <ShareForAudienceDialog
+          show={openShareAudience}
+          handleClose={() => updateState({ openShareAudience: false })}
         />
       )}
     </Box>
@@ -269,13 +276,13 @@ export default function Bundles() {
       },
       params: {
         page,
-        limit: 8,
+        limit: 4,
       },
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          setBundleList(res.data.result.docs);
-          setPages(res.data.result.pages);
+          updateState({ bundleList: res.data.result.docs });
+          updateState({ pages: res.data.result.pages });
         }
       })
       .catch((err) => {

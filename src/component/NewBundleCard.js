@@ -35,6 +35,7 @@ import ButtonCircularProgress from "./ButtonCircularProgress";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import ReactPlayer from "react-player";
+import AddBundleDialog from "../component/AddBundleDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -77,15 +78,15 @@ export default function BundleCard({ data }) {
   const [nbLike, setnbLike] = useState(0);
   const [openSubscribe, setOpenSubscribe] = useState(false);
   const [isSubscribed, setisSubscribed] = useState(false);
-  const [activeSubscribe, setActiveSubscribe] = useState(false);
+  const [activeSubscribe, setActiveSubscribe] = useState(true);
   const [nbSubscribed, setnbSubscribed] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
   const [open2, setOpen2] = useState(false);
   const [open3, setOpen3] = useState(false);
-  const MyOptions = ["Copy Link"];
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openEdit, setOpenEdit] = useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -126,7 +127,8 @@ export default function BundleCard({ data }) {
       : BundleData.userId;
   const isUserBundle = auth.userData._id === userId;
   let userName = BundleData.userId.userName || BundleData.userDetail.userName;
-  let userSpeciality = BundleData.userId?.speciality || BundleData.userDetail?.speciality;
+  let userSpeciality =
+    BundleData.userId?.speciality || BundleData.userDetail?.speciality;
   let profilePic =
     BundleData?.userId?.profilePic ||
     BundleData?.userDetail?.profilePic ||
@@ -146,22 +148,22 @@ export default function BundleCard({ data }) {
   const bundleMediaFormat = BundleData.mediaUrl.split(".").slice(-1)[0];
   let isVideo = videoFormats.includes(bundleMediaFormat);
 
-  const getSubscription = async () => {
-    try {
-      const data = await axios({
-        method: "GET",
-        url: `${Apiconfigs.getSubscription}/${auth.userData._id}/${BundleData._id}`,
-        headers: {
-          token: sessionStorage.getItem("token"),
-        },
-      });
-      if (data.status === 200) {
-        setActiveSubscribe(data.data.result.subscriptionStatus === "ACTIVE");
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  /*const getSubscription = async () => {
+          try {
+            const data = await axios({
+              method: "GET",
+              url: `${Apiconfigs.getSubscription}/${auth.userData._id}/${BundleData._id}`,
+              headers: {
+                token: sessionStorage.getItem("token"),
+              },
+            });
+            if (data.status === 200) {
+              setActiveSubscribe(data.data.result.subscriptionStatus === "ACTIVE");
+            }
+          } catch (err) {
+            console.log(err.message);
+          }
+        };*/
 
   const subscribeToBundleHandler = async () => {
     setIsloading(true);
@@ -250,7 +252,7 @@ export default function BundleCard({ data }) {
       setisSubscribed(BundleData.subscribers?.includes(auth.userData._id));
     }
     if (auth.userData._id && BundleData._id) {
-      getSubscription().catch(console.error);
+      //getSubscription().catch(console.error);
     }
   }, []);
 
@@ -278,17 +280,15 @@ export default function BundleCard({ data }) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={
-          <p style={{ fontWeight: "bold", margin: 0 }}>
-            {userName}
-          </p>
-        }
+        title={<p style={{ fontWeight: "bold", margin: 0 }}>{userName}</p>}
         /*subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-        })}*/
-        subheader={<p style={{margin: 0, color: 'black'}}>{userSpeciality}</p>}
+                                                                                                                                                                                                                                                  year: "numeric",
+                                                                                                                                                                                                                                                  month: "numeric",
+                                                                                                                                                                                                                                                  day: "numeric",
+                                                                                                                                                                                                                                                })}*/
+        subheader={
+          <p style={{ margin: 0, color: "black" }}>{userSpeciality}</p>
+        }
       />
       {isVideo ? (
         <div
@@ -325,26 +325,36 @@ export default function BundleCard({ data }) {
         onClose={handleCloseMenu}
         open={openMenu}
       >
-        {MyOptions.map((option) => (
+        {isUserBundle && (
           <MenuItem
-            key={option}
+            key={"Edit"}
             onClick={() => {
-              navigator.clipboard.writeText(
-                `${pageURL}/bundles-details?${BundleData?._id}`
-              );
               setAnchorEl(false);
+              setOpenEdit(true);
             }}
-            style={{ fontSize: 12 }}
+            style={{ fontSize: 14 }}
           >
-            {option}
+            {"Edit"}
           </MenuItem>
-        ))}
+        )}
+        <MenuItem
+          key={"Copy"}
+          onClick={() => {
+            navigator.clipboard.writeText(
+              `${pageURL}/bundles-details?${BundleData?._id}`
+            );
+            setAnchorEl(false);
+          }}
+          style={{ fontSize: 12 }}
+        >
+          {"Copy"}
+        </MenuItem>
       </Menu>
       <CardContent>
         <Typography
-            variant="h5"
-            component="h5"
-            style={{ color: "#000", fontWeight: "bold" }}
+          variant="h5"
+          component="h5"
+          style={{ color: "#000", fontWeight: "bold" }}
         >
           {BundleData.bundleName}
         </Typography>
@@ -353,14 +363,21 @@ export default function BundleCard({ data }) {
           component="h5"
           style={{ color: "#000", fontWeight: "bold", marginTop: 5 }}
         >
-          {"( "}{BundleData?.donationAmount
+          {"( "}
+          {BundleData?.donationAmount
             ? BundleData?.donationAmount
-            : "Any amount"} {" )"} {" "}
+            : "Any amount"}{" "}
+          {" )"}{" "}
           {BundleData && BundleData.coinName ? BundleData.coinName : "MAS"}{" "}
           {" for "}
           {BundleData?.duration ? BundleData?.duration : "Ever"}
         </Typography>
-        <Typography variant="body2" color="textSecondary" component="p" style={{marginTop: 5}}>
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          component="p"
+          style={{ marginTop: 5 }}
+        >
           {BundleData?.details}
         </Typography>
       </CardContent>
@@ -383,7 +400,7 @@ export default function BundleCard({ data }) {
               disabled={isSubscribed && activeSubscribe}
               onClick={() => (activeSubscribe ? {} : handleClickOpen2())}
             >
-              {activeSubscribe ? 'Subscribed' : 'Renew'}
+              {activeSubscribe ? "Subscribed" : "Renew"}
             </Button>
           )}
         {auth?.userData?._id !== userId && !isSubscribed && (
@@ -752,6 +769,11 @@ export default function BundleCard({ data }) {
           </DialogContentText>
         </DialogContent>
       </Dialog>
+      <AddBundleDialog
+        handleClose={() => setOpenEdit(false)}
+        show={openEdit}
+        bundleData={data}
+      />
     </Card>
   );
 }

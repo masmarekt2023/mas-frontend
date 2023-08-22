@@ -295,7 +295,7 @@ function ExploreCard(props) {
                 </Button>
               ) : (
                 <>
-                  {isSubscribed ? (
+                  {isSubscribed || (auth.userData._id === data.userId) ? (
                     <Button
                       variant="contained"
                       size="large"
