@@ -101,10 +101,14 @@ export default function Login() {
       headers: {
         token: sessionStorage.getItem("token"),
       },
+      params: {
+        page: page,
+        limit: 4
+      }
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          updateState({ allFeed: res.data.result.docs });
+          updateState({ allFeed: res.data.result.docs, pages: res.data.pages });
         }
       })
       .catch((err) => {

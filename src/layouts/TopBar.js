@@ -526,7 +526,7 @@ export default function Header() {
                       </> :
                     <Button
                       className={classes.createButton}
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/login")}
                     >
                       Create on MAS
                     </Button>

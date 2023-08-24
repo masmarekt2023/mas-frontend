@@ -37,7 +37,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     details: yup.string().required("Enter description please"),
     duration: yup.number().min(1, "Select a ending date"),
     donationAmount: yup
-      .number()
+      .number().nonNullable("Ahmed")
       .min(1, "Enter donation amount please")
       .positive("the price should be positive number"),
     coinName: yup.string().required("Enter coin name"),
@@ -50,6 +50,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     setValue,
     handleSubmit,
     formState: { errors, dirtyFields },
+    register,
   } = useForm({
     resolver: yupResolver(schema),
     reValidateMode: "onChange",
@@ -178,7 +179,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
 
   function FormButtons() {
     const onSubmit = handleSubmit(
-      (data) => isEdit ? editBundle(data) : createBundle(data),
+      (data) => (isEdit ? editBundle(data) : createBundle(data)),
       () => console.log(errors)
     );
 
@@ -256,99 +257,104 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
   function InputList() {
     return (
       <Grid item xs={12} sm={7}>
-        <CustomInput
-          name={"bundleTitle"}
-          control={control}
-          title={"Bundle Title"}
-          placeholder={"Enter Bundle Title"}
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"bundleName"}
-          control={control}
-          title={"Bundle Name"}
-          placeholder={"Enter Bundle Name"}
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"donationAmount"}
-          control={control}
-          title={"Donation Amount"}
-          placeholder={"Enter Donation Amount"}
-          type={"number"}
-          endAdornment={CoinSelector()}
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"duration"}
-          control={control}
-          title={"Duration"}
-          placeholder={"Enter Duration"}
-          type={"number"}
-          endAdornment={
-            <p style={{ margin: "0px 10px", fontSize: 14 }}>days</p>
-          }
-          disabled={isEdit}
-        />
-        <CustomInput
-          name={"details"}
-          control={control}
-          title={"Details"}
-          placeholder={"Enter a details about your bundle"}
-          multiline={true}
-          disabled={isEdit}
-        />
+        <>
+          <Grid
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors["bundleTitle"] ? "red" : "#ddd" }}
+          >
+            <label>Bundle Title</label>
+            <Input
+              {...register("bundleTitle")}
+              className={classes.input}
+              placeholder={"Enter Bundle Title"}
+              disabled={isEdit}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {errors["bundleTitle"]?.message}
+          </p>
+        </>
+        <>
+          <Grid
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors["bundleName"] ? "red" : "#ddd" }}
+          >
+            <label>Bundle Name</label>
+            <Input
+              {...register("bundleName")}
+              className={classes.input}
+              placeholder={"Enter Bundle Name"}
+              disabled={isEdit}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {errors["bundleName"]?.message}
+          </p>
+        </>
+        <>
+          <Grid
+              sm={12}
+              className={classes.inputContainer}
+              style={{ borderColor: errors["donationAmount"] ? "red" : "#ddd" }}
+          >
+            <label>Amount</label>
+            <Input
+                {...register("donationAmount")}
+                className={classes.input}
+                placeholder={"Enter Donation Amount"}
+                disabled={isEdit}
+                type={"number"}
+                endAdornment={CoinSelector()}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {typeof watch("donationAmount") === 'number' && errors["donationAmount"]?.message}
+          </p>
+        </>
+        <>
+          <Grid
+              sm={12}
+              className={classes.inputContainer}
+              style={{ borderColor: errors["duration"] ? "red" : "#ddd" }}
+          >
+            <label>Duration</label>
+            <Input
+                {...register("duration")}
+                className={classes.input}
+                placeholder={"Enter Duration"}
+                disabled={isEdit}
+                type={"number"}
+                endAdornment={
+                  <p style={{ margin: "0px 10px", fontSize: 14 }}>days</p>
+                }
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {typeof watch("duration") === 'number' && errors["duration"]?.message}
+          </p>
+        </>
+        <>
+          <Grid
+              sm={12}
+              className={classes.inputContainer}
+              style={{ borderColor: errors["details"] ? "red" : "#ddd" }}
+          >
+            <label>Details</label>
+            <Input
+                {...register("details")}
+                className={classes.input}
+                placeholder={"Enter a details about your bundle"}
+                disabled={isEdit}
+                multiline={true}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {errors["details"]?.message}
+          </p>
+        </>
       </Grid>
-    );
-  }
-
-  function CustomInput({
-    control,
-    name,
-    title,
-    placeholder,
-    endAdornment = null,
-    type = "text",
-    multiline = false,
-    disabled = false,
-  }) {
-    const {
-      field,
-      fieldState: { error },
-      //formState: { touchedFields, dirtyFields },
-    } = useController({
-      name,
-      control,
-    });
-
-    const { onChange, ref, value, onBlur } = field;
-
-    return (
-      <>
-        <Grid
-          sm={12}
-          className={classes.inputContainer}
-          style={{ borderColor: error ? "red" : "#ddd" }}
-        >
-          <label>{title}</label>
-          <Input
-            onChange={onChange}
-            onBlur={onBlur}
-            inputRef={ref}
-            value={value}
-            name={name}
-            className={classes.input}
-            placeholder={placeholder}
-            endAdornment={endAdornment}
-            type={type}
-            multiline={multiline}
-            disabled={disabled}
-          />
-        </Grid>
-        <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
-          {error?.message}
-        </p>
-      </>
     );
   }
 
@@ -362,8 +368,18 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
           disabled={isEdit}
         >
           {tokensDetails.map((item, index) => (
-            <MenuItem key={index} value={item.name}>
-              {item.name}
+            <MenuItem
+              key={index}
+              value={item.name}
+              style={{
+                padding: "10px 0px",
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+              }}
+            >
+              <p style={{ margin: 0, width: 50 }}>{item.name}</p>
+              <img src={item.img} style={{ width: 25 }} />
             </MenuItem>
           ))}
         </Select>
@@ -489,6 +505,10 @@ const useStyles = makeStyles(() => ({
     },
     "& div:focus": {
       background: "transparent",
+    },
+    "&>div": {
+      display: "flex",
+      alignItems: "center",
     },
   },
 
