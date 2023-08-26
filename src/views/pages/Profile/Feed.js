@@ -28,6 +28,13 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     marginBottom: "30px",
   },
+
+  bunbox: {
+    "@media(max-width:600px)": {
+      display: "flex",
+      justifyContent: "center",
+    },
+  },
 }));
 
 export default function Login() {
@@ -61,10 +68,10 @@ export default function Login() {
         ) : (
           ""
         )}
-        <Grid container>
+        <Grid container spacing={3} className={classes.bunbox}>
           {allFeed?.map((data, i) => {
             return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+              <Grid item lg={3} md={4} sm={6} xm={12} key={i}>
                 <FeedCard
                   updateList={getFeedListHandler}
                   data={data}

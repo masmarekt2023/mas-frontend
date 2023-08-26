@@ -33,6 +33,7 @@ const Apiconfigs = {
     ipfsupload: `${url}/nft/ipfsUpload`,
     subscribeNow: `${url}/user/subscribeNow/`,
     share: `${url}/user/shareWithAudience`,
+    editAudience: `${url}/user/editAudience`,
     uploadft: `${url}/nft/uploadNFT`,
     createNft: `${url}/nft/createNft`,
     nftList: `${url}/nft/nftList`,

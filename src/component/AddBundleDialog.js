@@ -37,7 +37,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
     details: yup.string().required("Enter description please"),
     duration: yup.number().min(1, "Select a ending date"),
     donationAmount: yup
-      .number().nonNullable("Ahmed")
+      .number()
       .min(1, "Enter donation amount please")
       .positive("the price should be positive number"),
     coinName: yup.string().required("Enter coin name"),
@@ -76,7 +76,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
       fullWidth={true}
       maxWidth={"md"}
       open={show}
-      onClose={handleClose}
+      onClose={uploadCounter === 0 ? handleClose : null}
       aria-labelledby="max-width-dialog-title"
     >
       <DialogTitle
@@ -295,59 +295,61 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
         </>
         <>
           <Grid
-              sm={12}
-              className={classes.inputContainer}
-              style={{ borderColor: errors["donationAmount"] ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors["donationAmount"] ? "red" : "#ddd" }}
           >
             <label>Amount</label>
             <Input
-                {...register("donationAmount")}
-                className={classes.input}
-                placeholder={"Enter Donation Amount"}
-                disabled={isEdit}
-                type={"number"}
-                endAdornment={CoinSelector()}
+              {...register("donationAmount")}
+              className={classes.input}
+              placeholder={"Enter Donation Amount"}
+              disabled={isEdit}
+              type={"number"}
+              endAdornment={CoinSelector()}
             />
           </Grid>
           <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
-            {typeof watch("donationAmount") === 'number' && errors["donationAmount"]?.message}
+            {typeof watch("donationAmount") === "number" &&
+              errors["donationAmount"]?.message}
           </p>
         </>
         <>
           <Grid
-              sm={12}
-              className={classes.inputContainer}
-              style={{ borderColor: errors["duration"] ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors["duration"] ? "red" : "#ddd" }}
           >
             <label>Duration</label>
             <Input
-                {...register("duration")}
-                className={classes.input}
-                placeholder={"Enter Duration"}
-                disabled={isEdit}
-                type={"number"}
-                endAdornment={
-                  <p style={{ margin: "0px 10px", fontSize: 14 }}>days</p>
-                }
+              {...register("duration")}
+              className={classes.input}
+              placeholder={"Enter Duration"}
+              disabled={isEdit}
+              type={"number"}
+              endAdornment={
+                <p style={{ margin: "0px 10px", fontSize: 14 }}>days</p>
+              }
             />
           </Grid>
           <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
-            {typeof watch("duration") === 'number' && errors["duration"]?.message}
+            {typeof watch("duration") === "number" &&
+              errors["duration"]?.message}
           </p>
         </>
         <>
           <Grid
-              sm={12}
-              className={classes.inputContainer}
-              style={{ borderColor: errors["details"] ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors["details"] ? "red" : "#ddd" }}
           >
             <label>Details</label>
             <Input
-                {...register("details")}
-                className={classes.input}
-                placeholder={"Enter a details about your bundle"}
-                disabled={isEdit}
-                multiline={true}
+              {...register("details")}
+              className={classes.input}
+              placeholder={"Enter a details about your bundle"}
+              disabled={isEdit}
+              multiline={true}
             />
           </Grid>
           <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>

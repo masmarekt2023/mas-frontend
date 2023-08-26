@@ -23,7 +23,7 @@ import ReactPlayer from "react-player";
 import { toast } from "react-toastify";
 import { Pagination } from "@material-ui/lab";
 
-const ShareForAudienceDialog = ({ show, handleClose }) => {
+const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
   const classes = useStyles();
   const [state, setState] = useState({
     mediaUrl: "",
@@ -31,14 +31,15 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
     bundleList: [],
     page: 1,
     pages: 1,
+    isEdit: !!audienceData,
   });
-  const { mediaUrl, uploadCounter, page, pages, bundleList } = state;
+  const { mediaUrl, uploadCounter, page, pages, bundleList, isEdit } = state;
   const updateState = (data) =>
     setState((prevState) => ({ ...prevState, ...data }));
 
   // Yup inputs validation
   const schema = yup.object({
-    file: yup.mixed().required("File is required"),
+    file: !isEdit ? yup.mixed().required("File is required") : null,
     title: yup.string().min(3, "Enter title please"),
     details: yup.string().min(3, "Enter description please"),
     bundleIds: yup.array().min(1, "Select 1 bundle at least"),
@@ -50,18 +51,23 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
     watch,
     setValue,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, dirtyFields },
+      register
   } = useForm({
     resolver: yupResolver(schema),
-    reValidateMode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       file: null,
-      title: "",
-      details: "",
-      type: "PUBLIC",
-      bundleIds: [],
+      title: isEdit ? audienceData.title : "",
+      details: isEdit ? audienceData.details : "",
+      type: isEdit ? audienceData.postType : "PUBLIC",
+      bundleIds: isEdit ? audienceData.nftId : [],
     },
   });
+
+  useEffect(() => {
+    updateState({ mediaUrl: isEdit ? audienceData.mediaUrl : "" });
+  }, [show]);
 
   useEffect(() => {
     getBundleListHandler().catch(console.error);
@@ -74,13 +80,13 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
       fullWidth={true}
       maxWidth={"md"}
       open={show}
-      onClose={handleClose}
+      onClose={uploadCounter === 0 ? handleClose : null}
       aria-labelledby="max-width-dialog-title"
     >
       <DialogTitle
         style={{ textAlign: "center", color: "black", fontWeight: "bold" }}
       >
-        Share For Audience
+        {isEdit ? "Edit Audience" : "Share For Audience"}
       </DialogTitle>
       <DialogContent style={{ padding: 40, paddingTop: 10 }}>
         <Grid container spacing={5}>
@@ -98,10 +104,14 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
   /* Main Return */
 
   function MediaBox() {
-    const { type, name } = watch("file")
-      ? watch("file")
-      : { type: "", name: "" };
-    const isVideo = type?.split("/")[0] !== "image";
+    const { name } = watch("file") ? watch("file") : { type: "", name: "" };
+
+    const isVideo = watch("file")
+      ? watch("file")?.type?.split("/")[0] !== "image"
+      : isEdit
+      ? isVideoType(mediaUrl)
+      : false;
+
     const onRemove = () => {
       updateState({ mediaUrl: "" });
       setValue("file", null);
@@ -173,7 +183,7 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
 
   function FormButtons() {
     const onSubmit = handleSubmit(
-      (data) => shareForAudience(data),
+      (data) => isEdit ? editAudience(data) : shareForAudience(data),
       () => console.log(errors)
     );
 
@@ -193,7 +203,7 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
           size="large"
           className={classes.submitButton}
         >
-          Share
+          {isEdit ? "Edit" : "Share"}
         </Button>
       </Grid>
     );
@@ -250,79 +260,57 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
   function InputList() {
     return (
       <Grid item xs={12} sm={7}>
-        <CustomInput
-          name={"title"}
-          control={control}
-          title={"Title"}
-          placeholder={"Enter Title"}
-        />
-        <CustomInput
-          name={"type"}
-          control={control}
-          title={"Type"}
-          placeholder={"Enter Type"}
-          disabled={true}
-          endAdornment={<TypeSelector />}
-        />
-        <CustomInput
-          name={"details"}
-          control={control}
-          title={"Details"}
-          placeholder={"Enter details"}
-          multiline={true}
-        />
-        <BundleSelector />
-      </Grid>
-    );
-  }
-
-  function CustomInput({
-    control,
-    name,
-    title,
-    placeholder,
-    endAdornment = null,
-    type = "text",
-    multiline = false,
-    disabled = false,
-  }) {
-    const {
-      field,
-      fieldState: { error },
-      //formState: { touchedFields, dirtyFields },
-    } = useController({
-      name,
-      control,
-    });
-
-    const { onChange, ref, value, onBlur } = field;
-
-    return (
-      <>
+        <>
+          <Grid
+              sm={12}
+              className={classes.inputContainer}
+              style={{ borderColor: errors.title ? "red" : "#ddd" }}
+          >
+            <label>Title</label>
+            <Input
+                {...register("title")}
+                className={classes.input}
+                placeholder={"Enter Title"}
+                disabled={isEdit}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {errors.title?.message}
+          </p>
+        </>
         <Grid
-          sm={12}
-          className={classes.inputContainer}
-          style={{ borderColor: error ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
         >
-          <label>{title}</label>
+          <label>Type</label>
           <Input
-            onChange={onChange}
-            onBlur={onBlur}
-            inputRef={ref}
-            value={value}
-            name={name}
-            className={classes.input}
-            placeholder={placeholder}
-            endAdornment={endAdornment}
-            type={type}
-            multiline={multiline}
-            disabled={disabled}
+              {...register("type")}
+              className={classes.input}
+              placeholder={"Enter Type"}
+              disabled={true}
+              endAdornment={<TypeSelector />}
           />
         </Grid>
-        <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
-          {error?.message}
-        </p>
-      </>
+        <>
+          <Grid
+              sm={12}
+              className={classes.inputContainer}
+              style={{ borderColor: errors.details ? "red" : "#ddd" }}
+          >
+            <label>Details</label>
+            <Input
+                {...register("details")}
+                className={classes.input}
+                placeholder={"Enter details"}
+                multiline={true}
+            />
+          </Grid>
+          <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
+            {errors.details?.message}
+          </p>
+        </>
+        <BundleSelector />
+      </Grid>
     );
   }
 
@@ -369,8 +357,10 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
               <Grid item key={item._id} lg={3} md={4} sm={6} xm={12}>
                 <div
                   className={classes.bundleCardStyle}
-                  style={{ borderColor: isChosen ? "rgb(192, 72, 72)" : "#ddd" }}
-                  onClick={() => selectItem(item._id)}
+                  style={{
+                    borderColor: isChosen ? "rgb(192, 72, 72)" : "#ddd",
+                  }}
+                  onClick={() => (isEdit ? {} : selectItem(item._id))}
                 >
                   <p style={{ textAlign: "center" }}>{item.bundleName}</p>
                 </div>
@@ -430,6 +420,38 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
     }
   }
 
+  async function editAudience(data) {
+    const formData = new FormData();
+    formData.append("id", audienceData._id);
+    if (dirtyFields.file) {
+      formData.append("mediaUrl", data.file);
+    }
+      formData.append("details", data.details);
+      formData.append("postType", data.type);
+    try {
+      const res = await axios({
+        method: "PUT",
+        url: Apiconfigs.editAudience,
+        data: formData,
+        headers: {
+          token: sessionStorage.getItem("token"),
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => onUploadProgress(progressEvent),
+      });
+      if (res.data.statusCode === 200) {
+        handleClose();
+        window.location.reload();
+        toast.success(res.data?.responseMessage);
+      } else {
+        toast.error(res.data.responseMessage);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async function getBundleListHandler() {
     await axios({
       method: "GET",
@@ -458,6 +480,10 @@ const ShareForAudienceDialog = ({ show, handleClose }) => {
       (progressEvent.loaded * 100) / progressEvent.total
     );
     updateState({ uploadCounter: percentCompleted });
+  }
+
+  function isVideoType(url) {
+    return url.includes("video");
   }
 };
 
