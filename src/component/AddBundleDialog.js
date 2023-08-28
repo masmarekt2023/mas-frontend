@@ -247,7 +247,18 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
             <div className={classes.uploadIcon}>
               <CloudUploadIcon />
             </div>
-            <p>Upload image/video</p>
+            <div style={{ marginTop: 10, textAlign: "center" }}>
+              <p style={{ margin: "5px 0px 0px 0px", fontSize: 18 }}>
+                Select Image/Video
+              </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>Drag And Drop Files</p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Accept All Video/Image Formats
+              </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Max File Size: 1024 MP
+              </p>
+            </div>
           </Button>
         </label>
       </label>

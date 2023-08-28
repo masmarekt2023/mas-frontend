@@ -9,7 +9,7 @@ const useStyles = makeStyles(() => ({
   NotificationBox: {
     display: "flex",
     padding: 5,
-    marginTop: 2,
+    marginTop: 10,
     borderRadius: 5,
     border: "1px solid #52565c",
     alignContent: "center",

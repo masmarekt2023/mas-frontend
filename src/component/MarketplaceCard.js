@@ -19,6 +19,9 @@ import { GiCancel } from "react-icons/gi";
 import moment from "moment";
 import ReactPlayer from "react-player";
 import ShareForAudienceDialog from "../component/shareForAudienceDialog";
+import axios from "axios";
+import Apiconfigs from "../Apiconfig/Apiconfigs";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -200,6 +203,7 @@ function ExploreCard(props) {
   const [open, setOpen] = useState(false);
   const [viewContent, setViewContent] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const [likesUsers, setLikesUsers] = useState(data?.likesUsers);
   const showCard =
     data.postType === "PUBLIC" ||
     (data.postType === "PRIVATE" && auth?.userData?._id === data?.userId);
@@ -267,9 +271,16 @@ function ExploreCard(props) {
                 <Grid item xs={6} sm={6} align="right">
                   <Box className={classes.pricedata}>
                     <Typography variant="h6">
-                      <FavoriteIcon />
+                      <FavoriteIcon
+                        onClick={() => likeDislikeFeedHandler()}
+                        style={{
+                          color: likesUsers.includes(auth?.userData?._id)
+                            ? "red"
+                            : "black",
+                        }}
+                      />
                       &nbsp;&nbsp;
-                      {data?.likesUsers ? data?.likesUsers?.length : "0"}
+                      {likesUsers ? likesUsers.length : "0"}
                     </Typography>
                   </Box>
                 </Grid>
@@ -453,6 +464,25 @@ function ExploreCard(props) {
       )}
     </>
   );
+
+  async function likeDislikeFeedHandler() {
+    axios({
+      methods: "GET",
+      url: Apiconfigs.likeDislikeFeed + data._id,
+      headers: {
+        token: sessionStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        if (res.data.statusCode === 200) {
+          setLikesUsers(res.data.result.likesUsers);
+          toast.success(res.data.responseMessage);
+        }
+      })
+      .catch((res) => {
+        console.log(res.message);
+      });
+  }
 
   function handleVideo(url) {
     const videoFormats = [

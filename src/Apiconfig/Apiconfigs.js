@@ -25,7 +25,6 @@ const Apiconfigs = {
     likeDislikeFeed: `${url}/user/likeDislikeFeed/`,
     unSubscription: `${url}/user/unSubscription?_id=`,
     transactionList: `${url}/user/transactionList/`,
-    listBanner: `${url}/admin/listBanner`,
 
     mysubscription: `${url}/user/mySubscriptions`,
     delnft: `${url}/nft/nft/`,
@@ -101,6 +100,7 @@ const Apiconfigs = {
     totalEarnings: `${url}/user/totalEarnings`,
     listSocial: `${url}/admin/listSocial`,
     getBanner: `${url}/user/getBanner`,
+    listBanner: `${url}/user/listBanner`,
     landingContentList: `${url}/content/landingContentList`,
     staticContentList: `${url}/static/staticContentList`,
     viewStaticPage: `${url}/static/staticContent`,

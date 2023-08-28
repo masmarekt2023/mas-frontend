@@ -52,7 +52,7 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
     setValue,
     handleSubmit,
     formState: { errors, dirtyFields },
-      register
+    register,
   } = useForm({
     resolver: yupResolver(schema),
     reValidateMode: "onChange",
@@ -183,7 +183,7 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
 
   function FormButtons() {
     const onSubmit = handleSubmit(
-      (data) => isEdit ? editAudience(data) : shareForAudience(data),
+      (data) => (isEdit ? editAudience(data) : shareForAudience(data)),
       () => console.log(errors)
     );
 
@@ -250,7 +250,18 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
             <div className={classes.uploadIcon}>
               <CloudUploadIcon />
             </div>
-            <p>Upload image/video</p>
+            <div style={{ marginTop: 10, textAlign: "center" }}>
+              <p style={{ margin: "5px 0px 0px 0px", fontSize: 18 }}>
+                Select Image/Video
+              </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>Drag And Drop Files</p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Accept All Video/Image Formats
+              </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Max File Size: 1024 MP
+              </p>
+            </div>
           </Button>
         </label>
       </label>
@@ -262,47 +273,44 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
       <Grid item xs={12} sm={7}>
         <>
           <Grid
-              sm={12}
-              className={classes.inputContainer}
-              style={{ borderColor: errors.title ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors.title ? "red" : "#ddd" }}
           >
             <label>Title</label>
             <Input
-                {...register("title")}
-                className={classes.input}
-                placeholder={"Enter Title"}
-                disabled={isEdit}
+              {...register("title")}
+              className={classes.input}
+              placeholder={"Enter Title"}
+              disabled={isEdit}
             />
           </Grid>
           <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
             {errors.title?.message}
           </p>
         </>
-        <Grid
-            sm={12}
-            className={classes.inputContainer}
-        >
+        <Grid sm={12} className={classes.inputContainer}>
           <label>Type</label>
           <Input
-              {...register("type")}
-              className={classes.input}
-              placeholder={"Enter Type"}
-              disabled={true}
-              endAdornment={<TypeSelector />}
+            {...register("type")}
+            className={classes.input}
+            placeholder={"Enter Type"}
+            disabled={true}
+            endAdornment={<TypeSelector />}
           />
         </Grid>
         <>
           <Grid
-              sm={12}
-              className={classes.inputContainer}
-              style={{ borderColor: errors.details ? "red" : "#ddd" }}
+            sm={12}
+            className={classes.inputContainer}
+            style={{ borderColor: errors.details ? "red" : "#ddd" }}
           >
             <label>Details</label>
             <Input
-                {...register("details")}
-                className={classes.input}
-                placeholder={"Enter details"}
-                multiline={true}
+              {...register("details")}
+              className={classes.input}
+              placeholder={"Enter details"}
+              multiline={true}
             />
           </Grid>
           <p style={{ margin: "-5px 0px 15px 5px", color: "red" }}>
@@ -321,6 +329,7 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
           className={classes.select}
           value={watch("type")}
           onChange={(event) => setValue("type", event.target.value)}
+          disabled={isEdit && audienceData.postType === "PUBLIC"}
         >
           {["PUBLIC", "PRIVATE"].map((item, index) => (
             <MenuItem key={index} value={item}>
@@ -426,8 +435,8 @@ const ShareForAudienceDialog = ({ show, handleClose, audienceData }) => {
     if (dirtyFields.file) {
       formData.append("mediaUrl", data.file);
     }
-      formData.append("details", data.details);
-      formData.append("postType", data.type);
+    formData.append("details", data.details);
+    formData.append("postType", data.type);
     try {
       const res = await axios({
         method: "PUT",

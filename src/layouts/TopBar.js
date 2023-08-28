@@ -15,7 +15,7 @@ import {
   Container,
   Typography
 } from "@material-ui/core";
-import { AiOutlineLogout, AiFillSetting } from "react-icons/ai";
+import { AiOutlineLogout } from "react-icons/ai";
 import { BsChat } from "react-icons/bs";
 import SearchIcon from "@material-ui/icons/Search";
 import { UserContext } from "src/context/User";
