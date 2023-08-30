@@ -101,6 +101,7 @@ const Apiconfigs = {
     listSocial: `${url}/admin/listSocial`,
     getBanner: `${url}/user/getBanner`,
     listBanner: `${url}/user/listBanner`,
+    getBannerDuration: `${url}/user/getBannerDuration`,
     landingContentList: `${url}/content/landingContentList`,
     staticContentList: `${url}/static/staticContentList`,
     viewStaticPage: `${url}/static/staticContent`,

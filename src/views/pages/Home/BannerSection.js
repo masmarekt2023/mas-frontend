@@ -111,7 +111,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function BannerSection({ bannerDetails }) {
+export default function BannerSection({ bannerDetails, bannerDuration }) {
   const classes = useStyles();
   return (
     <Carousel
@@ -123,7 +123,7 @@ export default function BannerSection({ bannerDetails }) {
       showStatus={false}
       showIndicators={false}
       showArrows={false}
-      interval={5000}
+      interval={bannerDuration * 1000}
     >
       {bannerDetails.map((item) => (
         <Box

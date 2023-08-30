@@ -8,6 +8,7 @@ import Apiconfigs from "src/Apiconfig/Apiconfigs";
 
 export default function Main() {
   const [bannerDetails, setBannerDetails] = useState([]);
+  const [bannerDuration, setBannerDuration] = useState();
   const [ourSolutions, setOurSolutions] = useState({});
   const [howItWorks, setHowItWorks] = useState({});
 
@@ -19,6 +20,20 @@ export default function Main() {
       });
       if (res.data.statusCode === 200) {
         setBannerDetails(res.data.result.docs);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getBannerDuration = async () => {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.getBannerDuration,
+      });
+      if (res.data.statusCode === 200) {
+        setBannerDuration(res.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -41,12 +56,22 @@ export default function Main() {
   };
 
   useEffect(() => {
+    getBannerDuration().catch(console.error);
     getBannerContentHandler();
     getLandingPageSectionsHandler();
   }, []);
+
+  useEffect(() => {
+    console.log(bannerDuration);
+  }, [bannerDuration]);
   return (
     <>
-      {bannerDetails.length > 0 && <BannerSection bannerDetails={bannerDetails} />}
+      {bannerDetails.length > 0 && (
+        <BannerSection
+          bannerDetails={bannerDetails}
+          bannerDuration={bannerDuration}
+        />
+      )}
       <OurSolutions ourSolutions={ourSolutions} />
       <HowItWorks howItWorks={howItWorks} />
       <AuctionPage />
