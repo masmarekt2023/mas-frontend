@@ -3,7 +3,7 @@ import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
 import { isMobile } from "react-device-detect";
 import { Carousel } from "react-responsive-carousel";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   bannerSectionBody: {
     minHeight: "400px",
     padding: "100px 0px 0px",
@@ -96,17 +96,19 @@ const useStyles = makeStyles(() => ({
   rightSection: {
     display: "flex",
     justifyContent: "center",
-    "& img": {
-      width: "auto",
-      minHeight: "200px",
-      maxHeight: "260px",
-      maxWidth: "95%",
-    },
-    "& video": {
-      width: "auto",
-      minHeight: "300px",
-      maxHeight: "360px",
-      maxWidth: "95%",
+    alignItems: 'center',
+    '& img, & video': {
+      width: '500px',
+      height: '250px',
+      borderRadius: 12,
+      [theme.breakpoints.only('sm')]: {
+        width: '400px !important',
+        height: '200px !important'
+      },
+      [theme.breakpoints.only('xs')]: {
+        width: '90% !important',
+        height: '200px !important'
+      },
     },
   },
 }));
@@ -150,13 +152,16 @@ export default function BannerSection({ bannerDetails, bannerDuration }) {
             <Grid item lg={6} sm={12} md={6} xs={12}>
               {item && item.media && (
                 <Box className={classes.rightSection}>
-                  {item.mediaType == "video" ? (
+                  {item.mediaType === "video" ? (
                     <video
                       autoPlay
                       muted
                       loop
-                      width="100%"
-                      style={{ borderRadius: "12px" }}
+                      style={{
+                        width: isMobile ? '50%' : '500px',
+                        height: isMobile ? 'auto' : '250px',
+                        borderRadius: 12
+                      }}
                     >
                       <source src={item.media} type="video/mp4" />
                     </video>
@@ -164,14 +169,10 @@ export default function BannerSection({ bannerDetails, bannerDuration }) {
                     <img
                       src={item.media}
                       alt=""
-                      style={
-                        isMobile
-                          ? {
-                              borderRadius: "22px",
-                              width: "300px",
-                            }
-                          : { width: "500px", borderRadius: "22px" }
-                      }
+                      style={{
+                        width: isMobile ? '50%' : '500px',
+                        height: isMobile ? 'auto' : '250px'
+                      }}
                     />
                   )}
                 </Box>
