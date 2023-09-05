@@ -258,6 +258,12 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
               <p style={{ margin: "5px 0px 0px 0px" }}>
                 Max File Size: 1024 MP
               </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Min Width Size: 300px
+              </p>
+              <p style={{ margin: "5px 0px 0px 0px" }}>
+                Min Height Size: 160px
+              </p>
             </div>
           </Button>
         </label>

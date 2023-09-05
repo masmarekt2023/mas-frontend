@@ -150,7 +150,7 @@ export default function BannerSection({ bannerDetails, bannerDuration }) {
               )}
             </Grid>
             <Grid item lg={6} sm={12} md={6} xs={12}>
-              {item && item.media && (
+              {item && item.media.length > 1 && (
                 <Box className={classes.rightSection}>
                   {item.mediaType === "video" ? (
                     <video

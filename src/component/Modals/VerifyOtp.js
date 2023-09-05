@@ -72,7 +72,7 @@ export const VerifyOtp = ({
           password: signUpData.password,
           email: signUpData.email,
           phone: signUpData.phone,
-          referralCode: "",
+          referralCode: signUpData.referralCode,
           otp: code.email,
         },
       })

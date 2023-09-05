@@ -496,7 +496,7 @@ export default function SignUp() {
           await user.updateUserData();
           navigate('/profilesettings')
         }}
-        signUpData={{username: username, password: pass, email: email, phone: phone}}
+        signUpData={{username: username, password: pass, email: email, phone: phone, referralCode: referralCode}}
       />
       </Container>
 

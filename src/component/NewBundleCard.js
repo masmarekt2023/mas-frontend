@@ -177,7 +177,7 @@ export default function BundleCard({ data }) {
       .then(async (res) => {
         setIsloading(false);
         if (res.data.statusCode === 200) {
-          setisSubscribed(res.data.result.subscribed == "yes");
+          setisSubscribed(res.data.result.subscribed === "yes");
           setnbSubscribed(res.data.result.nb);
           setActiveSubscribe(true);
           setOpen2(false);
@@ -281,18 +281,13 @@ export default function BundleCard({ data }) {
           </IconButton>
         }
         title={<p style={{ fontWeight: "bold", margin: 0 }}>{userName}</p>}
-        /*subheader={new Date(BundleData.createdAt).toLocaleDateString("en-us", {
-                                                                                                                                                                                                                                                  year: "numeric",
-                                                                                                                                                                                                                                                  month: "numeric",
-                                                                                                                                                                                                                                                  day: "numeric",
-                                                                                                                                                                                                                                                })}*/
         subheader={
           <p style={{ margin: 0, color: "black" }}>{userSpeciality}</p>
         }
       />
       {isVideo ? (
         <div
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", background: '#000'}}
           onClick={() =>
             isSubscribed || isUserBundle
               ? navigate("/bundles-details?" + BundleData?._id)
