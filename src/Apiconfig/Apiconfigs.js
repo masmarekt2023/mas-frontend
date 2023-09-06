@@ -103,6 +103,7 @@ const Apiconfigs = {
     listBanner: `${url}/user/listBanner`,
     getBannerDuration: `${url}/user/getBannerDuration`,
     landingContentList: `${url}/content/landingContentList`,
+    staticSectionList: `${url}/content/staticContentList`,
     staticContentList: `${url}/static/staticContentList`,
     viewStaticPage: `${url}/static/staticContent`,
 

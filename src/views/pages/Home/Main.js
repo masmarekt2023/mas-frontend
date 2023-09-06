@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import AuctionPage from "./AuctionPage";
 import BannerSection from "./BannerSection";
-import HowItWorks from "./HowItWorks";
-import OurSolutions from "./OurSolutions";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
+import LandingSection from "src/views/pages/Home/LandingSection";
 
 export default function Main() {
-  const [bannerDetails, setBannerDetails] = useState([]);
-  const [bannerDuration, setBannerDuration] = useState();
-  const [ourSolutions, setOurSolutions] = useState({});
-  const [howItWorks, setHowItWorks] = useState({});
+  const [state, setState] = useState({
+    bannerDetails: [],
+    bannerDuration: undefined,
+    landingSections: [],
+    staticSections: []
+  });
+  const { bannerDuration, bannerDetails, landingSections, staticSections } = state;
+  const updateState = (data) =>
+    setState((prevState) => ({ ...prevState, ...data }));
 
   const getBannerContentHandler = async () => {
     try {
@@ -19,7 +23,7 @@ export default function Main() {
         url: Apiconfigs.listBanner,
       });
       if (res.data.statusCode === 200) {
-        setBannerDetails(res.data.result.docs);
+        updateState({ bannerDetails: res.data.result.docs });
       }
     } catch (error) {
       console.log(error);
@@ -33,7 +37,7 @@ export default function Main() {
         url: Apiconfigs.getBannerDuration,
       });
       if (res.data.statusCode === 200) {
-        setBannerDuration(res.data.result);
+        updateState({ bannerDuration: res.data.result });
       }
     } catch (error) {
       console.log(error);
@@ -47,18 +51,32 @@ export default function Main() {
         url: Apiconfigs.landingContentList,
       });
       if (res.data.statusCode === 200) {
-        setOurSolutions(res.data.result.find((sec) => sec.type == "solution"));
-        setHowItWorks(res.data.result.find((sec) => sec.type == "howItWorks"));
+        updateState({ landingSections: res.data.result });
       }
     } catch (error) {
       console.log(error);
     }
   };
 
+  async function getStaticSections() {
+    try {
+      const res = await axios({
+        method: "GET",
+        url: Apiconfigs.staticSectionList,
+      });
+      if (res.data.statusCode === 200) {
+        updateState({ staticSections: res.data.result });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     getBannerDuration().catch(console.error);
-    getBannerContentHandler();
-    getLandingPageSectionsHandler();
+    getBannerContentHandler().catch(console.error);
+    getLandingPageSectionsHandler().catch(console.error);
+    getStaticSections().catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -72,9 +90,10 @@ export default function Main() {
           bannerDuration={bannerDuration}
         />
       )}
-      <OurSolutions ourSolutions={ourSolutions} />
-      <HowItWorks howItWorks={howItWorks} />
-      <AuctionPage />
+      {landingSections.map((item, index) => (
+        <LandingSection key={item._id} item={item} index={index} />
+      ))}
+      <AuctionPage staticSections={staticSections}/>
     </>
   );
 }
