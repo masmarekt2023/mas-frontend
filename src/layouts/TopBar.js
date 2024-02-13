@@ -15,7 +15,7 @@ import {
   Container,
   Typography
 } from "@material-ui/core";
-import { AiOutlineLogout } from "react-icons/ai";
+import { AiOutlineLogout, AiFillSetting } from "react-icons/ai";
 import { BsChat } from "react-icons/bs";
 import SearchIcon from "@material-ui/icons/Search";
 import { UserContext } from "src/context/User";
@@ -32,6 +32,7 @@ import NoDataFound from "src/component/NoDataFound";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import { ethers } from 'ethers';
 
 const menuLinks = [
   {
@@ -54,11 +55,8 @@ const menuLinks = [
     href: "/auctions",
     isLink: true,
   },
-  {
-    label: "Metaverse",
-    href: "/corporate/metaverse",
-    isLink: true,
-  },
+
+  
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -68,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "600",
     borderRadius: 0,
     minWidth: "auto",
+    color: theme.palette.secondary.main,
     height: "30px",
     padding: "0px 7px",
     letterSpacing: "1px",
@@ -155,6 +154,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   containerHeight: {
+    height: "100%",
     background: "white",
     height: "54px",
   },
@@ -419,6 +419,7 @@ export default function Header() {
   //End Search result
 
   const displayDesktop = () => {
+
     return (
       <Box maxWidth="lg">
         <Container maxWidth="lg">
@@ -523,10 +524,18 @@ export default function Header() {
                         src={auth.userData?.profilePic}
                         style={{ cursor: 'pointer', border: 'solid 3px #fff' }} />
                     </Tooltip>
-                      </> :
+
+                    <Tooltip
+                      title="My Setting"
+                      placement="bottom"
+                    >
+                      <IconButton onClick={() => navigate('/profilesettings')}>
+                        <AiFillSetting />
+                      </IconButton>
+                    </Tooltip></> :
                     <Button
                       className={classes.createButton}
-                      onClick={() => navigate("/login")}
+                      onClick={() => navigate("/profile")}
                     >
                       Create on MAS
                     </Button>
@@ -552,18 +561,37 @@ export default function Header() {
                       >
                         Login
                       </Button>
+                      
                     )}
                   </Box>
-                </Box>
-              </Grid>
-
-            </Grid>
-          </Toolbar>
-        </Container>
+                  <Box>
+                 <Button
+                        onClick={() => navigate('/buymas')}
+                        variant="contained"
+                        size="36px"
+                        color="secondary"
+                      >
+                        buy a mas
+                      </Button>
+                      <Button
+                        onClick={() => navigate('/connectWallet')}
+                        variant="contained"
+                        size="36px"
+                        color="secondary"
+                      >
+                        connect wallet
+                      </Button>
+                      
+                     </Box>
+                      </Box>
+                      </Grid>
+                      </Grid>
+                      </Toolbar>
+                     </Container>
+                     
       </Box>
     );
   };
-
 
   const [displayMobileSearch, setDisplayMobileSearch] = useState(false);
 
@@ -642,9 +670,6 @@ export default function Header() {
                 </Button>
               </Box></>
           }
-
-
-
           {getDrawerChoices()}
         </Drawer>
 
