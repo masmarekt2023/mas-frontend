@@ -6,6 +6,8 @@ import PageLoading from 'src/component/PageLoading'
 import AuthGuard from 'src/component/AuthGuard'
 import { ThemeProvider } from '@material-ui/core'
 import { CreateTheme } from 'src/theme'
+import ConnectWallet from 'src/views/pages/Profile/connectWallet';
+import { WalletProvider } from 'src/views/pages/Profile/WalletContext';
 
 const RenderRoutes = routes.map((route, i) => {
   const Component = route.element
@@ -30,6 +32,7 @@ const RenderRoutes = routes.map((route, i) => {
 function App() {
   const theme = CreateTheme();
   return (
+    <WalletProvider>
     <ThemeProvider theme={theme}>
       <UserContextProvider>
         <Routes>
@@ -37,6 +40,7 @@ function App() {
         </Routes>
       </UserContextProvider>
     </ThemeProvider>
+    </WalletProvider>
   )
 }
 
