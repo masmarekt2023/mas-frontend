@@ -208,7 +208,7 @@ export default function TransactionsList() {
                     Type
                   </TableCell>
                   <TableCell align="Center" style={{ color: "white" }}>
-                    Receipt Id
+                  TransactionsHash
                   </TableCell>
                   <TableCell align="Center" style={{ color: "white" }}>
                     Status
@@ -272,7 +272,7 @@ export default function TransactionsList() {
                       </TableCell>
 
                       <TableCell style={{ color: "black" }} align="Center">
-                        {row?._id ? row?._id : ""}
+                        {row?.transactionHash ? row?.transactionHash : ""}
                       </TableCell>
                       <TableCell style={{ color: "black" }} align="Center">
                         {row?.transactionStatus}
