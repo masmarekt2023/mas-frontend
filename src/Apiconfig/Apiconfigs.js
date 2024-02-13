@@ -12,6 +12,9 @@ const url = `${baseURL}/api/v1`;
 const Apiconfigs = {
     connectWallet: `${url}/user/connectWallet`,
     updateprofile: `${url}/user/updateProfile`,
+    deleteProfile: `${url}/user/deleteProfile`,
+    deactivateProfile: `${url}/user/deactivateProfile`,
+    processing: `${url}/user/processing`,
     donationTransactionlist: `${url}/user/donationTransactionlist`,
     sendOtp: `${url}/user/send-otp`,
     verifyOtp: `${url}/user/verify-otp`,
@@ -59,9 +62,12 @@ const Apiconfigs = {
     register: `${url}/user/register`,
     forgotPassword: `${url}/user/forgotPassword/`,
     resetPassword: `${url}/user/resetPassword/`,
+    Buy: `${url}/admin/Buy/`,
+    price: `${url}/admin/price/`,
 
 
     withdraw: `${url}/blockchain/withdraw`,
+    swap: `${url}/blockchain/swap`,
     sendOrderToUser: `${url}/order/sendOrderToUser`,
     soldOrderList: `${url}/order/soldOrderList`,
     buyOrderList: `${url}/order/buyOrderList`,
