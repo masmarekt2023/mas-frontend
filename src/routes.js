@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import HomeLayout from "./layouts";
 
 export const routes = [
+
   {
     path: "/",
     layout: HomeLayout,
@@ -11,21 +12,26 @@ export const routes = [
 
   {
     path: "/login",
-    element: lazy(() => import("src/views/pages/UserSignUp/login")),
+    element: lazy(() =>
+      import("src/views/pages/UserSignUp/login")
+    ),
   },
   {
     path: "/profile",
-    element: lazy(() => import("src/views/pages/Profile/index")),
+    element: lazy(() =>
+      import("src/views/pages/Profile/index")
+    ),
   },
   {
     path: "/create-account",
-    element: lazy(() => import("src/views/pages/UserSignUp/register")),
+    element: lazy(() =>
+      import("src/views/pages/UserSignUp/register")
+    ),
   },
 
   {
     path: "/user-list",
     layout: HomeLayout,
-    guard: true,
     element: lazy(() => import("src/views/pages/Users/UsersList")),
   },
   {
@@ -59,6 +65,30 @@ export const routes = [
     element: lazy(() => import("src/views/pages/Profile/ProfileSetting")),
   },
   {
+    path: "/kyc",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() => import("src/views/pages/Profile/kyc")),
+  },
+  {
+    path: "/buymas",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() => import("src/views/pages/Profile/buymas")),
+  },
+  {
+    path: "/connectWallet",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() => import("src/views/pages/Profile/connectWallet")),
+  },
+  {
+    path: "/WalletContext",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() => import("src/views/pages/Profile/WalletContext")),
+  },
+  {
     path: "/user-profile/:username",
     layout: HomeLayout,
     guard: true,
@@ -73,7 +103,7 @@ export const routes = [
   {
     path: "/bundles-details",
     layout: HomeLayout,
-    //guard: true,
+    guard: true,
     element: lazy(() =>
       import("src/views/pages/Profile/Bundles/BundleDetails")
     ),
@@ -90,6 +120,7 @@ export const routes = [
     guard: true,
     element: lazy(() => import("src/views/pages/Profile/ShareAudience")),
   },
+
 
   {
     path: "/refferal",
