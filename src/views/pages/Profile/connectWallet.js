@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   balanceBox: {
-    width: '50%', // Set the width as needed
+    width: '50%',
     marginTop: theme.spacing(2),
     marginLeft: theme.spacing(2),
   },
