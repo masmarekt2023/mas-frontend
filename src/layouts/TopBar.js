@@ -32,7 +32,6 @@ import NoDataFound from "src/component/NoDataFound";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { ethers } from 'ethers';
 
 const menuLinks = [
   {
