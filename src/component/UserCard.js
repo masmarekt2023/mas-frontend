@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Typography, Box, Avatar, Tooltip, Badge, IconButton, Button, Card, makeStyles } from "@material-ui/core";
+import { Typography, Box, Tooltip, Badge, IconButton, Button, Card, makeStyles } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import axios from "axios";
