@@ -50,7 +50,7 @@ import NoDataFound from "src/component/NoDataFound";
 import { toast } from "react-toastify";
 import { FaTwitter } from "react-icons/fa";
 import { VerifyOtp } from "src/component/Modals/VerifyOtp"
-import Tabs from "./Tabs"
+
 
 
 const useStyles = makeStyles((theme) => ({
