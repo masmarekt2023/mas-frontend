@@ -72,52 +72,100 @@ const ConnectWallet = () => {
   const [coin, setCoin] = useState('MAS');
   const [price, setPrice] = useState(null);
 
-  const usdtContractAddress = '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684';
+  const usdtContractAddress = '0x55d398326f99059fF775485246999027B3197955';
   const usdtContractABI = [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "name",
-      "outputs": [{ "name": "", "type": "string" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [{ "name": "", "type": "string" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "decimals",
-      "outputs": [{ "name": "", "type": "uint8" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_owner", "type": "address" }],
-      "name": "balanceOf",
-      "outputs": [{ "name": "balance", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    }
-    // Add USDT contract ABI
-  ];
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
+
 // Specify the provider URL for the BSC testnet
-  const providerUrl = 'https://data-seed-prebsc-1-s1.binance.org:8545/';
+  const providerUrl = 'https://cold-nameless-crater.bsc.discover.quiknode.pro/d4669858ede933d6642ec6309ba5089c338ead7c/';
 // Instantiate Web3 with the provider URL
   const web3 = new Web3(providerUrl);
   const contract = new web3.eth.Contract(usdtContractABI, usdtContractAddress,providerUrl);
-  const adminWalletAddress = '0x46928dc89ba120167eccd400fe85751740c0c02a';
+  const adminWalletAddress = '0x12d57224ee2efe9c13b8560372eff6e273ad6d61';
 
    // Function to calculate Mas amount based on the entered USDT amount
    const calculateMasAmount = (usdtAmount) => {
