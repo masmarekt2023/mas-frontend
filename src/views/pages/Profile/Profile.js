@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import {
-  box,
+  Box,
   Paper,
   Avatar,
   Container,
