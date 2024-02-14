@@ -832,7 +832,7 @@ const ConnectWallet = () => {
 <Dialog open={successDialogOpen} onClose={() => setSuccessDialogOpen(false)}>
   <DialogTitle>The transaction in processing... see your transaction history</DialogTitle>
   <DialogContent>
-    {/* Add any additional content as needed */}
+    
   </DialogContent>
 </Dialog>
     </div>
