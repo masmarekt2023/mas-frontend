@@ -6,7 +6,6 @@ import PageLoading from 'src/component/PageLoading'
 import AuthGuard from 'src/component/AuthGuard'
 import { ThemeProvider } from '@material-ui/core'
 import { CreateTheme } from 'src/theme'
-import ConnectWallet from 'src/views/pages/Profile/connectWallet';
 import { WalletProvider } from 'src/views/pages/Profile/WalletContext';
 
 const RenderRoutes = routes.map((route, i) => {
