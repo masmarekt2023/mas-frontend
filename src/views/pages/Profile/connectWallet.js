@@ -2,22 +2,15 @@ import React, { useEffect, useState,useContext  } from 'react';
 import { ethers } from 'ethers';
 import { useWallet } from './WalletContext';
 import {
-  Box,
-  Paper,
-  Avatar,
-  Container,
   Button,
-  IconButton,
   TextField,
   Typography,
   makeStyles,
   InputAdornment,
   DialogTitle,
   DialogActions, // Add this line
-  Input,
-  Grid,
 } from "@material-ui/core";
-import { tokensDetails, websiteName } from "src/constants";
+import { tokensDetails} from "src/constants";
 import BalanceBox from "src/component/BalanceBox";
 import { UserContext } from "src/context/User";
 import { sortAddress } from "src/utils";
