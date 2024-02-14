@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, makeStyles, Card } from "@material-ui/core";
+import { makeStyles, Card } from "@material-ui/core";
 import "./style.css";
 export default function MetaverseCard({ data, key }) {
     const useStyles = makeStyles((theme) => ({
