@@ -75,50 +75,98 @@ const ConnectWallet = () => {
   console.log("busdBalance:", busdBalance);
 
   // USDT contract address and ABI on BSC
-  const usdtContractAddress = '0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684';
+  const usdtContractAddress = '0x55d398326f99059fF775485246999027B3197955';
   const usdtContractABI = [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "name",
-      "outputs": [{ "name": "", "type": "string" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [{ "name": "", "type": "string" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "decimals",
-      "outputs": [{ "name": "", "type": "uint8" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [{ "name": "_owner", "type": "address" }],
-      "name": "balanceOf",
-      "outputs": [{ "name": "balance", "type": "uint256" }],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    }
-    // Add more functions if needed
-  ];
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
+
 
 
   // BUSD contract address and ABI on BSC
-  const busdContractAddress = '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7';
+  const busdContractAddress = '0xe9e7cea3dedca5984780bafc599bd69add087d56';
   const busdContractABI = [
     {
       "constant": true,
@@ -159,7 +207,7 @@ const ConnectWallet = () => {
     // Add more functions if needed
   ];
    // Replace with the actual ABI
-  const MASContractAddress = '0x22C0Bf6De47fAE4349A15BCb5c77d4A6B562B318';
+  const MASContractAddress = '0xe6a18c271ac1cd06a82c00245b6469cf99b851c7';
   const MASContractABI= [{
     inputs: [],
     payable: false,
