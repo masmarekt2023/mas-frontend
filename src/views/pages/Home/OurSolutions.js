@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
   },
 
   leftSection: {
-    color: '#000',
+    color: '#FFF',
     marginTop: '42px',
     '& h2': {
       fontSize: '48px',
