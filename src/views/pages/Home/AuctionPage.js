@@ -79,7 +79,7 @@ const AuctionPage = ({ staticSections }) => {
               cursor: "pointer",
               margin: "20px auto",
               fontSize: "66px",
-              color: "#444",
+              color: "#fff",
             }}
           >
             NFT Auction
@@ -146,7 +146,7 @@ const AuctionPage = ({ staticSections }) => {
               cursor: "pointer",
               margin: "20px auto",
               fontSize: "66px",
-              color: "#444",
+              color: "#fff",
             }}
           >
             Bundles
@@ -191,7 +191,7 @@ const AuctionPage = ({ staticSections }) => {
               cursor: "pointer",
               margin: "20px auto",
               fontSize: "66px",
-              color: "#444",
+              color: "#fff",
             }}
           >
             Creators
