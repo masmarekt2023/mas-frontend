@@ -82,7 +82,7 @@ const useStyles = makeStyles(() => ({
       },
     },
     "& h4": {
-      color: "#000",
+      color: "#fff",
       fontSize: "16px",
       fontWeight: "500",
       lineHeight: "28px",
