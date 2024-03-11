@@ -556,6 +556,7 @@ export default function Header() {
                         variant="contained"
                         size="22px"
                         color="secondary"
+                        style={{ marginRight: '10px' }}
                       >
                         Login
                       </Button>
