@@ -513,17 +513,17 @@ export default function Header() {
                     </Box>
                   )}
 {
-{auth.userLoggedIn ? <>
-                    <Tooltip
+                  auth.userLoggedIn ? <>
+                  <Tooltip
                       title="My Profile"
                       placement="bottom"
                     >
-                      <Avatar onClick={() => navigate("/profile")}
-                        alt={auth.userData?.userName}
-                        src={auth.userData?.profilePic}
-                        style={{ cursor: 'pointer', border: 'solid 3px #fff' }} />
+                       <Avatar onClick={() => navigate("/profile")}
+                        alt={auth.userData?.userName} 
+                        src={auth.userData?.profilePic} 
+                        style={{cursor: 'pointer', border: 'solid 3px #fff'}} />
                     </Tooltip>
-
+                    
                     <Tooltip
                       title="My Setting"
                       placement="bottom"
@@ -538,7 +538,7 @@ export default function Header() {
                     >
                       Create on MAS
                     </Button>
-}
+                }
                   <Box>
                     {auth.userLoggedIn ? (
 
