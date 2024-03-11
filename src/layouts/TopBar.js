@@ -562,32 +562,25 @@ export default function Header() {
                       
                     )}
                   </Box>
-                  <Box>
-                 <Button
-                        onClick={() => navigate('/buymas')}
-                        variant="contained"
-                        size="36px"
-                        color="secondary"
-                      >
-                        buy a mas
-                      </Button>
-                      <Button
-                        onClick={() => navigate('/connectWallet')}
-                        variant="contained"
-                        size="36px"
-                        color="secondary"
-                      >
-                        connect wallet
-                      </Button>
-                      
-                     </Box>
-                      </Box>
-                      </Grid>
-                      </Grid>
-                      </Toolbar>
-                     </Container>
-                     
-      </Box>
+                 <Box>
+  <Button
+    onClick={() => navigate('/buymas')}
+    variant="contained"
+    size="36px"
+    color="secondary"
+    style={{ marginRight: '10px' }} // Add margin to the right
+  >
+    buy a mas
+  </Button>
+  <Button
+    onClick={() => navigate('/connectWallet')}
+    variant="contained"
+    size="36px"
+    color="secondary"
+  >
+    connect wallet
+  </Button>
+</Box>
     );
   };
 
