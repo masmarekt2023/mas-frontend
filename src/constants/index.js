@@ -8,7 +8,7 @@ export const masToken = "0xe6a18c271ac1cd06a82c00245b6469cf99b851c7";
 // export const USDTToken = '0xdac17f958d2ee523a2206206994597c13d831ec7'
 export const USDTToken = "0x55d398326f99059fF775485246999027B3197955";
 export const WBTCToken = "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599";
-export const FDUSDToken = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
+export const FDUSDToken = "0xc5f0f7b66764f6ec8c8dff7ba683102295e16409";
 export const CEO_NAME = "MAS MANGER";
 export const websiteName =
   window.location.protocol + "//" + window.location.host;
