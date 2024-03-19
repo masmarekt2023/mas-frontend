@@ -395,9 +395,9 @@ export default function ProfileSettings() {
     };
   };
   const updateProfile = async () => {
-     if (!name || !bio || !speciality || !profilePic ) {
-      toast.error("Check field Errors !");
-     } else {
+     // if (!name || !bio || !speciality || !profilePic ) {
+      // toast.error("Check field Errors !");
+    // } else {
 
     setIsloading(true);
     axios({
@@ -436,7 +436,7 @@ export default function ProfileSettings() {
           toast.error(error.message);
         }
       });
-    }
+   // }
   };
   const handleSaveEmailClick = () => {
     // Add logic to save edited email
