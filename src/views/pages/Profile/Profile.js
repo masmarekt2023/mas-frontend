@@ -353,7 +353,7 @@ export default function Profile() {
   useEffect(() => {
     setAvailableBalance({
       masBalance: parseFloat(user.userData?.masBalance),
-      busdBalance: parseFloat(user.userData?.busdBalance),
+      fdusdBalance: parseFloat(user.userData?.fdusdBalance),
       usdtBalance: parseFloat(user.userData?.usdtBalance),
     });
 
@@ -362,7 +362,7 @@ export default function Profile() {
   useEffect(() => {
     setTotalEarning({
       masBalance: parseFloat(user.userEarnings?.masBalance) + parseFloat(user.userEarnings?.referralBalance),
-      busdBalance: parseFloat(user.userEarnings?.busdBalance),
+      fdusdBalance: parseFloat(user.userEarnings?.fdusdBalance),
       usdtBalance: parseFloat(user.userEarnings?.usdtBalance),
     });
 
