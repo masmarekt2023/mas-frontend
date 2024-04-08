@@ -52,6 +52,7 @@ const AuctionPage = ({ staticSections }) => {
     <>
       {CreatorsSection()}
       {BundlesSection()}
+      {ItemsSection()}
       {NFTSection()}
     </>
   );
@@ -150,6 +151,50 @@ const AuctionPage = ({ staticSections }) => {
             }}
           >
             Bundles
+          </Typography>
+        </div>
+        <Carousel
+          infiniteLoop={false}
+          centerMode={true}
+          centerSlidePercentage={35000 / windowSize.innerWidth}
+          numItemsPerView={5}
+        >
+          {allNFTList &&
+            allNFTList.map((data, i) => {
+              return <BundleCard data={data} key={i} />;
+            })}
+        </Carousel>
+      </Container>
+    );
+  }
+  function ItemsSection() {
+    const item = staticSections.find((i) => i?.title === "Bundles");
+    return (
+      <Container
+        maxWidth="100%"
+        style={{
+          marginBottom: "-20px",
+          backgroundSize: "cover",
+          backgroundImage: item?.background
+            ? `url(${item?.background})`
+            : "linear-gradient(0deg, #D9AFD9 0%, #97D9E1 100%)",
+          height: "100%",
+          display: item?.status === "ACTIVE" ? "block" : "none",
+        }}
+      >
+        <div id="bundle_section" className={classes.sectionHeading}>
+          <Typography
+            variant="h2"
+            component="h2"
+            onClick={() => navigate("/bundles")}
+            style={{
+              cursor: "pointer",
+              margin: "20px auto",
+              fontSize: "66px",
+              color: "#fff",
+            }}
+          >
+            Marketplace
           </Typography>
         </div>
         <Carousel
