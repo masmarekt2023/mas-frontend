@@ -100,6 +100,13 @@ export const routes = [
     guard: true,
     element: lazy(() => import("src/views/pages/AllBundles")),
   },
+
+  {
+    path: "/items",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() => import("src/views/pages/AllItems")),
+  },
   {
     path: "/bundles-details",
     layout: HomeLayout,
