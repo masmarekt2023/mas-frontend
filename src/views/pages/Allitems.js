@@ -103,7 +103,7 @@ const AllBundlesPage = () => {
           {auth.userLoggedIn && auth.userData?._id && (
             <>
               <div className={classes.heading}>
-                <Typography variant="h2" className={classes.pageTitle}>ALL BUNDLES</Typography>
+                <Typography variant="h2" className={classes.pageTitle}>ALL Items</Typography>
               </div>
               <Container maxWidth="lg">
                 {allNFTList.length === 0 ? (
