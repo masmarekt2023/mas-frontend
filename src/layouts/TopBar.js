@@ -40,6 +40,11 @@ const menuLinks = [
     isLink: true,
   },
   {
+    label: "Marketplace",
+    href: "/items",
+    isLink: true,
+  },
+  {
     label: "Creators",
     href: "/creators",
     isLink: true,
@@ -48,14 +53,7 @@ const menuLinks = [
     label: "Transfer`s",
     href: "/user-list",
     isLink: true,
-  },
-  {
-    label: "NFT",
-    href: "/auctions",
-    isLink: true,
-  },
-
-  
+  }, 
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "auto",
     color: theme.palette.secondary.main,
     height: "30px",
-    padding: "0px 7px",
+    padding: "0px 0px",
     letterSpacing: "1px",
     marginLeft: "15px",
     color: "black",
