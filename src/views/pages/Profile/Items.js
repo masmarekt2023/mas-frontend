@@ -201,7 +201,7 @@ export default function items() {
             style={{ marginRight: "10px" }}
             onClick={() => updateState({ openShareAudience: true })}
           >
-            add a Part
+            add a Photos
           </Button>
           <Button
             variant="contained"
