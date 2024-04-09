@@ -22,11 +22,11 @@ import axios from "axios";
 import ButtonCircularProgress from "src/component/ButtonCircularProgress";
 import NoDataFound from "src/component/NoDataFound";
 import { toast } from "react-toastify";
-import BundleCard from "src/component/NewBundleCard";
+import ItemCard from "src/component/NewItemCard";
 import { tokensDetails } from "src/constants";
 import ReactPlayer from "react-player";
 import { Pagination } from "@material-ui/lab";
-import AddBundleDialog from "../../../component/AddBundleDialog";
+import AdditemDialog from "../../../component/AddItemDialog";
 import ShareForAudienceDialog from "../../../component/shareForAudienceDialog";
 
 const useStyles = makeStyles((theme) => ({
@@ -171,22 +171,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Bundles() {
+export default function items() {
   const [state, setState] = useState({
     OpenAuction: false,
     openShareAudience: false,
-    bundleList: [],
+    itemList: [],
     page: 1,
     pages: 1,
   });
-  const { OpenAuction, bundleList, page, pages, openShareAudience } = state;
+  const { OpenAuction, itemList, page, pages, openShareAudience } = state;
   const updateState = (data) =>
     setState((prevState) => ({ ...prevState, ...data }));
 
   const classes = useStyles();
 
   useEffect(() => {
-    getBundleListHandler().catch(console.error);
+    getitemListHandler().catch(console.error);
   }, [page]);
 
   return (
@@ -214,7 +214,7 @@ export default function Bundles() {
         </Box>
       </Box>
       <Box>
-        {!bundleList[0] ? (
+        {!itemList[0] ? (
           <Box align="center" mt={4} mb={5}>
             <NoDataFound />
           </Box>
@@ -223,10 +223,10 @@ export default function Bundles() {
         )}
 
         <Grid container spacing={1} className={classes.bunbox}>
-          {bundleList.map((data, i) => {
+          {itemList.map((data, i) => {
             return (
               <Grid item key={i} lg={3} md={4} sm={6} xm={12}>
-                <BundleCard data={data} index={i} isDays={true} />
+                <ItemCard data={data} index={i} isDays={true} />
               </Grid>
             );
           })}
@@ -248,10 +248,10 @@ export default function Bundles() {
         )}
       </Box>
 
-      {/* add bundle */}
+      {/* add item */}
 
       {OpenAuction && (
-        <AddBundleDialog
+        <AdditemDialog
           show={open}
           handleClose={() => updateState({ OpenAuction: false })}
         />
@@ -267,7 +267,7 @@ export default function Bundles() {
     </Box>
   );
 
-  async function getBundleListHandler() {
+  async function getitemListHandler() {
     await axios({
       method: "GET",
       url: Apiconfigs.myNftList,
@@ -281,7 +281,7 @@ export default function Bundles() {
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          updateState({ bundleList: res.data.result.docs });
+          updateState({ itemList: res.data.result.docs });
           updateState({ pages: res.data.result.pages });
         }
       })
@@ -291,7 +291,7 @@ export default function Bundles() {
   }
 }
 
-export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
+export const AdditemPopup = ({ open, handleClose, callbackFun }) => {
   const user = useContext(UserContext);
   const classes = useStyles();
   const [title, settitle] = useState("");
@@ -321,14 +321,14 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
       parseFloat(donation) > 0
     ) {
       try {
-        setmessage("Creating Bundle...");
+        setmessage("Creating item...");
         setprocess(true);
         const formData = new FormData();
         formData.append("file", image);
         formData.append("tokenName", name);
-        formData.append("bundleTitle", title);
+        formData.append("itemTitle", title);
         formData.append("duration", duration);
-        formData.append("bundleName", name);
+        formData.append("itemName", name);
         formData.append("details", details);
         formData.append("donationAmount", donation);
         formData.append("coinName", selectedToken.name);
@@ -349,7 +349,7 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
 
           await user.updateUserData();
           setprocess(false);
-          toast.success("Bundle created");
+          toast.success("item created");
           setfire(!fire);
           handleClose();
           setname("");
@@ -378,17 +378,17 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
       onClose={() => handleClose()}
       aria-labelledby="max-width-dialog-title"
     >
-      <DialogTitle className={classes.dailogTitle}>Create a bundle</DialogTitle>
+      <DialogTitle className={classes.dailogTitle}>Create a item</DialogTitle>
       <DialogContent>
         <Box>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
-              <label> Bundles Title</label>
+              <label> items Title</label>
             </Grid>
             <Grid item xs={12} md={8}>
               <TextField
                 id="standard-basic"
-                placeholder="Bundles 1"
+                placeholder="items 1"
                 className={classes.input_fild2}
                 onChange={(e) => settitle(e.target.value)}
                 error={
@@ -404,12 +404,12 @@ export const AddBundlePopup = ({ open, handleClose, callbackFun }) => {
         <Box>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
-              <label> Bundles Name</label>
+              <label> items Name</label>
             </Grid>
             <Grid item xs={12} md={8}>
               <TextField
                 id="standard-basic"
-                placeholder="Basic Bundle"
+                placeholder="Basic item"
                 onChange={(e) => setname(e.target.value)}
                 className={classes.input_fild2}
                 error={isSubmit && name === ""}
