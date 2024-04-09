@@ -192,7 +192,7 @@ export default function Bundles() {
   return (
     <Box className={classes.LoginBox} mb={5}>
       <Box className={classes.masBoxFlex}>
-        <Typography variant="h6">My Bundles</Typography>
+        <Typography variant="h6">My Items</Typography>
         <Box display="flex">
           <Button
             variant="contained"
@@ -201,7 +201,7 @@ export default function Bundles() {
             style={{ marginRight: "10px" }}
             onClick={() => updateState({ openShareAudience: true })}
           >
-            share for audience
+            add a Part
           </Button>
           <Button
             variant="contained"
@@ -209,7 +209,7 @@ export default function Bundles() {
             color="secondary"
             onClick={() => updateState({ OpenAuction: true })}
           >
-            add a bundle
+            add a item
           </Button>
         </Box>
       </Box>
