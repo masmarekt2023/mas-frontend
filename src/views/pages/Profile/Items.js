@@ -335,7 +335,7 @@ export const AdditemPopup = ({ open, handleClose, callbackFun }) => {
 
         const res = await axios({
           method: "POST",
-          url: Apiconfigs.addNft,
+          url: Apiconfigs.addNft1,
           data: formData,
           headers: {
             token: sessionStorage.getItem("token"),

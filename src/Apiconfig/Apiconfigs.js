@@ -41,6 +41,7 @@ const Apiconfigs = {
     nftList: `${url}/nft/nftList`,
     myNftList: `${url}/nft/myNftList`,
     addNft: `${url}/nft/nft`,
+    addNft1: `${url}/nft/nft1`,
     editNft: `${url}/nft/nft`,
     viewNft: `${url}/nft/viewNft/`,
     order: `${url}/order/order`,
