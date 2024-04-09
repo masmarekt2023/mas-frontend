@@ -15,7 +15,7 @@ import {
   Container,
   Typography
 } from "@material-ui/core";
-import { AiOutlineLogout } from "react-icons/ai";
+import { AiOutlineLogout} from "react-icons/ai";
 import { BsChat } from "react-icons/bs";
 import SearchIcon from "@material-ui/icons/Search";
 import { UserContext } from "src/context/User";
@@ -512,7 +512,17 @@ export default function Header() {
                   )}
 {
                   auth.userLoggedIn ? <>
-                 </> :
+                  <Tooltip
+                      title="My Profile"
+                      placement="bottom"
+                    >
+                       <Avatar onClick={() => navigate("/profile")}
+                        alt={auth.userData?.userName} 
+                        src={auth.userData?.profilePic} 
+                        style={{cursor: 'pointer', border: 'solid 3px #fff'}} />
+                    </Tooltip>
+                    
+                    </> :
                     <Button
                       className={classes.createButton}
                       onClick={() => navigate("/profile")}
