@@ -83,6 +83,7 @@ const Apiconfigs = {
     getUser: `${url}/user/getUser/`,
     getCertificates: `${url}/user/getCertificates`,
     listAllNft: `${url}/nft/listAllNft`,
+    listAllNft1: `${url}/nft/listAllNft1`,
     followProfile: `${url}/user/followProfile/`,
     profileFollowersList: `${url}/user/profileFollowersList`,
     profileFollowingList: `${url}/user/profileFollowingList`,

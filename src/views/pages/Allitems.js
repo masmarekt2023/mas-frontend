@@ -57,7 +57,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const AllBundlesPage = () => {
+const AllItemsPage = () => {
   const classes = useStyles();
   const auth = useContext(UserContext);
   const [allNFTList, setAllNFTList] = useState([]);
@@ -65,10 +65,10 @@ const AllBundlesPage = () => {
   const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  const listAllNftHandler = async () => {
+  const listAllNft1Handler = async () => {
     await axios({
       method: "GET",
-      url: Apiconfigs.listAllNft,
+      url: Apiconfigs.listAllNft1,
       params: {
         page: page,
         limit: 10
@@ -90,7 +90,7 @@ const AllBundlesPage = () => {
 
   useEffect(() => {
     if (auth.userData?._id && auth.userLoggedIn) {
-      listAllNftHandler();
+      listAllNft1Handler();
     }
   }, [auth.userLoggedIn, auth.userData, page]);
 
@@ -128,7 +128,7 @@ const AllBundlesPage = () => {
                         <Bundlecard
                           data={data}
                           index={i}
-                          callbackFn={listAllNftHandler}
+                          callbackFn={listAllNft1Handler}
                         />
                       </Grid>
                     );
@@ -150,4 +150,4 @@ const AllBundlesPage = () => {
   );
 };
 
-export default AllBundlesPage;
+export default AllItemsPage;
