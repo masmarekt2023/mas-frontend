@@ -270,7 +270,7 @@ export default function items() {
   async function getitemListHandler() {
     await axios({
       method: "GET",
-      url: Apiconfigs.myNft1List,
+      url: Apiconfigs.listAllNft1,
       headers: {
         token: sessionStorage.getItem("token"),
       },
