@@ -13,12 +13,14 @@ const AuctionPage = ({ staticSections }) => {
   const navigate = useNavigate();
   const [auctionList, setAuctionList] = useState([]);
   const [allNFTList, setAllNFTList] = useState([]);
+  const [allNFT1List, setAllNFT1List] = useState([]);
   const [userListToDisplay, setUserListToDisplay] = useState([]);
   const [isLoadingAuctions, setIsLaodingAuctions] = useState(false);
 
   useEffect(() => {
     auctionNftListHandler().catch(console.error);
     listAllNftHandler().catch(console.error);
+    listAllNft1Handler().catch(console.error);
     getuser().catch(console.error);
     let resize = setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
@@ -203,8 +205,8 @@ const AuctionPage = ({ staticSections }) => {
           centerSlidePercentage={35000 / windowSize.innerWidth}
           numItemsPerView={5}
         >
-          {allNFTList &&
-            allNFTList.map((data, i) => {
+          {allNFT1List &&
+            allNFT1List.map((data, i) => {
               return <BundleCard data={data} key={i} />;
             })}
         </Carousel>
@@ -291,6 +293,25 @@ const AuctionPage = ({ staticSections }) => {
       .then(async (res) => {
         if (res.data.statusCode === 200) {
           setAllNFTList(res.data.result.docs);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
+  async function listAllNft1Handler() {
+    await axios({
+      method: "GET",
+      url: Apiconfigs.listAllNft1,
+      params: {
+        page: 1,
+        limit: 10,
+      },
+    })
+      .then(async (res) => {
+        if (res.data.statusCode === 200) {
+          setAllNFT1List(res.data.result.docs);
         }
       })
       .catch((err) => {
