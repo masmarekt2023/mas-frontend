@@ -186,7 +186,7 @@ const AuctionPage = ({ staticSections }) => {
           <Typography
             variant="h2"
             component="h2"
-            onClick={() => navigate("/bundles")}
+            onClick={() => navigate("/items")}
             style={{
               cursor: "pointer",
               margin: "20px auto",

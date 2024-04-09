@@ -4,6 +4,7 @@ import { UserContext } from "src/context/User";
 import Page from "src/component/Page";
 import Auction from "./Auction";
 import Bundles from "./Bundles";
+import Items from "./Items";
 import Subscriptions from "./Subscriptions";
 import Feed from "./Feed";
 import MyBids from "./MyBids";
@@ -60,6 +61,14 @@ export default function Activity() {
                 My Bundles
               </Button>
             )}
+            {auth?.userData?.userType !== "User" && (
+              <Button
+                className={tabview === "items" ? classes.active : " "}
+                onClick={() => setTabView("items")}
+              >
+                My Marketplace
+              </Button>
+            )}
             <Button
               className={tabview === "subscriptions" ? classes.active : " "}
               onClick={() => setTabView("subscriptions")}
@@ -80,12 +89,7 @@ export default function Activity() {
                 My auctions
               </Button>
             )}
-            <Button
-              className={tabview === "bids" ? classes.active : " "}
-              onClick={() => setTabView("bids")}
-            >
-              My Bids
-            </Button>
+            
             {auth?.userData?.userType !== "User" && (
               <Button
                 className={tabview === "subscribe" ? classes.active : " "}
@@ -103,20 +107,6 @@ export default function Activity() {
                 Supporter List
               </Button>
             )}
-            {auth?.userData?.userType !== "User" && (
-              <Button
-                className={tabview === "soldAuctions" ? classes.active : " "}
-                onClick={() => setTabView("soldAuctions")}
-              >
-                Sold Auctions NFT
-              </Button>
-            )}
-            <Button
-              className={tabview === "BoughtAuctions" ? classes.active : " "}
-              onClick={() => setTabView("BoughtAuctions")}
-            >
-              Bought Auctions NFT
-            </Button>
             <Button
               className={tabview === "DonateList" ? classes.active : " "}
               onClick={() => setTabView("DonateList")}
@@ -134,6 +124,7 @@ export default function Activity() {
           </Box>
           <Box>
             {tabview === "bundles" && <Bundles />}
+            {tabview === "items" && <Items />}
             {tabview === "subscriptions" && <Subscriptions />}
             {tabview === "subscribe" && <UserDetails type="subscribers" />}
             {tabview === "feed" && <Feed />}
