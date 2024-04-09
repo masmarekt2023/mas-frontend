@@ -40,6 +40,7 @@ const Apiconfigs = {
     createNft: `${url}/nft/createNft`,
     nftList: `${url}/nft/nftList`,
     myNftList: `${url}/nft/myNftList`,
+    myNft1List: `${url}/nft/myNft1List`,
     addNft: `${url}/nft/nft`,
     addNft1: `${url}/nft/nft1`,
     editNft: `${url}/nft/nft`,

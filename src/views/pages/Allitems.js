@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
 const AllItemsPage = () => {
   const classes = useStyles();
   const auth = useContext(UserContext);
-  const [allNFTList, setAllNFTList] = useState([]);
+  const [allNFTList1, setAllNFTList1] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +76,7 @@ const AllItemsPage = () => {
     })
       .then(async (res) => {
         if (res.data.statusCode === 200) {
-          setAllNFTList(res.data.result.docs);
+          setAllNFTList1(res.data.result.docs);
           setPages(res.data.result.pages)
         }
         setIsLoading(false);
@@ -106,7 +106,7 @@ const AllItemsPage = () => {
                 <Typography variant="h2" className={classes.pageTitle}>ALL Items</Typography>
               </div>
               <Container maxWidth="lg">
-                {allNFTList.length === 0 ? (
+                {allNFTList1.length === 0 ? (
                   <Box align="center" mt={4} mb={5}>
                     <NoDataFound />
                   </Box>
@@ -114,7 +114,7 @@ const AllItemsPage = () => {
                   ""
                 )}
                 <Grid container spacing={2}>
-                  {allNFTList.map((data, i) => {
+                  {allNFTList1.map((data, i) => {
                     return (
                       <Grid
                         item
