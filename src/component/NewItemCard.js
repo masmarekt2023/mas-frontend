@@ -31,7 +31,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
-import ButtonCircularProgress from "./ButtonCircularProgress";
+
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import ReactPlayer from "react-player";
@@ -87,6 +87,9 @@ export default function itemCard({ data }) {
   const [open3, setOpen3] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openEdit, setOpenEdit] = useState(false);
+  const [isVideo, setisVideo] = useState(false);
+  
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -145,8 +148,8 @@ export default function itemCard({ data }) {
     "3gp",
     "ogv",
   ];
-  const itemMediaFormat = itemData.mediaUrl.split(".").slice(-1)[0];
-  let isVideo = videoFormats.includes(itemMediaFormat);
+  //const itemMediaFormat = itemData.mediaUrl.split(".").slice(-1)[0];
+  //let isVideo = videoFormats.includes(itemMediaFormat);
 
   /*const getSubscription = async () => {
           try {
@@ -244,6 +247,13 @@ export default function itemCard({ data }) {
     saveAs(itemData?.mediaUrl);
   };
 
+  const groupedImages = [
+    [itemData.mediaUrl1, itemData.mediaUrl2, itemData.mediaUrl3],
+    [itemData.mediaUrl4, itemData.mediaUrl5, itemData.mediaUrl6],
+    [itemData.mediaUrl7, itemData.mediaUrl8, itemData.mediaUrl9],
+  ];
+  
+
   useEffect(() => {
     setnbLike(itemData.likesUsers.length);
     setnbSubscribed(itemData.subscribers.length);
@@ -295,7 +305,7 @@ export default function itemCard({ data }) {
           }
         >
           <ReactPlayer
-            url={itemData.mediaUrl}
+            url={itemData.mediaUrl1}
             muted
             playing
             width="100%"
@@ -305,7 +315,7 @@ export default function itemCard({ data }) {
       ) : (
         <CardMedia
           className={classes.media}
-          image={itemData.mediaUrl}
+          image={itemData.mediaUrl1}
           title={itemData.itemName}
           onClick={() =>
             (isSubscribed && activeSubscribe) || isUseritem
@@ -597,126 +607,68 @@ export default function itemCard({ data }) {
         disableEscapeKeyDown={isLoading}
       >
         <DialogContent>
-          <Box className={classes.PhotoBox}>
-            {isVideo ? (
-              <div>
-                <ReactPlayer
-                  url={itemData.mediaUrl}
-                  controls
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "300px",
-                    height: "50%",
-                  }}
-                />
-                {auth.userData &&
-                  auth.userLoggedIn &&
-                  auth.userData._id !== userId &&
-                  isSubscribed && (
-                    <Box>
-                      <Grid
-                        lg={12}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Button
-                          className={classes.downloadButton}
-                          fullWidth
-                          onClick={downLoadFile}
-                        >
-                          Download
-                        </Button>
-                      </Grid>
-                    </Box>
-                  )}
-              </div>
-            ) : (
-              <img
-                src={itemData.mediaUrl}
-                alt=""
-                style={{ width: "100%", height: "50%" }}
-              />
-            )}
-          </Box>
-          <Box mt={3} className={classes.itemText} textAlign="center">
-            <Typography variant="h4">{itemData.itemTitle}</Typography>
-          </Box>
+  {groupedImages.map((group, index) => (
+    <Box key={index} className={classes.PhotoBox}>
+      <Grid container spacing={2}>
+        {group.map((url, idx) => (
+          <Grid item xs={12} sm={4} key={idx}>
+            <img
+              src={url}
+              alt={`Media ${index * 3 + idx + 1}`}
+              style={{ width: "100%", height: "150px" }}  // Adjust the size as needed
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  ))}
 
-          <Box mt={2} className={classes.deskiText}>
-            <Typography variant="h4" align="left" color="textSecondary">
-              Donation amount:
-              <span>
-                {itemData.donationAmount} {itemData.coinName}
-              </span>
-            </Typography>
-            <Typography variant="h4" align="left" color="textSecondary">
-              Duration: <span> {itemData.duration}</span>
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={3} lg={2}>
-                <Typography variant="h4" align="left" color="textSecondary">
-                  Details:
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={9} lg={10}>
-                <Typography variant="body2" align="left" color="textSecondary">
-                  {itemData?.details}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-          {!auth.userLoggedIn && (
-            <Box mt={3} mb={3} textAlign="center">
-              <Button className={classes.LoginButton} onClick={handleClose2}>
-                Cancel
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                className={classes.LoginButton}
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                Login
-              </Button>
-            </Box>
-          )}
-          {auth.userData &&
-            auth.userLoggedIn &&
-            auth.userData._id !== data.userId && (
-              <Box mt={3} mb={3} textAlign="center">
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="large"
-                  onClick={() => {
-                    handleClose2();
-                  }}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </Button>
-                &nbsp;&nbsp;&nbsp;
-                {auth.userData &&
-                  auth.userLoggedIn &&
-                  auth.userData._id !== userId && (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      size="large"
-                      onClick={subscribeToitemHandler}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "pending..." : "Subscribe now"}
-                      {isLoading && <ButtonCircularProgress />}
-                    </Button>
-                  )}
-              </Box>
-            )}
-        </DialogContent>
+  <Box mt={3} className={classes.itemText} textAlign="center">
+    <Typography variant="h4">{itemData.itemTitle}</Typography>
+  </Box>
+  <Box mt={2} className={classes.deskiText}>
+    <Typography variant="h4" align="left" color="textSecondary">
+      Donation amount:
+      <span>
+        {itemData.donationAmount} {itemData.coinName}
+      </span>
+    </Typography>
+    <Typography variant="h4" align="left" color="textSecondary">
+      Duration: <span>{itemData.duration}</span>
+    </Typography>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={3} lg={2}>
+        <Typography variant="h4" align="left" color="textSecondary">
+          Details:
+        </Typography>
+      </Grid>
+      <Grid item xs={12} md={9} lg={10}>
+        <Typography variant="body2" align="left" color="textSecondary">
+          {itemData.details}
+        </Typography>
+      </Grid>
+    </Grid>
+  </Box>
+
+  {/* Login and Subscribe Buttons */}
+  {!auth.userLoggedIn && (
+    <Box mt={3} mb={3} textAlign="center">
+      <Button className={classes.LoginButton} onClick={handleClose2}>
+        Cancel
+      </Button>
+      &nbsp;&nbsp;
+      <Button
+        className={classes.LoginButton}
+        onClick={() => {
+          navigate("/login");
+        }}
+      >
+        Login
+      </Button>
+    </Box>
+  )}
+</DialogContent>
+
       </Dialog>
 
       <Dialog

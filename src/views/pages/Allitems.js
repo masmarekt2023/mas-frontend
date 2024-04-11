@@ -6,7 +6,7 @@ import {
   Typography,
   makeStyles,
 } from "@material-ui/core";
-import Bundlecard from "src/component/NewBundleCard";
+import Itemcard from "src/component/NewItemCard";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import { UserContext } from "src/context/User";
@@ -125,7 +125,7 @@ const AllItemsPage = () => {
                         lg={3}
                         className={classes.gridbox}
                       >
-                        <Bundlecard
+                        <Itemcard
                           data={data}
                           index={i}
                           callbackFn={listAllNft1Handler}

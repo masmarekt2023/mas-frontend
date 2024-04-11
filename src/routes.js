@@ -115,6 +115,16 @@ export const routes = [
       import("src/views/pages/Profile/Bundles/BundleDetails")
     ),
   },
+
+{
+    path: "/items-details",
+    layout: HomeLayout,
+    guard: true,
+    element: lazy(() =>
+      import("src/views/pages/Profile/Items/ItemDetails")
+    ),
+  },
+  
   {
     path: "/auctions",
     layout: HomeLayout,

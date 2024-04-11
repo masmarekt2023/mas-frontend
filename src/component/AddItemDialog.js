@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   Button,
+  IconButton,
   Box,
 } from "@material-ui/core";
 import { useController, useForm } from "react-hook-form";
@@ -18,15 +19,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import Apiconfigs from "../Apiconfig/Apiconfigs";
 import { tokensDetails } from "../constants/index";
-import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import DeleteIcon from "@material-ui/icons/Delete";
-import ReactPlayer from "react-player";
+
 import { toast } from "react-toastify";
 
 const AdditemDialog = ({ show, handleClose, itemData }) => {
   const [isEdit, setIsEdit] = useState(!!itemData);
   const classes = useStyles();
   const [mediaUrl, setMediaUrl] = useState(isEdit ? itemData.mediaUrl : "");
+  const [mediaUrls, setMediaUrls] = useState(isEdit && Array.isArray(itemData.mediaUrls) ? itemData.mediaUrls : []);
+
+
   const [uploadCounter, setUploadCounter] = useState(0);
 
   // Yup inputs validation
@@ -85,97 +88,54 @@ const AdditemDialog = ({ show, handleClose, itemData }) => {
         {isEdit ? "Edit item" : "Create a item"}
       </DialogTitle>
       <DialogContent style={{ padding: 40 }}>
-        <Grid container spacing={5}>
-          {InputList()}
-          <Grid item xs={12} sm={5}>
-            {MediaInput()}
-            {MediaBox()}
-          </Grid>
-          {FormButtons()}
-        </Grid>
-      </DialogContent>
+  <Grid container spacing={5}>
+    {InputList()}
+    <Grid item xs={12} sm={5} style={{ textAlign: 'center' }}>
+      {MediaBox()}
+      <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+        {MediaInput()}
+      </div>
+    </Grid>
+    {FormButtons()}
+  </Grid>
+</DialogContent>
     </Dialog>
   );
 
   /* Main Return */
 
   function MediaBox() {
-    const { name } = watch("file") ? watch("file") : { type: "", name: "" };
-
-    const isVideo = watch("file")
-      ? watch("file")?.type?.split("/")[0] !== "image"
-      : isEdit
-      ? isVideoType(mediaUrl)
-      : false;
-
-    const onRemove = () => {
-      setMediaUrl("");
-      setValue("file", null);
-    };
+    const classes = useStyles(); // Assuming you use this hook for styles
+    const maxImages = 9;
+    const emptySlots = maxImages - mediaUrls.length;
 
     return (
-      <Box
-        style={{ display: mediaUrl !== "" ? "block" : "none" }}
-        className={classes.mediaBox}
-      >
-        {isVideo ? (
-          <div
-            style={{ borderRadius: "10px 10px 0px 0px", overflow: "hidden" }}
-          >
-            <ReactPlayer
-              url={mediaUrl}
-              playing
-              controls
-              width={"100%"}
-              height={"100%"}
-            />
-          </div>
-        ) : (
-          <img
-            src={mediaUrl}
-            width="100%"
-            height={"50%"}
-            alt={"item image"}
-            style={{ borderRadius: "10px 10px 0px 0px" }}
-          />
-        )}
-        <div className={classes.mediaBoxInfo}>
-          <div>
-            <p
-              style={{
-                color: "#777",
-                fontWeight: "600",
-                margin: 0,
-                fontSize: 14,
-              }}
-            >
-              Filename
-            </p>
-            <p style={{ marginTop: 5, fontWeight: "500" }}>
-              {name ? name : ""}
-            </p>
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <DeleteIcon
-              fontSize={"medium"}
-              style={{ color: "red", cursor: "pointer" }}
-              onClick={onRemove}
-            />
-          </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', marginBottom: '20px' }}>
+            <div className={classes.mediaBoxHeader}>
+                Download your images here
+            </div>
+            {mediaUrls.map((url, index) => (
+                <Box key={index} className={classes.mediaPreview}>
+                    <img src={url} alt={`Selected image ${index + 1}`} className={classes.img} />
+                    <IconButton onClick={() => removeImage(index)} size="small" style={{ position: 'absolute', top: 0, right: 0, color: 'red' }}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Box>
+            ))}
+            {Array.from({ length: emptySlots }, (_, i) => (
+                <Box key={i + mediaUrls.length} className={classes.emptyBox} onClick={() => document.getElementById('file-input').click()}>
+                    <div className={classes.plusIcon}>+</div>
+                </Box>
+            ))}
         </div>
-        {uploadCounter > 0 && (
-          <div className={classes.uploadCounter}>
-            <CloudUploadIcon
-              fontSize={"large"}
-              style={{ color: "rgb(192, 72, 72)" }}
-              className={classes.uploadCounterIcon}
-            />
-            <p>Uploading {uploadCounter}%</p>
-          </div>
-        )}
-      </Box>
     );
-  }
+}
+
+function removeImage(index) {
+    const filteredUrls = mediaUrls.filter((_, idx) => idx !== index);
+    setMediaUrls(filteredUrls);
+}
+
 
   function FormButtons() {
     const onSubmit = handleSubmit(
@@ -207,69 +167,40 @@ const AdditemDialog = ({ show, handleClose, itemData }) => {
   }
 
   function MediaInput() {
-    const {
-      field,
-      fieldState: { error },
-    } = useController({
-      name: "file",
-      control,
+    const { field } = useController({
+        name: "file",
+        control,
     });
 
     const { onChange, ref, name } = field;
+    const handleFileChange = (files) => {
+      if (files.length > 0) {
+          const file = files[0]; // Get the single file
+          const newUrl = URL.createObjectURL(file); // Create a URL for this single file
+          setMediaUrls([...mediaUrls, newUrl]); // Append new URL to existing URLs
+      }
+  };
+  
 
     return (
-      <label htmlFor="raised-button-file">
-        <input
-          accept="image/*,video/*"
-          style={{ display: "none" }}
-          className={classes.input}
-          id="contained-button-file-add-bun"
-          multiple
-          onChange={(e) => {
-            onChange(e.target.files[0]);
-            setMediaUrl(URL.createObjectURL(e.target.files[0]));
-          }}
-          ref={ref}
-          name={name}
-          type="file"
-        />
-        <label htmlFor="contained-button-file-add-bun">
-          <Button
-            variant="outined"
-            color="primary"
-            component="span"
-            className={classes.uploadBox}
-            style={{
-              borderColor: error ? "red" : "#ddd",
-              display: mediaUrl === "" ? "flex" : "none",
-            }}
-          >
-            <div className={classes.uploadIcon}>
-              <CloudUploadIcon />
-            </div>
-            <div style={{ marginTop: 10, textAlign: "center" }}>
-              <p style={{ margin: "5px 0px 0px 0px", fontSize: 18 }}>
-                Select Image/Video
-              </p>
-              <p style={{ margin: "5px 0px 0px 0px" }}>Drag And Drop Files</p>
-              <p style={{ margin: "5px 0px 0px 0px" }}>
-                Accept All Video/Image Formats
-              </p>
-              <p style={{ margin: "5px 0px 0px 0px" }}>
-                Max File Size: 1024 MP
-              </p>
-              <p style={{ margin: "5px 0px 0px 0px" }}>
-                Min Width Size: 300px
-              </p>
-              <p style={{ margin: "5px 0px 0px 0px" }}>
-                Min Height Size: 160px
-              </p>
-            </div>
-          </Button>
-        </label>
-      </label>
+        <>
+            <input
+                accept="image/*"
+                style={{ display: "none" }}
+                className={classes.input}
+                id="file-input"
+                multiple={false}
+                onChange={(e) => {
+                    onChange(e.target.files[0]);
+                    handleFileChange(e.target.files);
+                }}
+                ref={ref}
+                name={name}
+                type="file"
+            />
+        </>
     );
-  }
+}
 
   function InputList() {
     return (
@@ -408,37 +339,51 @@ const AdditemDialog = ({ show, handleClose, itemData }) => {
 
   async function createitem(data) {
     try {
-      const formData = new FormData();
-      formData.append("file", data.file);
-      formData.append("tokenName", data.itemName);
-      formData.append("itemTitle", data.itemTitle);
-      formData.append(
-        "duration",
-        `${data.duration} ${data.duration > 1 ? "days" : "day"}`
-      );
-      formData.append("itemName", data.itemName);
-      formData.append("details", data.details);
-      formData.append("donationAmount", data.donationAmount);
-      formData.append("coinName", data.coinName);
-
-      const res = await axios({
-        method: "POST",
-        url: Apiconfigs.addNft1,
-        data: formData,
-        headers: {
-          token: sessionStorage.getItem("token"),
-        },
-        onUploadProgress: (progressEvent) => onUploadProgress(progressEvent),
+        const formData = new FormData();
+        // Append text fields first
+        formData.append("itemTitle", data.itemTitle);
+        formData.append("itemName", data.itemName);
+        formData.append("details", data.details);
+        formData.append("donationAmount", data.donationAmount);
+        formData.append("duration", `${data.duration} ${data.duration > 1 ? "days" : "day"}`);
+        formData.append("coinName", data.coinName);
+        // Append URLs as separate fields
+        mediaUrls.forEach((url, index) => {
+          formData.append(`url${index + 1}`, url); // Appending as url1, url2, ..., url9
       });
 
-      if (res.data.statusCode === 200) {
-        toast.success("item created");
-        handleClose();
-      }
+        // Convert URLs to File objects and append them
+        const filePromises = mediaUrls.map(async (url, index) => {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return new File([blob], `image${index}.png`, { type: 'image/png' });
+        });
+
+        const files = await Promise.all(filePromises);
+        files.forEach(file => formData.append("images", file));
+
+        const res = await axios({
+          method: "POST",
+          url: Apiconfigs.addNft1,
+          data: formData,
+          headers: {
+            token: sessionStorage.getItem("token"),
+          },
+          onUploadProgress: (progressEvent) => onUploadProgress(progressEvent),
+        });
+
+        if (res.data.statusCode === 200) {
+            toast.success("Item created successfully");
+            handleClose();
+        } else {
+            throw new Error('Failed to create item');
+        }
     } catch (err) {
-      console.log(err);
+        console.error(err);
+        toast.error("An error occurred while creating the item.");
     }
-  }
+   
+}
 
   async function edititem(data) {
     const formData = new FormData();
@@ -501,6 +446,9 @@ const useStyles = makeStyles(() => ({
       fontSize: 14,
     },
   },
+  deleteIcon: {
+    color: 'red', // Set the color property to red
+},
 
   input: {
     width: "100%",
@@ -582,7 +530,49 @@ const useStyles = makeStyles(() => ({
     height: "50%",
   },
 
-  uploadCounter: {
+  mediaPreview: {
+    width: '100px',  // Same as empty box width
+    height: '100px', // Same as empty box height
+    overflow: 'hidden', // Ensures no part of the image spills out
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '1px solid #ccc',  // Optional, for visual consistency
+    borderRadius: '5px',       // Optional, matches empty box
+},
+img: {
+    width: 'auto',
+    height: '100%', // Ensures the image covers the full height
+    maxWidth: '100%',  // Ensures the image width does not exceed the box
+},
+
+
+mediaBoxHeader: {
+  width: '100%',
+  marginBottom: '10px', // Adjust spacing as needed
+  color: '#666',
+  textAlign: 'center',
+  fontWeight: 'bold',
+},
+
+
+emptyBox: {
+  width: '100px',
+  height: '113px',
+  border: '2px dashed #ccc',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+},
+plusIcon: {
+  fontSize: '24px',
+  color: '#ccc',
+},
+
+
+uploadCounter: {
     position: "relative",
     marginTop: 30,
     padding: 20,

@@ -87,6 +87,7 @@ export default function BundleCard({ data }) {
   const [open3, setOpen3] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openEdit, setOpenEdit] = useState(false);
+  const [isVideo, setisVideo] = useState(false);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -145,8 +146,8 @@ export default function BundleCard({ data }) {
     "3gp",
     "ogv",
   ];
-  const bundleMediaFormat = BundleData.mediaUrl.split(".").slice(-1)[0];
-  let isVideo = videoFormats.includes(bundleMediaFormat);
+  //const bundleMediaFormat = BundleData.mediaUrl.split(".").slice(-1)[0];
+  //let isVideo = videoFormats.includes(bundleMediaFormat);
 
   /*const getSubscription = async () => {
           try {
@@ -474,8 +475,8 @@ export default function BundleCard({ data }) {
                 componant="p"
                 style={{ color: "#000", fontSize: "20px" }}
               >
-                I will send you a special video every <br />
-                month specially for you! (edit)
+                {/*I will send you a special video every <br />
+                month specially for you! (edit)*/}
               </Typography>
             </Box>
             <Box mt={2} className={classes.changepic}>

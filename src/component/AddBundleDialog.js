@@ -473,7 +473,7 @@ const AddBundleDialog = ({ show, handleClose, bundleData }) => {
   }
 
   function isVideoType(url) {
-    return url.includes("video");
+   //return url.includes("video");
   }
 };
 

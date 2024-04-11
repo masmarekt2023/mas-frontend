@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Box, Typography, makeStyles } from "@material-ui/core";
 import UserDetailsCard from "src/component/UserCard";
 import BundleCard from "src/component/NewBundleCard";
+import ItemCard from "src/component/NewItemCard";
 import { Carousel } from "react-responsive-carousel";
 import axios from "axios";
 import Apiconfigs from "src/Apiconfig/Apiconfigs";
@@ -207,7 +208,7 @@ const AuctionPage = ({ staticSections }) => {
         >
           {allNFT1List &&
             allNFT1List.map((data, i) => {
-              return <BundleCard data={data} key={i} />;
+              return <ItemCard data={data} key={i} />;
             })}
         </Carousel>
       </Container>
@@ -315,7 +316,7 @@ const AuctionPage = ({ staticSections }) => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        //console.log(err.message);
       });
   }
 
