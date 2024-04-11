@@ -1,4 +1,4 @@
-export let baseURL = "http://node.masplatform.net";
+export let baseURL = "https://node.masplatform.net";
 //export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageURL = "https://masplatform.net"
 export let socketURL = "wss://node.masplatform.net";
