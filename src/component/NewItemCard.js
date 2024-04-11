@@ -25,7 +25,6 @@ import {
 import { Link } from "react-router-dom";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { red } from "@material-ui/core/colors";
@@ -275,98 +274,75 @@ export default function itemCard({ data }) {
       name: '',
       surname: '',
       phoneNumber: '',
+      email: '',
       postcode: '',
       address1: '',
       address2: ''
     });
     const handleChange = (e) => {
-      const { name, value } = e.target;
+      const { name,surname, value } = e.target;
       setFormData(prevState => ({
         ...prevState,
-        [name]: value
+        [name]: value,
+        [surname]: value
+
       }));
     };
-    const handleSubmit = () => {
-      console.log("Form Data Submitted", formData);
-      onClose(); // Optionally close dialog after submission
-    };
+    const handleSubmit = async () => {
+      try {
+        console.log("data:",formData);
+        const res = await axios({
+          method: "PUT",
+          url: Apiconfigs.bill,
+          data: formData,
+          headers: {
+            token: sessionStorage.getItem("token"), // Make sure you handle the case where token might not be available
+          },
+        });
+  
+        console.log("Response from server:", res.data);
+        onClose(); // Close dialog after submission
+      } catch (error) {
+        console.error("Error submitting form:", error.message);
+        // Handle errors, maybe set an error message state and display it
+      }
+    }; [formData, onClose];
 
     return (
       <Dialog
-        open={open}
-        onClose={onClose}
-        aria-labelledby="billing-dialog-title"
-        maxWidth="sm"  // Set maximum width for the dialog
-        fullWidth={true}  // Ensure dialog stretches to the maxWidth
-      >
-        <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">Billing Information</Typography>
+      open={open}
+      onClose={onClose}
+      aria-labelledby="billing-dialog-title"
+      maxWidth="sm"
+      fullWidth={true}
+    >
+      <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
+      <DialogContent>
+        <Typography variant="body1">Please enter your billing information below:</Typography>
+        {["name", "surname", "phoneNumber","email", "postcode", "address1", "address2"].map((item) => (
           <TextField
-          margin="dense"
-          label="Name"
-          type="text"
-          fullWidth
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Surname"
-          type="text"
-          fullWidth
-          name="surname"
-          value={formData.surname}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Phone Number"
-          type="text"
-          fullWidth
-          name="phoneNumber"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Postcode"
-          type="text"
-          fullWidth
-          name="postcode"
-          value={formData.postcode}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Address Line 1"
-          type="text"
-          fullWidth
-          name="address1"
-          value={formData.address1}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          label="Address Line 2"
-          type="text"
-          fullWidth
-          name="address2"
-          value={formData.address2}
-          onChange={handleChange}
-        />
-        </DialogContent>
-        <br />
-        <Box mt={1} mb={1} textAlign="center">
-        <Button onClick={onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} color="secondary" variant="contained">
-          Buy Now
-        </Button>
+            key={item}
+            margin="dense"
+            label={item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+            type="text"
+            fullWidth
+            name={item}
+            value={formData[item]}
+            onChange={handleChange}
+          />
+        ))}
+      </DialogContent>
+      <br />
+      <Box textAlign="center" width="100%">
+          <Button onClick={onClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color="secondary" variant="contained">
+            Buy Now
+          </Button>
         </Box>
-      </Dialog>
+        <br />
+    </Dialog>
     );
   }
   

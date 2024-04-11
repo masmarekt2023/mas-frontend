@@ -1,7 +1,7 @@
-export let baseURL = "https://node.masplatform.net";
+export let baseURL = "http://localhost:1865";
 //export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageURL = "https://masplatform.net"
-export let socketURL = "wss://node.masplatform.net";
+export let socketURL = "wss://localhost:1865";
 
 /*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
    baseURL = "http://localhost:1865";
@@ -66,6 +66,7 @@ const Apiconfigs = {
     resetPassword: `${url}/user/resetPassword/`,
     Buy: `${url}/admin/Buy/`,
     price: `${url}/admin/price/`,
+    bill: `${url}/user/bill/`,
 
 
     withdraw: `${url}/blockchain/withdraw`,
