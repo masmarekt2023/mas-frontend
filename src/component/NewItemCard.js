@@ -24,6 +24,8 @@ import {
 
 import { Link } from "react-router-dom";
 import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { red } from "@material-ui/core/colors";
@@ -88,6 +90,9 @@ export default function itemCard({ data }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [openEdit, setOpenEdit] = useState(false);
   const [isVideo, setisVideo] = useState(false);
+  const [openBillingDialog, setOpenBillingDialog] = useState(false); // Manages the billing dialog
+
+
   
 
   const handleClick = (event) => {
@@ -252,7 +257,6 @@ export default function itemCard({ data }) {
     [itemData.mediaUrl4, itemData.mediaUrl5, itemData.mediaUrl6],
     [itemData.mediaUrl7, itemData.mediaUrl8, itemData.mediaUrl9],
   ];
-  
 
   useEffect(() => {
     setnbLike(itemData.likesUsers.length);
@@ -266,6 +270,106 @@ export default function itemCard({ data }) {
     }
   }, []);
 
+  function BillingDialog({ open, onClose }) {
+    const [formData, setFormData] = useState({
+      name: '',
+      surname: '',
+      phoneNumber: '',
+      postcode: '',
+      address1: '',
+      address2: ''
+    });
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
+    };
+    const handleSubmit = () => {
+      console.log("Form Data Submitted", formData);
+      onClose(); // Optionally close dialog after submission
+    };
+
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        aria-labelledby="billing-dialog-title"
+        maxWidth="sm"  // Set maximum width for the dialog
+        fullWidth={true}  // Ensure dialog stretches to the maxWidth
+      >
+        <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">Billing Information</Typography>
+          <TextField
+          margin="dense"
+          label="Name"
+          type="text"
+          fullWidth
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          label="Surname"
+          type="text"
+          fullWidth
+          name="surname"
+          value={formData.surname}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          label="Phone Number"
+          type="text"
+          fullWidth
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          label="Postcode"
+          type="text"
+          fullWidth
+          name="postcode"
+          value={formData.postcode}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          label="Address Line 1"
+          type="text"
+          fullWidth
+          name="address1"
+          value={formData.address1}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          label="Address Line 2"
+          type="text"
+          fullWidth
+          name="address2"
+          value={formData.address2}
+          onChange={handleChange}
+        />
+        </DialogContent>
+        <br />
+        <Box mt={1} mb={1} textAlign="center">
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit} color="secondary" variant="contained">
+          Buy Now
+        </Button>
+        </Box>
+      </Dialog>
+    );
+  }
+  
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -649,6 +753,27 @@ export default function itemCard({ data }) {
       </Grid>
     </Grid>
   </Box>
+   {/* Buy Now and Cancel Buttons */}
+   <Box mt={3} mb={3} textAlign="center">
+    <Button className={classes.LoginButton} onClick={handleClose2}>
+      Cancel
+    </Button>
+    &nbsp;&nbsp;
+    <Button
+      className={classes.BuyButton}
+      onClick={() => setOpenBillingDialog(true)}
+      color="secondary"  // This gives the button a distinctive color, usually the primary theme color
+      variant="contained"  // This makes the button have a filled style
+    >
+      Buy Now
+    </Button>
+  </Box>
+  <BillingDialog
+  open={openBillingDialog}
+  onClose={() => setOpenBillingDialog(false)}
+/>
+
+  
 
   {/* Login and Subscribe Buttons */}
   {!auth.userLoggedIn && (
