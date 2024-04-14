@@ -67,6 +67,7 @@ const Apiconfigs = {
     Buy: `${url}/admin/Buy/`,
     price: `${url}/admin/price/`,
     bill: `${url}/user/bill/`,
+    order: `${url}/user/order/`,
 
 
     withdraw: `${url}/blockchain/withdraw`,

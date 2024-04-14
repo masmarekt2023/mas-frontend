@@ -37,6 +37,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import ReactPlayer from "react-player";
 import AdditemDialog from "../component/AddItemDialog";
+import CloseIcon from '@material-ui/icons/Close';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,6 +76,7 @@ export default function itemCard({ data }) {
   const navigate = useNavigate();
   const classes = useStyles();
   const auth = useContext(UserContext);
+  const userData = useContext(UserContext);
 
   const [isLike, setisLike] = useState(false);
   const [nbLike, setnbLike] = useState(0);
@@ -90,6 +93,9 @@ export default function itemCard({ data }) {
   const [openEdit, setOpenEdit] = useState(false);
   const [isVideo, setisVideo] = useState(false);
   const [openBillingDialog, setOpenBillingDialog] = useState(false); // Manages the billing dialog
+  const [openImageDialog, setOpenImageDialog] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  
 
 
   
@@ -140,117 +146,7 @@ export default function itemCard({ data }) {
     itemData?.userId?.profilePic ||
     itemData?.userDetail?.profilePic ||
     `https://avatars.dicebear.com/api/miniavs/${userName}.svg`;
-  const videoFormats = [
-    "mp4",
-    "avi",
-    "wmv",
-    "mov",
-    "mkv",
-    "flv",
-    "webm",
-    "mpeg",
-    "3gp",
-    "ogv",
-  ];
-  //const itemMediaFormat = itemData.mediaUrl.split(".").slice(-1)[0];
-  //let isVideo = videoFormats.includes(itemMediaFormat);
-
-  /*const getSubscription = async () => {
-          try {
-            const data = await axios({
-              method: "GET",
-              url: `${Apiconfigs.getSubscription}/${auth.userData._id}/${itemData._id}`,
-              headers: {
-                token: sessionStorage.getItem("token"),
-              },
-            });
-            if (data.status === 200) {
-              setActiveSubscribe(data.data.result.subscriptionStatus === "ACTIVE");
-            }
-          } catch (err) {
-            console.log(err.message);
-          }
-        };*/
-
-  const subscribeToitemHandler = async () => {
-    setIsloading(true);
-    await axios({
-      method: "GET",
-      url: Apiconfigs.subscribeNow + itemData._id,
-      headers: {
-        token: sessionStorage.getItem("token"),
-      },
-    })
-      .then(async (res) => {
-        setIsloading(false);
-        if (res.data.statusCode === 200) {
-          setisSubscribed(res.data.result.subscribed === "yes");
-          setnbSubscribed(res.data.result.nb);
-          setActiveSubscribe(true);
-          setOpen2(false);
-          toast.success("Subscribe Successfully");
-          navigate("/items-details?" + itemData?._id);
-        } else {
-          toast.error(res.data.responseMessage);
-        }
-      })
-      .catch((err) => {
-        setIsloading(false);
-        console.log(err.message);
-        toast.error(err?.response?.data?.responseMessage);
-      });
-  };
-  const unSubscribeToitemHandler = async () => {
-    setIsloading(true);
-    await axios({
-      method: "DELETE",
-      url: Apiconfigs.unSubscription + itemData?._id,
-      headers: {
-        token: sessionStorage.getItem("token"),
-      },
-    })
-      .then(async (res) => {
-        setIsloading(false);
-        if (res.data.statusCode === 200) {
-          setIsloading(false);
-          toast.success("You have unsubscribed successfully.");
-          setisSubscribed(false);
-          setnbSubscribed((nb) => nb - 1);
-        } else {
-          toast.error("Something went wrong");
-        }
-      })
-      .catch((err) => {
-        toast.error("Something went wrong");
-      });
-  };
-  const likeDislikeNfthandler = async (id) => {
-    if (auth.userData?._id) {
-      try {
-        const res = await axios.get(Apiconfigs.likeDislikeNft + id, {
-          headers: {
-            token: sessionStorage.getItem("token"),
-          },
-        });
-        if (res.data.statusCode === 200) {
-          setisLike((liked) => !liked);
-          setnbLike((nb) => (isLike ? nb - 1 : nb + 1));
-        } else {
-          setisLike(false);
-          toast.error(res.data.responseMessage);
-        }
-      } catch (error) {
-        console.log("ERROR", error);
-      }
-    } else {
-      toast.error("Please login");
-    }
-  };
-
-  const downLoadFile = () => {
-    saveAs(itemData?.mediaUrl);
-  };
-
+  
   const groupedImages = [
     [itemData.mediaUrl1, itemData.mediaUrl2, itemData.mediaUrl3],
     [itemData.mediaUrl4, itemData.mediaUrl5, itemData.mediaUrl6],
@@ -269,82 +165,230 @@ export default function itemCard({ data }) {
     }
   }, []);
 
+  /*const getSubscription = async () => {
+          try {
+            const data = await axios({
+              method: "GET",
+              url: `${Apiconfigs.getSubscription}/${auth.userData._id}/${BundleData._id}`,
+              headers: {
+                token: sessionStorage.getItem("token"),
+              },
+            });
+            if (data.status === 200) {
+              setActiveSubscribe(data.data.result.subscriptionStatus === "ACTIVE");
+            }
+          } catch (err) {
+            console.log(err.message);
+          }
+        };*/
+
+        const subscribeToBundleHandler = async () => {
+          setIsloading(true);
+          await axios({
+            method: "GET",
+            url: Apiconfigs.subscribeNow + itemData._id,
+            headers: {
+              token: sessionStorage.getItem("token"),
+            },
+          })
+            .then(async (res) => {
+              setIsloading(false);
+              if (res.data.statusCode === 200) {
+                setisSubscribed(res.data.result.subscribed === "yes");
+                setnbSubscribed(res.data.result.nb);
+                setActiveSubscribe(true);
+                setOpen2(false);
+                toast.success("Subscribe Successfully");
+                navigate("/items-details?" + itemData?._id);
+              } else {
+                toast.error(res.data.responseMessage);
+              }
+            })
+            .catch((err) => {
+              setIsloading(false);
+              console.log(err.message);
+              toast.error(err?.response?.data?.responseMessage);
+            });
+        };
+        const unSubscribeToBundleHandler = async () => {
+          setIsloading(true);
+          await axios({
+            method: "DELETE",
+            url: Apiconfigs.unSubscription + itemData?._id,
+            headers: {
+              token: sessionStorage.getItem("token"),
+            },
+          })
+            .then(async (res) => {
+              setIsloading(false);
+              if (res.data.statusCode === 200) {
+                setIsloading(false);
+                toast.success("You have unsubscribed successfully.");
+                setisSubscribed(false);
+                setnbSubscribed((nb) => nb - 1);
+              } else {
+                toast.error("Something went wrong");
+              }
+            })
+            .catch((err) => {
+              toast.error("Something went wrong");
+            });
+        };
+        const likeDislikeNfthandler = async (id) => {
+          if (auth.userData?._id) {
+            try {
+              const res = await axios.get(Apiconfigs.likeDislikeNft + id, {
+                headers: {
+                  token: sessionStorage.getItem("token"),
+                },
+              });
+              if (res.data.statusCode === 200) {
+                setisLike((liked) => !liked);
+                setnbLike((nb) => (isLike ? nb - 1 : nb + 1));
+              } else {
+                setisLike(false);
+                toast.error(res.data.responseMessage);
+              }
+            } catch (error) {
+              console.log("ERROR", error);
+            }
+          } else {
+            toast.error("Please login");
+          }
+        };
+
   function BillingDialog({ open, onClose }) {
     const [formData, setFormData] = useState({
-      name: '',
-      surname: '',
-      phoneNumber: '',
-      email: '',
-      postcode: '',
-      address1: '',
-      address2: ''
+        name: '',
+        surname: '',
+        phoneNumber: '',
+        email: '',
+        postcode: '',
+        address1: '',
+        address2: '',
     });
-    const handleChange = (e) => {
-      const { name,surname, value } = e.target;
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value,
-        [surname]: value
+    const [error, setError] = useState('');
 
-      }));
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
+
     const handleSubmit = async () => {
-      try {
-        console.log("data:",formData);
-        const res = await axios({
-          method: "PUT",
-          url: Apiconfigs.bill,
-          data: formData,
-          headers: {
-            token: sessionStorage.getItem("token"), // Make sure you handle the case where token might not be available
-          },
-        });
-  
-        console.log("Response from server:", res.data);
-        onClose(); // Close dialog after submission
-      } catch (error) {
-        console.error("Error submitting form:", error.message);
-        // Handle errors, maybe set an error message state and display it
-      }
-    }; [formData, onClose];
+        try {
+            console.log("data:", formData);
+            const res = await axios({
+                method: "PUT",
+                url: Apiconfigs.bill,
+                data: formData,
+                headers: {
+                    token: sessionStorage.getItem("token") || "default-token",
+                },
+            });
+
+            console.log("Response from server:", res.data);
+            onClose();  // Close dialog after successful submission
+            return res;  // This return doesn't serve much purpose unless used elsewhere
+        } catch (error) {
+            console.error("Error submitting form:", error.message);
+            setError("Failed to submit form: " + error.message);  // Display this error in the UI
+            throw error;  // This prevents buyNow if there's an error
+        }
+    };
+
+    const buyNow = async () => {
+        try {
+            console.log("Initiating purchase:");
+            console.log("Data needed:", itemData.details, itemData.coinName, itemData.donationAmount,userName);
+            console.log("sellerId", userId);
+            console.log("ItemId", itemData._id);
+            console.log("buyerId",auth.userData._id );
+            const response = await axios({
+                method: "POST",
+                url: Apiconfigs.order + itemData._id,
+                data: {
+                    sellerId:userId,
+                    buyerId:auth.userData._id,
+                    nft1Id: itemData._id,
+                    mediaUrl: itemData.mediaUrl1,
+                    details: itemData.details,
+                    tokenName: itemData.coinName,
+                    Price: itemData.donationAmount,
+                    tokenId: sessionStorage.getItem("token") || "default-token",
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem("token") || "default-token"}`
+                }
+            });
+
+            console.log("Order response:", response.data);
+            if (response.status === 200) {
+                onClose();  // Optionally reset form state here if needed
+            } else {
+                throw new Error('Order placement failed with status: ' + response.status);
+            }
+        } catch (error) {
+            console.error("Order placement error:", error);
+            setError("Failed to place order: " + error.message);
+        }
+    };
+
+    const handleBuy = async () => {
+        try {
+            await handleSubmit();
+            await buyNow();  // Proceed to buy only if submit is successful
+        } catch (error) {
+            console.log("Unable to complete purchase:", error.message);
+        }
+    };
 
     return (
-      <Dialog
-      open={open}
-      onClose={onClose}
-      aria-labelledby="billing-dialog-title"
-      maxWidth="sm"
-      fullWidth={true}
-    >
-      <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
-      <DialogContent>
-        <Typography variant="body1">Please enter your billing information below:</Typography>
-        {["name", "surname", "phoneNumber","email", "postcode", "address1", "address2"].map((item) => (
-          <TextField
-            key={item}
-            margin="dense"
-            label={item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-            type="text"
-            fullWidth
-            name={item}
-            value={formData[item]}
-            onChange={handleChange}
-          />
-        ))}
-      </DialogContent>
-      <br />
-      <Box textAlign="center" width="100%">
-          <Button onClick={onClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color="secondary" variant="contained">
-            Buy Now
-          </Button>
-        </Box>
-        <br />
-    </Dialog>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            aria-labelledby="billing-dialog-title"
+            maxWidth="sm"
+            fullWidth={true}
+        >
+            <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
+            <DialogContent>
+                <Typography variant="body1">Please enter your billing information below:</Typography>
+                {error && <Typography color="error">{error}</Typography>}  
+                {["name", "surname", "phoneNumber", "email", "postcode", "address1", "address2"].map((item) => (
+                    <TextField
+                        key={item}
+                        margin="dense"
+                        label={item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                        type="text"
+                        fullWidth
+                        name={item}
+                        value={formData[item]}
+                        onChange={handleChange}
+                    />
+                ))}
+            </DialogContent>
+            <br />
+            <Box textAlign="center" width="100%">
+                <Button onClick={onClose} color="primary">Cancel</Button>
+                <Button onClick={handleBuy} color="secondary" variant="contained">Buy Now</Button>
+            </Box>
+            <br />
+        </Dialog>
     );
-  }
+}
+
+  const handleOpenImageDialog = (url) => {
+    setSelectedImageUrl(url);
+    setOpenImageDialog(true);
+  };
+
+  const handleCloseImageDialog = () => {
+    setOpenImageDialog(false);
+  };
   
   return (
     <Card className={classes.root}>
@@ -676,7 +720,7 @@ export default function itemCard({ data }) {
           </DialogContentText>
         </DialogContent>
       </Dialog>
-      {/* Subscribe now */}
+      {/* buy now */}
       <Dialog
         fullWidth="sm"
         maxWidth="sm"
@@ -696,6 +740,7 @@ export default function itemCard({ data }) {
               src={url}
               alt={`Media ${index * 3 + idx + 1}`}
               style={{ width: "100%", height: "150px" }}  // Adjust the size as needed
+              onClick={() => handleOpenImageDialog(url)}
             />
           </Grid>
         ))}
@@ -708,7 +753,7 @@ export default function itemCard({ data }) {
   </Box>
   <Box mt={2} className={classes.deskiText}>
     <Typography variant="h4" align="left" color="textSecondary">
-      Donation amount:
+      Price:
       <span>
         {itemData.donationAmount} {itemData.coinName}
       </span>
@@ -769,6 +814,24 @@ export default function itemCard({ data }) {
     </Box>
   )}
 </DialogContent>
+      {/* New Image Dialog */}
+      <Dialog
+        open={openImageDialog}
+        onClose={handleCloseImageDialog}
+        aria-labelledby="image-dialog-title"
+        fullWidth
+        maxWidth="md"
+      >
+        <IconButton
+          onClick={handleCloseImageDialog}
+          style={{ position: 'absolute', right: '10px', top: '10px' }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent>
+          <img src={selectedImageUrl} alt="Selected" style={{ width: '100%' }} />
+        </DialogContent>
+      </Dialog>
 
       </Dialog>
 

@@ -20,7 +20,7 @@ import axios from "axios";
 import Apiconfigs from "../Apiconfig/Apiconfigs";
 import { tokensDetails } from "../constants/index";
 import DeleteIcon from "@material-ui/icons/Delete";
-
+import CloudUploadIcon from "@material-ui/icons/CloudUpload"
 import { toast } from "react-toastify";
 
 const AdditemDialog = ({ show, handleClose, itemData }) => {
@@ -112,7 +112,7 @@ const AdditemDialog = ({ show, handleClose, itemData }) => {
     return (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px', marginBottom: '20px' }}>
             <div className={classes.mediaBoxHeader}>
-                Download your images here
+                Upload your images here
             </div>
             {mediaUrls.map((url, index) => (
                 <Box key={index} className={classes.mediaPreview}>
@@ -124,9 +124,19 @@ const AdditemDialog = ({ show, handleClose, itemData }) => {
             ))}
             {Array.from({ length: emptySlots }, (_, i) => (
                 <Box key={i + mediaUrls.length} className={classes.emptyBox} onClick={() => document.getElementById('file-input').click()}>
-                    <div className={classes.plusIcon}>+</div>
+                    <CloudUploadIcon style={{ color: '#ccc', fontSize: 24 }} />
                 </Box>
             ))}
+            {uploadCounter > 0 && (
+          <div className={classes.uploadCounter}>
+            <CloudUploadIcon
+              fontSize={"large"}
+              style={{ color: "rgb(192, 72, 72)" }}
+              className={classes.uploadCounterIcon}
+            />
+            <p>Uploading {uploadCounter}%</p>
+          </div>
+        )}
         </div>
     );
 }
@@ -571,16 +581,17 @@ plusIcon: {
   color: '#ccc',
 },
 
-
 uploadCounter: {
-    position: "relative",
-    marginTop: 30,
-    padding: 20,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  position: "relative",
+  marginTop: 30,
+  padding: 20,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center", // Ensures vertical centering in the column
+  alignItems: "center", // Centers content horizontally
+  width: '100%', // Ensures it takes the full width of its container
+  textAlign: 'center', // Centers any text inside the div
+},
 
   uploadCounterIcon: {
     position: "absolute",
