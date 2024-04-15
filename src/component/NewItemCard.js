@@ -96,6 +96,7 @@ export default function ItemCard({ data }) {
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
   
+  
 
 
   
@@ -257,7 +258,7 @@ export default function ItemCard({ data }) {
           }
         };
 
-  function BillingDialog({ open, onClose }) {
+  function BillingDialog({ open, onClose, onSuccessfulPurchase }) {
     const [formData, setFormData] = useState({
         name: '',
         surname: '',
@@ -291,6 +292,7 @@ export default function ItemCard({ data }) {
 
             console.log("Response from server:", res.data);
             onClose();  // Close dialog after successful submission
+            onSuccessfulPurchase();
             return res;  // This return doesn't serve much purpose unless used elsewhere
         } catch (error) {
             console.error("Error submitting form:", error.message);
@@ -307,22 +309,21 @@ export default function ItemCard({ data }) {
             console.log("ItemId", itemData._id);
             console.log("buyerId",auth.userData._id );
             const response = await axios({
-                method: "POST",
-                url: Apiconfigs.order + itemData._id,
+                method: "PUT",
+                url: Apiconfigs.order ,
                 data: {
-                    sellerId:userId,
-                    buyerId:auth.userData._id,
+                    //sellerId:userId, 
+                    //buyerId:auth.userData._id,
                     nft1Id: itemData._id,
-                    mediaUrl: itemData.mediaUrl1,
-                    details: itemData.details,
-                    tokenName: itemData.coinName,
-                    Price: itemData.donationAmount,
-                    tokenId: sessionStorage.getItem("token") || "default-token",
+                    //mediaUrl: itemData.mediaUrl1,
+                    //details: itemData.details,
+                    //tokenName: itemData.coinName,
+                    //Price: itemData.donationAmount,
+                    
                 },
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${sessionStorage.getItem("token") || "default-token"}`
-                }
+                  token: sessionStorage.getItem("token"),
+                },
             });
 
             console.log("Order response:", response.data);
@@ -388,6 +389,10 @@ export default function ItemCard({ data }) {
 
   const handleCloseImageDialog = () => {
     setOpenImageDialog(false);
+  };
+
+  const handleCloseParentDialog = () => {
+    setOpen2(false); // This assumes `setOpen2` is the state setter for controlling the visibility of the parent dialog
   };
   
   return (
@@ -792,6 +797,7 @@ export default function ItemCard({ data }) {
   <BillingDialog
   open={openBillingDialog}
   onClose={() => setOpenBillingDialog(false)}
+  onSuccessfulPurchase={handleCloseParentDialog} 
 />
 
   
