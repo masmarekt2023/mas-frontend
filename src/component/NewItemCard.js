@@ -31,7 +31,7 @@ import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { toast } from "react-toastify";
-import { saveAs } from "file-saver";
+
 
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
@@ -72,11 +72,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function itemCard({ data }) {
+export default function ItemCard({ data }) {
   const navigate = useNavigate();
   const classes = useStyles();
   const auth = useContext(UserContext);
-  const userData = useContext(UserContext);
+  
 
   const [isLike, setisLike] = useState(false);
   const [nbLike, setnbLike] = useState(0);

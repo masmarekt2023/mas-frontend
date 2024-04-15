@@ -23,6 +23,7 @@ const Apiconfigs = {
     getMyfeed: `${url}/user/getMyFeed`,
     myauction: `${url}/nft/listNFT`,
     mynft: `${url}/nft/nft/`,
+    mynft1: `${url}/nft/nft1/`,
     bundleList: `${url}/nft/bundleList`,
     nftall: `${url}/nft/allNftList`,
     likeDislikeFeed: `${url}/user/likeDislikeFeed/`,
@@ -30,6 +31,8 @@ const Apiconfigs = {
     transactionList: `${url}/user/transactionList/`,
 
     mysubscription: `${url}/user/mySubscriptions`,
+    mypurchases: `${url}/user/mypurchases`,
+    mysales: `${url}/user/mysales`,
     delnft: `${url}/nft/nft/`,
     listorder: `${url}/order/listOrder`,
     ipfsupload: `${url}/nft/ipfsUpload`,

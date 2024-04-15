@@ -363,7 +363,7 @@ const currencies = [
     label: "PRIVATE",
   },
 ];
-export default function ItemDetails() {
+export default function itemDetails() {
   const navigate = useNavigate();
   const auth = useContext(UserContext);
   const location = useLocation();
@@ -376,7 +376,7 @@ export default function ItemDetails() {
     type: "",
   });
 
-  const [ItemDetails, setItemDetails] = useState({});
+  const [itemDetails, setitemDetails] = useState({});
   const [isVideo, setIsVideo] = useState(false);
   const [openBuy, setOpenBuy] = useState(false);
   const [contentList, setContentList] = useState([]);
@@ -400,19 +400,19 @@ export default function ItemDetails() {
       searchKey: "",
       type: "",
     });
-    getItemContentListHandler(ItemDetails?._id);
+    getItemContentListHandler(itemDetails?._id);
     setIsFilterTrue(false);
   };
-  const getItemDetailsHandler = async (id) => {
+  const getitemDetailsHandler = async (id) => {
     try {
       setIsLoadingItemView(true);
       const res = await axios({
         method: "GET",
-        url: Apiconfigs.mynft + id,
+        url: Apiconfigs.mynft1 + id,
       });
       if (res.data.statusCode === 200) {
         console.log("responseItemDeatils-----", res.data.result);
-        setItemDetails(res.data.result);
+        setitemDetails(res.data.result);
         getItemContentListHandler(res.data.result._id);
         setIsLoadingItemView(false);
         const filterFunForCurrentSubscriber =
@@ -460,7 +460,7 @@ export default function ItemDetails() {
   useEffect(() => {
     const ItemId = location.search.split("?");
     if (ItemId[1]) {
-      getItemDetailsHandler(ItemId[1]);
+      getitemDetailsHandler(ItemId[1]);
       setItemId(ItemId[1]);
     }
   }, [location]);
@@ -472,16 +472,16 @@ export default function ItemDetails() {
       selectedFilter.type !== ""
     ) {
       if (isFilterTrue) {
-        getItemContentListHandler(ItemDetails?._id);
+        getItemContentListHandler(itemDetails?._id);
       }
     }
   }, [selectedFilter, isFilterTrue]);
 
   useEffect(() => {
-    if (ItemDetails.mediaUrl) {
-      setIsVideo(handleVideo(ItemDetails.mediaUrl));
+    if (itemDetails.mediaUrl) {
+      setIsVideo(handleVideo(itemDetails.mediaUrl));
     }
-  }, [ItemDetails]);
+  }, [itemDetails]);
   const subscribeNowHandler = async (isCheck) => {
     // if (parseFloat(auth?.userData?.masBalance) > 0) {
     setIsloading(true);
@@ -497,7 +497,7 @@ export default function ItemDetails() {
         if (res.data.statusCode === 200) {
           auth.updateUserData();
           toast.success("You have subscribed successfully");
-          getItemDetailsHandler(bunfleId);
+          getitemDetailsHandler(bunfleId);
           // if (callbackFn) {
           //   callbackFn()
           // }
@@ -535,7 +535,7 @@ export default function ItemDetails() {
           auth.updateUserData();
           setIsSubscribed(false);
           toast.success("You have unsubscribed successfully.");
-          getItemDetailsHandler(bunfleId);
+          getitemDetailsHandler(bunfleId);
         } else {
           toast.error("Something went wrong");
         }
@@ -561,7 +561,7 @@ export default function ItemDetails() {
                 <Box>
                   <Box className={classes.profileimg}>
                     <ReactPlayer
-                      url={ItemDetails?.mediaUrl1}
+                      url={itemDetails?.mediaUrl1}
                       playing
                       controls
                       width={"100%"}
@@ -571,28 +571,28 @@ export default function ItemDetails() {
                 </Box>
               ) : (
                 <Box
-                  //style={{ background: `url(${ItemDetails?.mediaUrl})` }}
+                  //style={{ background: `url(${itemDetails?.mediaUrl})` }}
                   className={classes.profileimg}
                 >
                   <img
-                    src={ItemDetails?.mediaUrl1}
+                    src={itemDetails?.mediaUrl1}
                     style={{ width: "100%", height: "100%" }}
                   />
                 </Box>
               )}
               <Box className={`${classes.text1} seats`}>
                 <Typography variant="h2">
-                  {ItemDetails?.ItemName ? ItemDetails?.ItemName : ""}
+                  {itemDetails?.ItemName ? itemDetails?.ItemName : ""}
                 </Typography>
                 <Typography
                   variant="h5"
                   dangerouslySetInnerHTML={{
-                    __html: ItemDetails?.details,
+                    __html: itemDetails?.details,
                   }}
                   className={classes.textColor}
                 ></Typography>
                 {/* <Typography variant="h5">
-                  {ItemDetails?.details ? ItemDetails?.details : ''}
+                  {itemDetails?.details ? itemDetails?.details : ''}
                 </Typography> */}
                 <Box mt={1}>
                   <Box
@@ -602,8 +602,8 @@ export default function ItemDetails() {
                   >
                     <Typography variant="h4">Donation Amount:</Typography>&nbsp;
                     <Typography variant="h4">
-                      {ItemDetails?.donationAmount
-                        ? ItemDetails?.donationAmount
+                      {itemDetails?.donationAmount
+                        ? itemDetails?.donationAmount
                         : "0"}
                       MAS
                     </Typography>
@@ -615,10 +615,10 @@ export default function ItemDetails() {
                   >
                     <Typography variant="h4">Time Duration:</Typography>&nbsp;
                     <Typography variant="h4">
-                      {ItemDetails?.duration ? ItemDetails?.duration : "0"}
+                      {itemDetails?.duration ? itemDetails?.duration : "0"}
                     </Typography>
                   </Box>
-                  {/*{auth?.userData?._id !== ItemDetails?.userId && (
+                  {/*{auth?.userData?._id !== itemDetails?.userId && (
                     <Box
                       display="flex"
                       alignItems="center"
@@ -654,8 +654,8 @@ export default function ItemDetails() {
                 onClick={() => setOpenBuy(true)}
               >
                 <Typography variant="h2">
-                  {ItemDetails?.subscribers
-                    ? ItemDetails?.subscribers?.length
+                  {itemDetails?.subscribers
+                    ? itemDetails?.subscribers?.length
                     : "0"}
                 </Typography>
                 <Typography variant="h5">Subscribers</Typography>
@@ -790,7 +790,7 @@ export default function ItemDetails() {
                   auth={auth}
                   isLoadingConetent={isLoadingConetent}
                   isSubscribed={isSubscribed}
-                  ItemDetails={ItemDetails}
+                  itemDetails={itemDetails}
                 />
               </Box>
             </Grid>

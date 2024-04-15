@@ -18,7 +18,7 @@ export default function Itembox({
   auth,
   isLoadingConetent,
   isSubscribed,
-  bundleDetails,
+  itemDetails,
 }) {
   const classes = useStyles()
   return (
@@ -35,7 +35,7 @@ export default function Itembox({
                     key={i}
                     auth={auth}
                     isSubscribed={isSubscribed}
-                    bundleDetails={bundleDetails}
+                    itemDetails={itemDetails}
                   />
                 </Box>
               </Grid>

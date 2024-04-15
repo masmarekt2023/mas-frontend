@@ -5,6 +5,8 @@ import Page from "src/component/Page";
 import Auction from "./Auction";
 import Bundles from "./Bundles";
 import Items from "./Items";
+import Purchases from "./purchases";
+import Sales from "./sales";
 import Subscriptions from "./Subscriptions";
 import Feed from "./Feed";
 import MyBids from "./MyBids";
@@ -70,6 +72,18 @@ export default function Activity() {
               </Button>
             )}
             <Button
+              className={tabview === "purchases" ? classes.active : " "}
+              onClick={() => setTabView("purchases")}
+            >
+              My purchases
+            </Button>
+            <Button
+              className={tabview === "sales" ? classes.active : " "}
+              onClick={() => setTabView("sales")}
+            >
+              My sales
+            </Button>
+            <Button
               className={tabview === "subscriptions" ? classes.active : " "}
               onClick={() => setTabView("subscriptions")}
             >
@@ -125,6 +139,8 @@ export default function Activity() {
           <Box>
             {tabview === "bundles" && <Bundles />}
             {tabview === "items" && <Items />}
+            {tabview === "purchases" && <Purchases/>}
+            {tabview === "sales" && <Sales/>}
             {tabview === "subscriptions" && <Subscriptions />}
             {tabview === "subscribe" && <UserDetails type="subscribers" />}
             {tabview === "feed" && <Feed />}
