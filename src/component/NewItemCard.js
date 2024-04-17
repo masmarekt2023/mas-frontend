@@ -313,7 +313,7 @@ export default function ItemCard({ data }) {
                 url: Apiconfigs.order ,
                 data: {
                     //sellerId:userId, 
-                    //buyerId:auth.userData._id,
+                    userBuyer:auth.userData._id,
                     nft1Id: itemData._id,
                     //mediaUrl: itemData.mediaUrl1,
                     //details: itemData.details,
@@ -534,7 +534,7 @@ export default function ItemCard({ data }) {
               disabled={isSubscribed && activeSubscribe}
               onClick={() => (activeSubscribe ? {} : handleClickOpen2())}
             >
-              {activeSubscribe ? "Subscribed" : "Renew"}
+              {activeSubscribe ? "Buyed" : "Renew"}
             </Button>
           )}
         {auth?.userData?._id !== userId && !isSubscribed && (

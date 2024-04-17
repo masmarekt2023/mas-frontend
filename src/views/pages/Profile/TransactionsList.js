@@ -238,15 +238,19 @@ export default function TransactionsList() {
                           : { color: "black" }
                       }
                       onClick={() => {
-                        if (row.transactionType === "Withdraw" || row.transactionType === "Donation") {
+                        if (row.transactionType === "Withdraw" || row.transactionType === "Donation" ) {
                           navigate("/user-profile/"+row.userId.userName);
                         }
                       }}
                       >
                         {
-                          (row.transactionType === "Withdraw" || row.transactionType === "Donation") ? row.userId.userName : 
-                          row.transactionType === "Deposit" ? sortAddress(row.fromAddress) : "N/A"
-                        }
+                          (row.transactionType === "Withdraw" || 
+                          row.transactionType === "Donation"||
+                          row.transactionType === "buying") ? row.userId.userName : 
+                          row.transactionType === "Deposit" ? sortAddress(row.fromAddress) : "N/A"  
+                          
+                          }
+                          
                       </TableCell>
                       <TableCell
                         style={
