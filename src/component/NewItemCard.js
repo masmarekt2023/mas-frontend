@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Apiconfigs, { pageURL } from "src/Apiconfig/Apiconfigs";
@@ -95,11 +95,7 @@ export default function ItemCard({ data }) {
   const [openBillingDialog, setOpenBillingDialog] = useState(false); // Manages the billing dialog
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
-  
-  
 
-
-  
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -269,6 +265,16 @@ export default function ItemCard({ data }) {
         address2: '',
     });
     const [error, setError] = useState('');
+    const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+    const [continueClicked, setContinueClicked] = useState(false);
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+      // This function runs when the component mounts and sets up the isMounted ref
+      return () => {
+          isMounted.current = false; // Set isMounted to false on cleanup
+      };
+  }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -291,15 +297,16 @@ export default function ItemCard({ data }) {
             });
 
             console.log("Response from server:", res.data);
-            onClose();  // Close dialog after successful submission
-            onSuccessfulPurchase();
-            return res;  // This return doesn't serve much purpose unless used elsewhere
-        } catch (error) {
-            console.error("Error submitting form:", error.message);
-            setError("Failed to submit form: " + error.message);  // Display this error in the UI
-            throw error;  // This prevents buyNow if there's an error
-        }
-    };
+            if (isMounted.current) {
+              setShowConfirmationDialog(true);
+          }
+      } catch (error) {
+          console.error("Error submitting form:", error);
+          if (isMounted.current) {
+              setError("Failed to submit form: " + error.message);
+          }
+      }
+  };
 
     const buyNow = async () => {
         try {
@@ -328,26 +335,45 @@ export default function ItemCard({ data }) {
 
             console.log("Order response:", response.data);
             if (response.status === 200) {
-                onClose();  // Optionally reset form state here if needed
-            } else {
-                throw new Error('Order placement failed with status: ' + response.status);
-            }
-        } catch (error) {
-            console.error("Order placement error:", error);
-            setError("Failed to place order: " + error.message);
-        }
-    };
+              onSuccessfulPurchase();  // Callback to indicate successful purchase
+          } else {
+              throw new Error('Order placement failed with status: ' + response.status);
+          }
+      } catch (error) {
+          console.error("Order placement error:", error);
+          if (isMounted.current) {
+              setError("Failed to place order: " + error.message);
+          }
+      }
+  };
+
 
     const handleBuy = async () => {
         try {
             await handleSubmit();
-            await buyNow();  // Proceed to buy only if submit is successful
         } catch (error) {
+          if (isMounted.current) {
             console.log("Unable to complete purchase:", error.message);
-        }
+        }}
     };
 
+    const handleContinue = async () => {
+      await buyNow();
+  };
+  const downloadPDF = () => {
+    console.log("Downloading PDF...");
+    const pdfUrl = "your-pdf-download-url"; // Ensure this URL is correct
+    window.open(pdfUrl, '_blank'); // Opens the PDF in a new tab/window
+    setShowConfirmationDialog(false); // Close the dialog after downloading the PDF
+};
+  const handleCancel = () => {
+    setShowConfirmationDialog(false);  // Close dialog on cancel
+    onClose();  // Also close the main dialog
+};
+  
+  
     return (
+      <>
         <Dialog
             open={open}
             onClose={onClose}
@@ -379,6 +405,19 @@ export default function ItemCard({ data }) {
             </Box>
             <br />
         </Dialog>
+        
+        <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="confirmation-dialog-title" maxWidth="sm" fullWidth={true}>
+                <DialogTitle id="confirmation-dialog-title">Confirm Purchase</DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1">Please confirm your purchase details are correct. You can download your bill now or continue to finalize your purchase.</Typography>
+                    <Box textAlign="center" mt={2}>
+                        <Button onClick={downloadPDF} color="primary" variant="contained">Download Bill</Button>
+                        <Button onClick={handleContinue} color="primary" variant="contained" >Continue</Button>
+                        <Button onClick={handleCancel} color="primary">Cancel</Button>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
 
