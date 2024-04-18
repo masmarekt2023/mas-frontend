@@ -265,7 +265,8 @@ export default function TransactionsList() {
                         }}
                       >
                         { 
-                         (row.transactionType == "Donation") ?  row.toDonationUser.userName :  
+                         (row.transactionType == "Donation" ||
+                         row.transactionType === "buying") ?  row.toDonationUser.userName :  
                          (row.transactionType == "Withdraw") ? sortAddress(row.recipientAddress) : auth.userData.userName
                         }
                       </TableCell>
