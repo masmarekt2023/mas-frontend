@@ -31,6 +31,7 @@ import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { toast } from "react-toastify";
+import ButtonCircularProgress from "./ButtonCircularProgress";
 
 
 import MenuItem from "@material-ui/core/MenuItem";
@@ -907,8 +908,10 @@ export default function ItemCard({ data }) {
       onClick={() => setOpenBillingDialog(true)}
       color="secondary"  // This gives the button a distinctive color, usually the primary theme color
       variant="contained"  // This makes the button have a filled style
+      disabled={isLoading}
     >
-      Buy Now
+      {isLoading ? "pending..." : "Buy Now"}
+      {isLoading && <ButtonCircularProgress />}
     </Button>
   </Box>
   <BillingDialog
