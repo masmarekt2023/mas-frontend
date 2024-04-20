@@ -254,7 +254,7 @@ export default function ItemCard({ data }) {
           }
         };
 
-  function BillingDialog({ open, onClose, onSuccessfulPurchase }) {
+  function BillingDialog({ open, onClose }) {
     const [formData, setFormData] = useState({
         name: '',
         surname: '',
@@ -266,7 +266,6 @@ export default function ItemCard({ data }) {
     });
     const [error, setError] = useState('');
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-    const [continueClicked, setContinueClicked] = useState(false);
     const isMounted = useRef(true);
 
     useEffect(() => {
@@ -297,16 +296,16 @@ export default function ItemCard({ data }) {
             });
 
             console.log("Response from server:", res.data);
+            if (res.status !== 200) {
+                throw new Error('Form submission failed with status: ' + res.status);
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
             if (isMounted.current) {
-              setShowConfirmationDialog(true);
-          }
-      } catch (error) {
-          console.error("Error submitting form:", error);
-          if (isMounted.current) {
-              setError("Failed to submit form: " + error.message);
-          }
-      }
-  };
+                setError("Failed to submit form: " + error.message);
+            }
+        }
+    };
 
     const buyNow = async () => {
         try {
@@ -334,42 +333,40 @@ export default function ItemCard({ data }) {
             });
 
             console.log("Order response:", response.data);
-            if (response.status === 200) {
-              onSuccessfulPurchase();  // Callback to indicate successful purchase
-          } else {
-              throw new Error('Order placement failed with status: ' + response.status);
-          }
-      } catch (error) {
-          console.error("Order placement error:", error);
-          if (isMounted.current) {
-              setError("Failed to place order: " + error.message);
-          }
-      }
-  };
+            if (response.status !== 200) {
 
-
-    const handleBuy = async () => {
-        try {
-            await handleSubmit();
+                throw new Error('Order placement failed with status: ' + response.status);
+            }
         } catch (error) {
-          if (isMounted.current) {
-            console.log("Unable to complete purchase:", error.message);
-        }}
+            console.error("Order placement error:", error);
+            if (isMounted.current) {
+                setError("Failed to place order: " + error.message);
+            }
+        }
     };
 
-    const handleContinue = async () => {
-      await buyNow();
-  };
-  const downloadPDF = () => {
+    const handleBuy = async () => {
+      try {
+          await handleSubmit();
+          await buyNow();
+          if (isMounted.current) {
+              setShowConfirmationDialog(true);
+          }
+      } catch (error) {
+          console.error("Unable to complete purchase:", error.message);
+      }
+    };
+    const downloadPDF = () => {
     console.log("Downloading PDF...");
     const pdfUrl = "your-pdf-download-url"; // Ensure this URL is correct
     window.open(pdfUrl, '_blank'); // Opens the PDF in a new tab/window
-    setShowConfirmationDialog(false); // Close the dialog after downloading the PDF
-};
+    handleCancel();
+    };
   const handleCancel = () => {
     setShowConfirmationDialog(false);  // Close dialog on cancel
     onClose();  // Also close the main dialog
-};
+    setOpen2(false);
+    };
   
   
     return (
@@ -406,17 +403,16 @@ export default function ItemCard({ data }) {
             <br />
         </Dialog>
         
-        <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="confirmation-dialog-title" maxWidth="sm" fullWidth={true}>
-                <DialogTitle id="confirmation-dialog-title">Confirm Purchase</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">Please confirm your purchase details are correct. You can download your bill now or continue to finalize your purchase.</Typography>
-                    <Box textAlign="center" mt={2}>
-                        <Button onClick={downloadPDF} color="primary" variant="contained">Download Bill</Button>
-                        <Button onClick={handleContinue} color="primary" variant="contained" >Continue</Button>
-                        <Button onClick={handleCancel} color="primary">Cancel</Button>
-                    </Box>
-                </DialogContent>
-            </Dialog>
+        <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="successed-dialog-title" maxWidth="sm" fullWidth={true}>
+            <DialogTitle id="successed-dialog-title">successed Purchase</DialogTitle>
+            <DialogContent>
+                <Typography variant="body1"> your purchase successed.... You can download your bill now.</Typography>
+                <Box textAlign="center" mt={2}>
+                    <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
+                    <Button onClick={handleCancel} color="primary">Cancel</Button>
+                </Box>
+            </DialogContent>
+        </Dialog>
         </>
     );
 }
