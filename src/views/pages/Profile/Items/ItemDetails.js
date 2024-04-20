@@ -351,6 +351,17 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: "400",
     },
   },
+  galleryContainer: {
+    display: 'flex',        // Enables flexbox
+    flexDirection: 'row',   // Children in a row
+    flexWrap: 'wrap',       // Allows wrapping items to the next line if no space
+    justifyContent: 'center', // Centers items horizontally if there's extra space
+    gap: theme.spacing(2),  // Adds space between the boxes
+  },
+  profileimg1: {
+    width: 'calc(10% - theme.spacing(5))', // Three images per row, adjust for gap
+    height: 'auto', // Keeps image aspect ratio
+  }
 }));
 
 const currencies = [
@@ -546,6 +557,7 @@ export default function itemDetails() {
   };
 
   return (
+    <>
     <Box className={classes.root}>
       {isLoadingBunldeView ? (
         <Loader />
@@ -605,7 +617,7 @@ export default function itemDetails() {
                       {itemDetails?.donationAmount
                         ? itemDetails?.donationAmount
                         : "0"}
-                      MAS
+                      {itemDetails.coinName}
                     </Typography>
                   </Box>
                   <Box
@@ -618,33 +630,6 @@ export default function itemDetails() {
                       {itemDetails?.duration ? itemDetails?.duration : "0"}
                     </Typography>
                   </Box>
-                  {/*{auth?.userData?._id !== itemDetails?.userId && (
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      className={classes.ItemData}
-                    >
-                      <Button
-                        color="secondary"
-                        size="large"
-                        variant="contained"
-                        onClick={() => {
-                          if(isLogin) {
-                          if (isSubscribed) {
-                            unSubscribeNowHandler();
-                          } else {
-                            subscribeNowHandler();
-                          }} else {
-                            navigate("/login");
-                          }
-                        }}
-                        disabled={isLoading}
-                      >
-                        {isSubscribed ? "Unsubscribe" : "Subscribe"}
-                        {isLoading && <ButtonCircularProgress />}
-                      </Button>
-                    </Box>
-                  )}*/}
                 </Box>
               </Box>
             </Box>
@@ -658,146 +643,39 @@ export default function itemDetails() {
                     ? itemDetails?.subscribers?.length
                     : "0"}
                 </Typography>
-                <Typography variant="h5">Subscribers</Typography>
+                <Typography variant="h5">buyers</Typography>
               </Box>
-              <Button
-                onClick={() => setShowSearch((prevState) => !prevState)}
-                style={{ marginTop: 10 }}
-              >
-                <SearchIcon fontSize={"large"} />
-              </Button>
             </Box>
           </Box>
-          <Collapse in={showSearch}>
-            <Box className={classes.whitebox}>
-              <Container>
-                <Box className={classes.idtxt}>
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} md={8} className={classes.dlflex}>
-                      <label>Start date:</label>
-                      <TextField
-                        id="datetime-local"
-                        onChange={_onInputChange}
-                        name="startDate"
-                        value={selectedFilter.startDate}
-                        type="datetime-local"
-                        defaultValue="2021-09-12T23:08"
-                        className={classes.textField}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        fullWidth
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} md={8} className={classes.dlflex}>
-                      <label>End date:</label>
-                      <TextField
-                        id="datetime-local"
-                        onChange={_onInputChange}
-                        value={selectedFilter.endDate}
-                        name="endDate"
-                        type="datetime-local"
-                        defaultValue="2021-09-12T23:08"
-                        className={classes.textField}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        fullWidth
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} md={8} className={classes.dlflex}>
-                      <label>Search</label>
-                      <Input
-                        placeholder="Search by title"
-                        className={classes.input_fild2}
-                        value={selectedFilter.searchKey}
-                        fullWidth
-                        type="text"
-                        name="searchKey"
-                        onChange={_onInputChange}
-                        endAdornment={
-                          <InputAdornment position="end">
-                            <IconButton>
-                              <SearchIcon />
-                            </IconButton>
-                          </InputAdornment>
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} md={8} className={classes.dlflex}>
-                      <label> Select post type </label>
-                      <Box>
-                        <Select
-                          fullWidth
-                          value={selectedFilter.type}
-                          name="type"
-                          onChange={_onInputChange}
-                        >
-                          {currencies.map((data, i) => {
-                            return (
-                              <MenuItem key={data.value} value={data.value}>
-                                {data.label}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                  <Grid container spacing={0}>
-                    <Grid item xs={12} md={8} className={classes.dlflex}>
-                      <Box className={classes.buttonBox}>
-                        <Button
-                          color="secondary"
-                          size="large"
-                          variant="contained"
-                          style={{ marginRight: "10px" }}
-                          onClick={() =>
-                            isLogin ? setIsFilterTrue(true) : navigate("/login")
-                          }
-                        >
-                          Apply
-                        </Button>
-                        <Button
-                          variant="contained"
-                          size="large"
-                          color="primary"
-                          onClick={() =>
-                            isLogin ? clearFilterHandler() : navigate("/login")
-                          }
-                        >
-                          Clear
-                        </Button>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Container>
-            </Box>
-          </Collapse>
           <Grid container spacing={3}>
             <Grid item md={12} sm={12} xs={12} lg={12}>
               <Box>
-                <All
-                  contentList={contentList}
-                  auth={auth}
-                  isLoadingConetent={isLoadingConetent}
-                  isSubscribed={isSubscribed}
-                  itemDetails={itemDetails}
-                />
+                
+                
+                
               </Box>
             </Grid>
           </Grid>
+          
         </Container>
       )}
     </Box>
+
+    <Box className={classes.galleryContainer}>
+      {Array.from({ length: 9 }).map((_, index) => (
+        <Box className={classes.profileimg1} key={index}>
+          <img
+            src={itemDetails?.[`mediaUrl${index + 1}`]}
+            alt={`Profile Image ${index + 1}`}
+            style={{ width: "100%", height: "100%" }}
+            onError={(e) => (e.target.src = "defaultImage.png")} // Fallback image
+          />
+        </Box>
+      ))}
+    </Box>
+
+
+    </>
   );
 
   function handleVideo(url) {
