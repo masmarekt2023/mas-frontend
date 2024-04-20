@@ -38,6 +38,9 @@ import Menu from "@material-ui/core/Menu";
 import ReactPlayer from "react-player";
 import AdditemDialog from "../component/AddItemDialog";
 import CloseIcon from '@material-ui/icons/Close';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import bwipjs from 'bwip-js';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -267,6 +270,8 @@ export default function ItemCard({ data }) {
     const [error, setError] = useState('');
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const isMounted = useRef(true);
+    const [showBillDialog, setShowBillDialog] = useState(false);
+
 
     useEffect(() => {
       // This function runs when the component mounts and sets up the isMounted ref
@@ -356,12 +361,78 @@ export default function ItemCard({ data }) {
           console.error("Unable to complete purchase:", error.message);
       }
     };
+    const generateSerialNumber = () => {
+      const now = new Date();
+      return 'SN' + now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString() + now.getMinutes().toString() + now.getSeconds().toString() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+  }
+  const generatePDF = async (formData, itemData) => {
+    const doc = new jsPDF();
+
+    const serialNumber = generateSerialNumber(); // Generate serial number
+
+    // Create an element to render the barcode into (a canvas)
+    const canvas = document.createElement("canvas");
+    let barcodeDataUrl = null; // Declare outside to widen scope
+
+    try {
+        bwipjs.toCanvas(canvas, {
+            bcid: 'code128',       // Barcode type
+            text: serialNumber,    // Text to encode
+            scale: 3,              // 3x scaling factor
+            height: 10,            // Bar height, in millimeters
+            includetext: true,     // Include text in the barcode
+            textxalign: 'center',  // Center-align text
+        });
+
+        barcodeDataUrl = canvas.toDataURL("image/png"); // Convert canvas to data URL
+    } catch (error) {
+        console.error('Barcode generation failed:', error);
+        // Consider handling the failure case, possibly with a fallback or a message
+    }
+
+    const tableColumn = ["Field", "Value"];
+    const tableRows = [];
+
+    // Extract data from formData to populate the table
+    Object.entries(formData).forEach(([key, value]) => {
+        const field = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
+        const rowData = [field, value];
+        tableRows.push(rowData);
+    });
+
+    // Additional data from itemData
+    tableRows.push(["Price", `${itemData.donationAmount} ${itemData.coinName}`]);
+    tableRows.push(["Details", `${itemData.details}`]);
+    tableRows.push(["Serial Number", serialNumber]);
+
+    // Title of the document
+    doc.text("Billing Information", 14, 15);
+    // Adding the table to the PDF
+    autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 40,
+    });
+
+    // If barcode is generated, position it at the top right
+    if (barcodeDataUrl) {
+      // Assuming the width of your barcode is about 50mm (adjust as necessary)
+      const pageWidth = 210;  // A4 width in mm
+      const barcodeWidth = 50;  // Width in mm
+      const marginRight = 10;  // Right margin in mm
+      const marginTop = 10;    // Top margin in mm
+      doc.addImage(barcodeDataUrl, 'PNG', pageWidth - marginRight - barcodeWidth, marginTop, barcodeWidth, 20); // Height adjusted to 20mm
+  }
+  
+
+    // Save the PDF
+    doc.save("billing-information.pdf");
+};
     const downloadPDF = () => {
-    console.log("Downloading PDF...");
-    const pdfUrl = "your-pdf-download-url"; // Ensure this URL is correct
-    window.open(pdfUrl, '_blank'); // Opens the PDF in a new tab/window
-    handleCancel();
-    };
+      console.log("Preparing to display bill...");
+      generatePDF(formData, itemData);
+      handleCancel();  // Assuming you still want to close the confirmation dialog
+  };
   const handleCancel = () => {
     setShowConfirmationDialog(false);  // Close dialog on cancel
     onClose();  // Also close the main dialog
@@ -412,6 +483,17 @@ export default function ItemCard({ data }) {
                     <Button onClick={handleCancel} color="primary">Cancel</Button>
                 </Box>
             </DialogContent>
+        </Dialog>
+
+        <Dialog open={showBillDialog} onClose={() => setShowBillDialog(false)} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth>
+            <DialogTitle id="bill-dialog-title">Your Bill</DialogTitle>
+            <DialogContent>
+                <iframe src="your-pdf-download-url" style={{ width: '100%', height: '500px' }}></iframe>
+            </DialogContent>
+            <Box>
+            <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
+           <Button onClick={onClose} color="primary">Close</Button>
+            </Box>
         </Dialog>
         </>
     );
