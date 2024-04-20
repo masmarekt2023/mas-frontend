@@ -267,6 +267,7 @@ export default function ItemCard({ data }) {
         postcode: '',
         address1: '',
         address2: '',
+        serialNumber: '',
     });
     const [error, setError] = useState('');
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
@@ -275,11 +276,26 @@ export default function ItemCard({ data }) {
 
 
     useEffect(() => {
-      // This function runs when the component mounts and sets up the isMounted ref
-      return () => {
-          isMounted.current = false; // Set isMounted to false on cleanup
+      // Function to generate the serial number
+      const generateSerialNumber = () => {
+          const now = new Date();
+          return 'SN' + now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(3, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
       };
-  }, []);
+  
+      if (open) {
+          const newSerialNumber = generateSerialNumber();
+          setFormData(prevFormData => ({
+              ...prevFormData,
+              serialNumber: newSerialNumber  // Set the new serial number
+          }));
+      }
+  
+      // Cleanup function
+      return () => {
+          isMounted.current = false;
+      };
+  }, [open]);  // Dependency array includes `open` to trigger the effect when it changes
+  
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -362,14 +378,12 @@ export default function ItemCard({ data }) {
           console.error("Unable to complete purchase:", error.message);
       }
     };
-    const generateSerialNumber = () => {
-      const now = new Date();
-      return 'SN' + now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString() + now.getMinutes().toString() + now.getSeconds().toString() + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-  }
+  
   const generatePDF = async (formData, itemData) => {
     const doc = new jsPDF();
 
-    const serialNumber = generateSerialNumber(); // Generate serial number
+    const serialNumber = formData.serialNumber;  // Generate serial number
+    console.log("serialNumber:",serialNumber);
 
     // Create an element to render the barcode into (a canvas)
     const canvas = document.createElement("canvas");
@@ -431,6 +445,7 @@ export default function ItemCard({ data }) {
 };
     const downloadPDF = () => {
       console.log("Preparing to display bill...");
+      
       generatePDF(formData, itemData);
       handleCancel();  // Assuming you still want to close the confirmation dialog
   };
@@ -454,7 +469,7 @@ export default function ItemCard({ data }) {
             <DialogContent>
                 <Typography variant="body1">Please enter your billing information below:</Typography>
                 {error && <Typography color="error">{error}</Typography>}  
-                {["name", "surname", "phoneNumber", "email", "postcode", "address1", "address2"].map((item) => (
+                {["name", "surname", "phoneNumber", "email", "postcode", "address1", "address2","serialNumber"].map((item) => (
                     <TextField
                         key={item}
                         margin="dense"

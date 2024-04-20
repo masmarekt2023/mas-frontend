@@ -278,6 +278,7 @@ export default function TransactionsList() {
 
                       <TableCell style={{ color: "black" }} align="Center">
                         {row?.transactionHash ? row?.transactionHash : ""}
+                        {row?._id ? row?._id : ""}
                       </TableCell>
                       <TableCell style={{ color: "black" }} align="Center">
                         {row?.transactionStatus}
