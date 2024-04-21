@@ -1,8 +1,11 @@
 import {
   Box,
   Container,
+  Dialog,
+  IconButton,
   Grid,
   Typography,
+  DialogContent,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React, { useState, useEffect, useContext } from "react";
@@ -13,6 +16,7 @@ import Apiconfigs from "src/Apiconfig/Apiconfigs";
 import Loader from "src/component/Loader";
 import { toast } from "react-toastify";
 import ReactPlayer from "react-player";
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
   root: { padding: "70px 0px" },
@@ -388,6 +392,9 @@ export default function itemDetails() {
   const [isLoading, setIsloading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentImg, setCurrentImg] = useState('');
+
   const _onInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -518,7 +525,6 @@ export default function itemDetails() {
     //   setIsloading(false);
     // }
   };
-
   const unSubscribeNowHandler = async () => {
     // const coinDetails = getCoinkDetails(data.coinName)
     setIsloading(true);
@@ -545,6 +551,15 @@ export default function itemDetails() {
         toast.error("Something went wrong");
       });
   };
+  const handleClickOpen = (imgUrl) => {
+    setCurrentImg(imgUrl);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   return (
     <>
@@ -658,10 +673,26 @@ export default function itemDetails() {
             src={itemDetails?.[`mediaUrl${index + 1}`]}
             alt={`Profile Image ${index + 1}`}
             style={{ width: "100%", height: "100%" }}
-            onError={(e) => (e.target.src = "defaultImage.png")} // Fallback image
+            onClick={() => handleClickOpen(itemDetails?.[`mediaUrl${index + 1}`])}
+            onError={(e) => (e.target.src = "defaultImage.png")}
           />
         </Box>
       ))}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="image-dialog-title"
+        aria-describedby="image-dialog-description"
+        maxWidth="md" // Controls the maximum width of the dialog
+        fullWidth={true} // Ensures dialog uses the full width of the screen
+      >
+        <IconButton onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '10px', color: 'white' }}>
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers>
+          <img src={currentImg} alt="Enlarged view" style={{ width: '100%', height: 'auto', display: 'block', margin: 'auto' }} />
+        </DialogContent>
+      </Dialog>
     </Box>
 
 
