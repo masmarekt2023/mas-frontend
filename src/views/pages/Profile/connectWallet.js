@@ -51,7 +51,7 @@ const ConnectWallet = () => {
   const [account, setAccount] = useState(null);
   const [connected, setConnected] = useState(false);
   const [usdtBalance, setUsdtBalance] = useState(null);
-  const [busdBalance, setBusdBalance] = useState(null);
+  const [fdusdBalance, setFDusdBalance] = useState(null);
   const [MASBalance, setMASBalance] = useState(null);
   const [showConnectDialog, setShowConnectDialog] = useState(false);
   const { updateBalances } = useWallet();
@@ -65,7 +65,7 @@ const ConnectWallet = () => {
 
   const user = useContext(UserContext);
   console.log("usdtBalance:", usdtBalance);
-  console.log("busdBalance:", busdBalance);
+  console.log("fdusdBalance:", fdusdBalance);
 
   // USDT contract address and ABI on BSC
   const usdtContractAddress = '0x55d398326f99059fF775485246999027B3197955';
@@ -158,9 +158,9 @@ const ConnectWallet = () => {
 
 
 
-  // BUSD contract address and ABI on BSC
-  const busdContractAddress = '0xe9e7cea3dedca5984780bafc599bd69add087d56';
-  const busdContractABI = [
+  // FDUSD contract address and ABI on BSC
+  const fdusdContractAddress = '0xc5f0f7b66764f6ec8c8dff7ba683102295e16409';
+  const fdusdContractABI = [
     {
       "constant": true,
       "inputs": [],
@@ -505,7 +505,7 @@ const ConnectWallet = () => {
   useEffect(() => {
     setAvailableBalance({
       masBalance: parseFloat(user.userData?.masBalance),
-      busdBalance: parseFloat(user.userData?.busdBalance),
+      fdusdBalance: parseFloat(user.userData?.fdusdBalance),
       usdtBalance: parseFloat(user.userData?.usdtBalance),
     });
   }, [user.userData])
@@ -549,7 +549,7 @@ const ConnectWallet = () => {
       setAccount(null);
       setConnected(false);
       setUsdtBalance(null);
-      setBusdBalance(null);
+      setFDusdBalance(null);
   
       // Disconnect from external wallet management context or service (WalletContext)
       disconnectWallet();
@@ -578,18 +578,18 @@ const ConnectWallet = () => {
   const fetchBalances = async () => {
     try {
       const usdtContract = new ethers.Contract(usdtContractAddress, usdtContractABI, provider);
-      const busdContract = new ethers.Contract(busdContractAddress, busdContractABI, provider);
+      const fdusdContract = new ethers.Contract(fdusdContractAddress, fdusdContractABI, provider);
       const MASContract = new ethers.Contract(MASContractAddress, MASContractABI, provider);
 
       const usdtBalance = await usdtContract.balanceOf(account);
-      const busdBalance = await busdContract.balanceOf(account);
+      const fdusdBalance = await fdusdContract.balanceOf(account);
       const MASBalance = await MASContract.balanceOf(account);
 
       setUsdtBalance(ethers.utils.formatUnits(usdtBalance, 18)); // Assuming USDT has 18 decimals
-      setBusdBalance(ethers.utils.formatUnits(busdBalance, 18)); // Assuming BUSD has 18 decimals
-      setMASBalance(ethers.utils.formatUnits(MASBalance, 18)); // Assuming BUSD has 18 decimals
+      setFDusdBalance(ethers.utils.formatUnits(fdusdBalance, 18)); // Assuming FDUSD has 18 decimals
+      setMASBalance(ethers.utils.formatUnits(MASBalance, 18)); // Assuming FDUSD has 18 decimals
 
-      updateBalances(usdtBalance, busdBalance);
+      updateBalances(usdtBalance, fdusdBalance);
     } catch (error) {
       console.error('Error fetching balances:', error);
     }
@@ -729,7 +729,7 @@ const ConnectWallet = () => {
         Charge Your Account with USDT
       </Button>
             <p>USDT Balance: {usdtBalance} USDT</p>
-            <p>BUSD Balance: {busdBalance} BUSD</p>
+            <p>FDUSD Balance: {fdusdBalance} FDUSD</p>
             <p>MAS Balance: {MASBalance} MAS</p>
             <p>Wallet is connected!</p>
     </div>

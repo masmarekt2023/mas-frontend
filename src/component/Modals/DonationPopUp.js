@@ -377,7 +377,7 @@ export const DonationPopUp = ({ open, handleClose, userData }) => {
 
   const availableBalance = {
     masBalance : parseFloat(user.userData.masBalance),
-    busdBalance : parseFloat(user.userData.busdBalance),
+    fdusdBalance : parseFloat(user.userData.fdusdBalance),
     usdtBalance : parseFloat(user.userData.usdtBalance),
   }
 

@@ -65,9 +65,9 @@ const ConnectWallet = () => {
   const [selectedToken, setSelectedToken] = useState(tokensDetails[0]);
   const user = useContext(UserContext);
   const [availableBalance, setAvailableBalance] = useState({});
-  const { usdtBalance,busdBalance } = useWallet();
+  const { usdtBalance,fdusdBalance } = useWallet();
   const usdtBalanceInUSDT = usdtBalance.dividedBy(new BigNumber(10).exponentiatedBy(18));
-  const busdBalanceInBUSD = busdBalance.dividedBy(new BigNumber(10).exponentiatedBy(18));
+  //const fdusdBalanceInFDUSD = fdusdBalance.dividedBy(new BigNumber(10).exponentiatedBy(18));
   const [metaMaskAddress, setMetaMaskAddress] = useState('');
   const [coin, setCoin] = useState('MAS');
   const [price, setPrice] = useState(null);
@@ -331,7 +331,7 @@ useEffect(() => {
   useEffect(() => {
     setAvailableBalance({
       masBalance: parseFloat(user.userData?.masBalance),
-      busdBalance: parseFloat(user.userData?.busdBalance),
+      fdusdBalance: parseFloat(user.userData?.fdusdBalance),
       usdtBalance: parseFloat(user.userData?.usdtBalance),
     });
   }, [user.userData])
@@ -386,7 +386,7 @@ useEffect(() => {
     <div>
               <p>External wallet: {metaMaskAddress}</p>
               <p>USDT Balance in External wallet: {usdtBalanceInUSDT.toFixed(3)}</p>
-              <p>BUSD Balance in External wallet: {busdBalanceInBUSD.toFixed(3)}</p>
+              {/*<p>FDUSD Balance in External wallet: {fdusdBalanceInFDUSD.toFixed(3)}</p>*/}
             </div>
           </div>
     

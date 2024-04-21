@@ -225,10 +225,10 @@ export default function ItemCard({ data }) {
               toast.error("Something went wrong");
             });
         };
- const likeDislikeNfthandler = async (id) => {
+ const likeDislikeNft1handler = async (id) => {
           if (auth.userData?._id) {
             try {
-              const res = await axios.get(Apiconfigs.likeDislikeNft + id, {
+              const res = await axios.get(Apiconfigs.likeDislikeNft1 + id, {
                 headers: {
                   token: sessionStorage.getItem("token"),
                 },
@@ -652,7 +652,7 @@ useEffect(() => {
       <CardActions disableSpacing>
         <IconButton
           aria-label="add to favorites"
-          onClick={() => likeDislikeNfthandler(itemData._id)}
+          onClick={() => likeDislikeNft1handler(itemData._id)}
         >
           <FavoriteIcon
             style={isLike ? { color: red[800] } : { color: red[200] }}
