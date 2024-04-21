@@ -136,36 +136,46 @@ export default function SignUp() {
   }
 
   const sendOtpRegister = async () => {
+    // Check if user is already logged in and verification was sent
     if (user.userLoggedIn && (emailVerificationSent || smsVerificationSent)) {
-      setTermsPopUp(false);
-      setVerifyOTPOpen(true);
-      return;
+        setTermsPopUp(false);
+        setVerifyOTPOpen(true);
+        return;
     }
-    if (!validateAll()){
-      setTermsPopUp(false);
-      setVerifyOTPOpen(false);
-      return;
+
+    // Validate all required fields before sending the request
+    if (!validateAll()) {
+        setTermsPopUp(false);
+        setVerifyOTPOpen(false);
+        return;
     }
+
+    // Show loader while the request is being processed
     setloader(true);
+
     try {
-      const res = await axios({
-        method: "POST",
-        url: Apiconfigs.sendOtpRegister,
-        data: {
-          email: email,
-        },
-      });
-      if (res.data.statusCode === 200) {
-        setEmailVerificationSent(res.data.result.email_verification_sent)
-        setSmsVerificationSent(res.data.result.sms_verification_sent)
-        //setVerifyOTPOpen(true);
-        //setTermsPopUp(false);
-      }
+        const res = await axios.post(Apiconfigs.sendOtpRegister, {
+            email: email,
+        });
+
+        if (res.data.statusCode === 200) {
+            setEmailVerificationSent(res.data.result.email_verification_sent);
+            setSmsVerificationSent(res.data.result.sms_verification_sent);
+            setVerifyOTPOpen(true);
+            setTermsPopUp(false);
+        } else {
+            // Handle different statuses here, if needed
+            console.error("Request completed, but status code is not 200", res.data);
+        }
     } catch (e) {
-      console.log("Error in sendOtpRegister");
+        console.error("Error in sendOtpRegister", e);
+        // Display error notification to the user, if you have such functionality
     }
+
+    // Hide loader after the request is completed
     setloader(false);
-  }
+};
+
 
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: !state[event.target.name] });

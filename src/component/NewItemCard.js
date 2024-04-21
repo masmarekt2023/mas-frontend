@@ -85,9 +85,9 @@ export default function ItemCard({ data }) {
   const [isLike, setisLike] = useState(false);
   const [nbLike, setnbLike] = useState(0);
   const [openSubscribe, setOpenSubscribe] = useState(false);
-  const [isSubscribed, setisSubscribed] = useState(false);
-  const [activeSubscribe, setActiveSubscribe] = useState(true);
-  const [nbSubscribed, setnbSubscribed] = useState(0);
+  const [isBuyed, setisBuyed] = useState(false);
+  const [activeBuy, setActiveBuy] = useState(true);
+  const [nbBuyed, setnbBuyed] = useState(0);
   const [isLoading, setIsloading] = useState(false);
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
@@ -154,17 +154,7 @@ export default function ItemCard({ data }) {
     [itemData.mediaUrl7, itemData.mediaUrl8, itemData.mediaUrl9],
   ];
 
-  useEffect(() => {
-    setnbLike(itemData.likesUsers.length);
-    setnbSubscribed(itemData.subscribers.length);
-    if (auth.userData?._id) {
-      setisLike(itemData.likesUsers?.includes(auth.userData._id));
-      setisSubscribed(itemData.subscribers?.includes(auth.userData._id));
-    }
-    if (auth.userData._id && itemData._id) {
-      //getSubscription().catch(console.error);
-    }
-  }, []);
+  
 
   /*const getSubscription = async () => {
           try {
@@ -183,11 +173,11 @@ export default function ItemCard({ data }) {
           }
         };*/
 
-        const subscribeToBundleHandler = async () => {
+ const subscribeToBundleHandler = async () => {
           setIsloading(true);
           await axios({
             method: "GET",
-            url: Apiconfigs.subscribeNow + itemData._id,
+            url: Apiconfigs.order + itemData._id,
             headers: {
               token: sessionStorage.getItem("token"),
             },
@@ -195,11 +185,11 @@ export default function ItemCard({ data }) {
             .then(async (res) => {
               setIsloading(false);
               if (res.data.statusCode === 200) {
-                setisSubscribed(res.data.result.subscribed === "yes");
-                setnbSubscribed(res.data.result.nb);
-                setActiveSubscribe(true);
+                setisBuyed(res.data.result.buyed === "yes");
+                setnbBuyed(res.data.result.nb);
+                setActiveBuy(true);
                 setOpen2(false);
-                toast.success("Subscribe Successfully");
+                toast.success("Buy Successfully");
                 navigate("/items-details?" + itemData?._id);
               } else {
                 toast.error(res.data.responseMessage);
@@ -211,7 +201,7 @@ export default function ItemCard({ data }) {
               toast.error(err?.response?.data?.responseMessage);
             });
         };
-        const unSubscribeToBundleHandler = async () => {
+ const unSubscribeToBundleHandler = async () => {
           setIsloading(true);
           await axios({
             method: "DELETE",
@@ -224,9 +214,9 @@ export default function ItemCard({ data }) {
               setIsloading(false);
               if (res.data.statusCode === 200) {
                 setIsloading(false);
-                toast.success("You have unsubscribed successfully.");
-                setisSubscribed(false);
-                setnbSubscribed((nb) => nb - 1);
+                toast.success("You have unbuyed successfully.");
+                setisBuyed(false);
+                setnbBuyed((nb) => nb - 1);
               } else {
                 toast.error("Something went wrong");
               }
@@ -235,7 +225,7 @@ export default function ItemCard({ data }) {
               toast.error("Something went wrong");
             });
         };
-        const likeDislikeNfthandler = async (id) => {
+ const likeDislikeNfthandler = async (id) => {
           if (auth.userData?._id) {
             try {
               const res = await axios.get(Apiconfigs.likeDislikeNft + id, {
@@ -257,6 +247,17 @@ export default function ItemCard({ data }) {
             toast.error("Please login");
           }
         };
+useEffect(() => {
+          setnbLike(itemData.likesUsers.length);
+          setnbBuyed(itemData.subscribers.length);
+          if (auth.userData?._id) {
+            setisLike(itemData.likesUsers?.includes(auth.userData._id));
+            setisBuyed(itemData.subscribers?.includes(auth.userData._id));
+          }
+          if (auth.userData._id && itemData._id) {
+            //getSubscription().catch(console.error);
+          }
+        }, []);      
 
   function BillingDialog({ open, onClose }) {
     const [formData, setFormData] = useState({
@@ -561,7 +562,7 @@ export default function ItemCard({ data }) {
         <div
           style={{ cursor: "pointer", background: '#000'}}
           onClick={() =>
-            isSubscribed || isUseritem
+            isBuyed || isUseritem
               ? navigate("/items-details?" + itemData?._id)
               : handleClickOpen2()
           }
@@ -580,7 +581,7 @@ export default function ItemCard({ data }) {
           image={itemData.mediaUrl1}
           title={itemData.itemName}
           onClick={() =>
-            (isSubscribed && activeSubscribe) || isUseritem
+            (isBuyed && activeBuy) || isUseritem
               ? navigate("/items-details?" + itemData?._id)
               : handleClickOpen2()
           }
@@ -661,16 +662,16 @@ export default function ItemCard({ data }) {
         {auth.userData &&
           auth.userLoggedIn &&
           auth.userData._id !== userId &&
-          isSubscribed && (
+          isBuyed && (
             <Button
               className={classes.expand}
-              disabled={isSubscribed && activeSubscribe}
-              onClick={() => (activeSubscribe ? {} : handleClickOpen2())}
+              disabled={isBuyed && activeBuy}
+              onClick={() => (activeBuy ? {} : handleClickOpen2())}
             >
-              {activeSubscribe ? "Buyed" : "Renew"}
+              {activeBuy ? "Buyed" : "Renew"}
             </Button>
           )}
-        {auth?.userData?._id !== userId && !isSubscribed && (
+        {auth?.userData?._id !== userId && !isBuyed && (
           <Button className={classes.expand} onClick={handleClickOpen2}>
             Details
           </Button>
@@ -836,7 +837,7 @@ export default function ItemCard({ data }) {
                 component="h6"
                 style={{ color: "#000", fontWeight: "400" }}
               >
-                <span style={{ color: "#707070" }}>Number of subscribers:</span>
+                <span style={{ color: "#707070" }}>Number of buyers:</span>
                 100
               </Typography>
             </Box>
