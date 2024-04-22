@@ -99,6 +99,8 @@ export default function ItemCard({ data }) {
   const [openBillingDialog, setOpenBillingDialog] = useState(false); // Manages the billing dialog
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
+  const [purchaseSuccessful, setPurchaseSuccessful] = useState(false);
+
 
 
   const handleClick = (event) => {
@@ -355,18 +357,27 @@ useEffect(() => {
                 },
             });
 
-            console.log("Order response:", response.data);
-            if (response.status !== 200) {
-
-                throw new Error('Order placement failed with status: ' + response.status);
-            }
-        } catch (error) {
-            console.error("Order placement error:", error);
-            if (isMounted.current) {
-                setError("Failed to place order: " + error.message);
-            }
-        }
-    };
+            if (response.status === 200 && response.data.success) {
+              console.log("Purchase successful:", response.data);
+              setPurchaseSuccessful(true);
+              setShowConfirmationDialog(true);
+          } else {
+              // Check if the response has the specific error for low balance
+              if (response.data.message === "Insufficient balance") {
+                  setError("Your balance is low");
+              } else {
+                  setError(response.data.message);
+              }
+              setPurchaseSuccessful(false);
+              setShowConfirmationDialog(true);
+          }
+      } catch (error) {
+          console.error("Error during purchase:", "Your balance is low");
+          setError("Failed to complete purchase: " + "Your balance is low");
+          setPurchaseSuccessful(false);
+          setShowConfirmationDialog(true);
+      }
+  };
 
     const handleBuy = async () => {
       try {
@@ -385,6 +396,19 @@ useEffect(() => {
 
     const serialNumber = formData.serialNumber;  // Generate serial number
     console.log("serialNumber:",serialNumber);
+
+    // Current date and time
+    const now = new Date();
+    const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+    const formattedDateTime = dateTimeFormat.format(now);
 
     // Create an element to render the barcode into (a canvas)
     const canvas = document.createElement("canvas");
@@ -420,6 +444,7 @@ useEffect(() => {
     tableRows.push(["Price", `${itemData.donationAmount} ${itemData.coinName}`]);
     tableRows.push(["Details", `${itemData.details}`]);
     tableRows.push(["Serial Number", serialNumber]);
+    tableRows.push(["Date/Time Issued", formattedDateTime]);
 
     // Title of the document
     doc.text("Billing Information", 14, 15);
@@ -454,6 +479,7 @@ useEffect(() => {
     setShowConfirmationDialog(false);  // Close dialog on cancel
     onClose();  // Also close the main dialog
     setOpen2(false);
+    setPurchaseSuccessful(false); 
     };
   
   
@@ -491,16 +517,24 @@ useEffect(() => {
             <br />
         </Dialog>
         
-        <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="successed-dialog-title" maxWidth="sm" fullWidth={true}>
-            <DialogTitle id="successed-dialog-title">successed Purchase</DialogTitle>
-            <DialogContent>
-                <Typography variant="body1"> your purchase successed.... You can download your bill now.</Typography>
+        <Dialog open={showConfirmationDialog} onClose={handleCancel} aria-labelledby="success-dialog-title" maxWidth="sm" fullWidth={true}>
+    <DialogTitle id="success-dialog-title">{purchaseSuccessful ? "Purchase Successful" : "Purchase Issue"}</DialogTitle>
+    <DialogContent>
+        {purchaseSuccessful ? (
+            <>
+                <Typography variant="body1">Your purchase was successful. You can download your bill now.</Typography>
                 <Box textAlign="center" mt={2}>
                     <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
-                    <Button onClick={handleCancel} color="primary">Cancel</Button>
                 </Box>
-            </DialogContent>
-        </Dialog>
+            </>
+        ) : (
+            <Typography variant="body1">{error}</Typography>
+        )}
+        <Box textAlign="center" mt={2}>
+            <Button onClick={handleCancel} color="primary">Close</Button>
+        </Box>
+    </DialogContent>
+</Dialog>
 
         <Dialog open={showBillDialog} onClose={() => setShowBillDialog(false)} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth>
             <DialogTitle id="bill-dialog-title">Your Bill</DialogTitle>
