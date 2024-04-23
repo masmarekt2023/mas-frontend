@@ -99,7 +99,7 @@ export default function ItemCard({ data }) {
   const [openBillingDialog, setOpenBillingDialog] = useState(false); // Manages the billing dialog
   const [openImageDialog, setOpenImageDialog] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState('');
-  const [purchaseSuccessful, setPurchaseSuccessful] = useState(false);
+
 
 
 
@@ -261,294 +261,263 @@ useEffect(() => {
           }
         }, []);      
 
-  function BillingDialog({ open, onClose }) {
-    const [formData, setFormData] = useState({
-        name: '',
-        surname: '',
-        phoneNumber: '',
-        email: '',
-        postcode: '',
-        address1: '',
-        address2: '',
-        serialNumber: '',
-    });
-    const [error, setError] = useState('');
-    const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
-    const isMounted = useRef(true);
-    const [showBillDialog, setShowBillDialog] = useState(false);
-
-
-    useEffect(() => {
-      // Function to generate the serial number
-      const generateSerialNumber = () => {
-          const now = new Date();
-          return 'SN' + now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(3, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-      };
-  
-      if (open) {
-          const newSerialNumber = generateSerialNumber();
-          setFormData(prevFormData => ({
-              ...prevFormData,
-              serialNumber: newSerialNumber  // Set the new serial number
-          }));
-      }
-  
-      // Cleanup function
-      return () => {
-          isMounted.current = false;
-      };
-  }, [open]);  // Dependency array includes `open` to trigger the effect when it changes
-  
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = async () => {
-        try {
-            console.log("data:", formData);
-            const res = await axios({
-                method: "PUT",
-                url: Apiconfigs.bill,
-                data: formData,
-                headers: {
-                    token: sessionStorage.getItem("token") || "default-token",
-                },
-            });
-
-            console.log("Response from server:", res.data);
-            if (res.status !== 200) {
-                throw new Error('Form submission failed with status: ' + res.status);
-            }
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            if (isMounted.current) {
-                setError("Failed to submit form: " + error.message);
-            }
-        }
-    };
-
-    const buyNow = async () => {
-        try {
-            console.log("Initiating purchase:");
-            console.log("Data needed:", itemData.details, itemData.coinName, itemData.donationAmount,userName);
-            console.log("sellerId", userId);
-            console.log("ItemId", itemData._id);
-            console.log("buyerId",auth.userData._id );
-            const response = await axios({
-                method: "PUT",
-                url: Apiconfigs.order ,
-                data: {
-                    //sellerId:userId, 
-                    userBuyer:auth.userData._id,
-                    nft1Id: itemData._id,
-                    //mediaUrl: itemData.mediaUrl1,
-                    //details: itemData.details,
-                    //tokenName: itemData.coinName,
-                    //Price: itemData.donationAmount,
-                    
-                },
-                headers: {
-                  token: sessionStorage.getItem("token"),
-                },
-            });
-
-            if (response.status === 200 && response.data.success) {
-              console.log("Purchase successful:", response.data);
-              setPurchaseSuccessful(true);
-              setShowConfirmationDialog(true);
-          } else {
-              // Check if the response has the specific error for low balance
-              if (response.data.message === "Insufficient balance") {
-                  setError("Your balance is low");
-              } else {
-                  setError(response.data.message);
-              }
-              setPurchaseSuccessful(false);
-              setShowConfirmationDialog(true);
-          }
-      } catch (error) {
-          console.error("Error during purchase:", "Your balance is low");
-          setError("Failed to complete purchase: " + "Your balance is low");
-          setPurchaseSuccessful(false);
-          setShowConfirmationDialog(true);
-      }
-  };
-
-    const handleBuy = async () => {
-      try {
-          await handleSubmit();
-          await buyNow();
-          if (isMounted.current) {
-              setShowConfirmationDialog(true);
-          }
-      } catch (error) {
-          console.error("Unable to complete purchase:", error.message);
-      }
-    };
-  
-  const generatePDF = async (formData, itemData) => {
-    const doc = new jsPDF();
-
-    const serialNumber = formData.serialNumber;  // Generate serial number
-    console.log("serialNumber:",serialNumber);
-
-    // Current date and time
-    const now = new Date();
-    const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    });
-    const formattedDateTime = dateTimeFormat.format(now);
-
-    // Create an element to render the barcode into (a canvas)
-    const canvas = document.createElement("canvas");
-    let barcodeDataUrl = null; // Declare outside to widen scope
-
-    try {
-        bwipjs.toCanvas(canvas, {
-            bcid: 'code128',       // Barcode type
-            text: serialNumber,    // Text to encode
-            scale: 3,              // 3x scaling factor
-            height: 10,            // Bar height, in millimeters
-            includetext: true,     // Include text in the barcode
-            textxalign: 'center',  // Center-align text
-        });
-
-        barcodeDataUrl = canvas.toDataURL("image/png"); // Convert canvas to data URL
-    } catch (error) {
-        console.error('Barcode generation failed:', error);
-        // Consider handling the failure case, possibly with a fallback or a message
-    }
-
-    const tableColumn = ["Field", "Value"];
-    const tableRows = [];
-
-    // Extract data from formData to populate the table
-    Object.entries(formData).forEach(([key, value]) => {
-        const field = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
-        const rowData = [field, value];
-        tableRows.push(rowData);
-    });
-
-    // Additional data from itemData
-    tableRows.push(["Price", `${itemData.donationAmount} ${itemData.coinName}`]);
-    tableRows.push(["Details", `${itemData.details}`]);
-    tableRows.push(["Serial Number", serialNumber]);
-    tableRows.push(["Date/Time Issued", formattedDateTime]);
-
-    // Title of the document
-    doc.text("Billing Information", 14, 15);
-    // Adding the table to the PDF
-    autoTable(doc, {
-        head: [tableColumn],
-        body: tableRows,
-        startY: 40,
-    });
-
-    // If barcode is generated, position it at the top right
-    if (barcodeDataUrl) {
-      // Assuming the width of your barcode is about 50mm (adjust as necessary)
-      const pageWidth = 210;  // A4 width in mm
-      const barcodeWidth = 50;  // Width in mm
-      const marginRight = 10;  // Right margin in mm
-      const marginTop = 10;    // Top margin in mm
-      doc.addImage(barcodeDataUrl, 'PNG', pageWidth - marginRight - barcodeWidth, marginTop, barcodeWidth, 20); // Height adjusted to 20mm
-  }
-  
-
-    // Save the PDF
-    doc.save("billing-information.pdf");
-};
-    const downloadPDF = () => {
-      console.log("Preparing to display bill...");
+ function BillingDialog({ open, onClose }) {
+          const [formData, setFormData] = useState({
+              name: '',
+              surname: '',
+              phoneNumber: '',
+              email: '',
+              postcode: '',
+              address1: '',
+              address2: '',
+              serialNumber: '',
+          });
+          const [error, setError] = useState('');
+          const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+          const isMounted = useRef(true);
+          const [showBillDialog, setShowBillDialog] = useState(false);
       
-      generatePDF(formData, itemData);
-      handleCancel();  // Assuming you still want to close the confirmation dialog
-  };
-  const handleCancel = () => {
-    setShowConfirmationDialog(false);  // Close dialog on cancel
-    onClose();  // Also close the main dialog
-    setOpen2(false);
-    setPurchaseSuccessful(false); 
-    };
-  
-  
-    return (
-      <>
-        <Dialog
-            open={open}
-            onClose={onClose}
-            aria-labelledby="billing-dialog-title"
-            maxWidth="sm"
-            fullWidth={true}
-        >
-            <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
-            <DialogContent>
-                <Typography variant="body1">Please enter your billing information below:</Typography>
-                {error && <Typography color="error">{error}</Typography>}  
-                {["name", "surname", "phoneNumber", "email", "postcode", "address1", "address2","serialNumber"].map((item) => (
-                    <TextField
-                        key={item}
-                        margin="dense"
-                        label={item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-                        type="text"
-                        fullWidth
-                        name={item}
-                        value={formData[item]}
-                        onChange={handleChange}
-                    />
-                ))}
-            </DialogContent>
-            <br />
-            <Box textAlign="center" width="100%">
-                <Button onClick={onClose} color="primary">Cancel</Button>
-                <Button onClick={handleBuy} color="secondary" variant="contained">Buy Now</Button>
-            </Box>
-            <br />
-        </Dialog>
+      
+          useEffect(() => {
+            // Function to generate the serial number
+            const generateSerialNumber = () => {
+                const now = new Date();
+                return 'SN' + now.getFullYear().toString() + (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(3, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            };
         
-        <Dialog open={showConfirmationDialog} onClose={handleCancel} aria-labelledby="success-dialog-title" maxWidth="sm" fullWidth={true}>
-    <DialogTitle id="success-dialog-title">{purchaseSuccessful ? "Purchase Successful" : "Purchase Issue"}</DialogTitle>
-    <DialogContent>
-        {purchaseSuccessful ? (
+            if (open) {
+                const newSerialNumber = generateSerialNumber();
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    serialNumber: newSerialNumber  // Set the new serial number
+                }));
+            }
+        
+            // Cleanup function
+            return () => {
+                isMounted.current = false;
+            };
+        }, [open]);  // Dependency array includes `open` to trigger the effect when it changes
+        
+      
+          const handleChange = (e) => {
+              const { name, value } = e.target;
+              setFormData(prevState => ({
+                  ...prevState,
+                  [name]: value,
+              }));
+          };
+      
+          const handleSubmit = async () => {
+              try {
+                  console.log("data:", formData);
+                  const res = await axios({
+                      method: "PUT",
+                      url: Apiconfigs.bill,
+                      data: formData,
+                      headers: {
+                          token: sessionStorage.getItem("token") || "default-token",
+                      },
+                  });
+      
+                  console.log("Response from server:", res.data);
+                  if (res.status !== 200) {
+                      throw new Error('Form submission failed with status: ' + res.status);
+                  }
+              } catch (error) {
+                  console.error("Error submitting form:", error);
+                  if (isMounted.current) {
+                      setError("Failed to submit form: " + error.message);
+                  }
+              }
+          };
+      
+          const buyNow = async () => {
+              try {
+                  console.log("Initiating purchase:");
+                  console.log("Data needed:", itemData.details, itemData.coinName, itemData.donationAmount,userName);
+                  console.log("sellerId", userId);
+                  console.log("ItemId", itemData._id);
+                  console.log("buyerId",auth.userData._id );
+                  const response = await axios({
+                      method: "PUT",
+                      url: Apiconfigs.order ,
+                      data: {
+                          //sellerId:userId, 
+                          userBuyer:auth.userData._id,
+                          nft1Id: itemData._id,
+                          //mediaUrl: itemData.mediaUrl1,
+                          //details: itemData.details,
+                          //tokenName: itemData.coinName,
+                          //Price: itemData.donationAmount,
+                          
+                      },
+                      headers: {
+                        token: sessionStorage.getItem("token"),
+                      },
+                  });
+      
+                  console.log("Order response:", response.data);
+                  if (response.status !== 200) {
+      
+                      throw new Error('Order placement failed with status: ' + response.status);
+                  }
+              } catch (error) {
+                  console.error("Order placement error:", error);
+                  if (isMounted.current) {
+                      setError("Failed to place order: " + error.message);
+                  }
+              }
+          };
+      
+          const handleBuy = async () => {
+            try {
+                await handleSubmit();
+                await buyNow();
+                if (isMounted.current) {
+                    setShowConfirmationDialog(true);
+                }
+            } catch (error) {
+                console.error("Unable to complete purchase:", error.message);
+            }
+          };
+        
+        const generatePDF = async (formData, itemData) => {
+          const doc = new jsPDF();
+      
+          const serialNumber = formData.serialNumber;  // Generate serial number
+          console.log("serialNumber:",serialNumber);
+      
+          // Create an element to render the barcode into (a canvas)
+          const canvas = document.createElement("canvas");
+          let barcodeDataUrl = null; // Declare outside to widen scope
+      
+          try {
+              bwipjs.toCanvas(canvas, {
+                  bcid: 'code128',       // Barcode type
+                  text: serialNumber,    // Text to encode
+                  scale: 3,              // 3x scaling factor
+                  height: 10,            // Bar height, in millimeters
+                  includetext: true,     // Include text in the barcode
+                  textxalign: 'center',  // Center-align text
+              });
+      
+              barcodeDataUrl = canvas.toDataURL("image/png"); // Convert canvas to data URL
+          } catch (error) {
+              console.error('Barcode generation failed:', error);
+              // Consider handling the failure case, possibly with a fallback or a message
+          }
+      
+          const tableColumn = ["Field", "Value"];
+          const tableRows = [];
+      
+          // Extract data from formData to populate the table
+          Object.entries(formData).forEach(([key, value]) => {
+              const field = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
+              const rowData = [field, value];
+              tableRows.push(rowData);
+          });
+      
+          // Additional data from itemData
+          tableRows.push(["Price", `${itemData.donationAmount} ${itemData.coinName}`]);
+          tableRows.push(["Details", `${itemData.details}`]);
+          tableRows.push(["Serial Number", serialNumber]);
+      
+          // Title of the document
+          doc.text("Billing Information", 14, 15);
+          // Adding the table to the PDF
+          autoTable(doc, {
+              head: [tableColumn],
+              body: tableRows,
+              startY: 40,
+          });
+      
+          // If barcode is generated, position it at the top right
+          if (barcodeDataUrl) {
+            // Assuming the width of your barcode is about 50mm (adjust as necessary)
+            const pageWidth = 210;  // A4 width in mm
+            const barcodeWidth = 50;  // Width in mm
+            const marginRight = 10;  // Right margin in mm
+            const marginTop = 10;    // Top margin in mm
+            doc.addImage(barcodeDataUrl, 'PNG', pageWidth - marginRight - barcodeWidth, marginTop, barcodeWidth, 20); // Height adjusted to 20mm
+        }
+        
+      
+          // Save the PDF
+          doc.save("billing-information.pdf");
+      };
+          const downloadPDF = () => {
+            console.log("Preparing to display bill...");
+            
+            generatePDF(formData, itemData);
+            handleCancel();  // Assuming you still want to close the confirmation dialog
+        };
+        const handleCancel = () => {
+          setShowConfirmationDialog(false);  // Close dialog on cancel
+          onClose();  // Also close the main dialog
+          setOpen2(false);
+          };
+        
+        
+          return (
             <>
-                <Typography variant="body1">Your purchase was successful. You can download your bill now.</Typography>
-                <Box textAlign="center" mt={2}>
-                    <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
-                </Box>
-            </>
-        ) : (
-            <Typography variant="body1">{error}</Typography>
-        )}
-        <Box textAlign="center" mt={2}>
-            <Button onClick={handleCancel} color="primary">Close</Button>
-        </Box>
-    </DialogContent>
-</Dialog>
-
-        <Dialog open={showBillDialog} onClose={() => setShowBillDialog(false)} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth>
-            <DialogTitle id="bill-dialog-title">Your Bill</DialogTitle>
-            <DialogContent>
-                <iframe src="your-pdf-download-url" style={{ width: '100%', height: '500px' }}></iframe>
-            </DialogContent>
-            <Box>
-            <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
-           <Button onClick={onClose} color="primary">Close</Button>
-            </Box>
-        </Dialog>
-        </>
-    );
-}
+              <Dialog
+                  open={open}
+                  onClose={onClose}
+                  aria-labelledby="billing-dialog-title"
+                  maxWidth="sm"
+                  fullWidth={true}
+              >
+                  <DialogTitle id="billing-dialog-title">Billing Information</DialogTitle>
+                  <DialogContent>
+                      <Typography variant="body1">Please enter your billing information below:</Typography>
+                      {error && <Typography color="error">{error}</Typography>}  
+                      {["name", "surname", "phoneNumber", "email", "postcode", "address1", "address2","serialNumber"].map((item) => (
+                          <TextField
+                              key={item}
+                              margin="dense"
+                              label={item.charAt(0).toUpperCase() + item.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                              type="text"
+                              fullWidth
+                              name={item}
+                              value={formData[item]}
+                              onChange={handleChange}
+                          />
+                      ))}
+                  </DialogContent>
+                  <br />
+                  <Box textAlign="center" width="100%">
+                      <Button onClick={onClose} color="primary">Cancel</Button>
+                      <Button onClick={handleBuy} color="secondary" variant="contained">Buy Now</Button>
+                  </Box>
+                  <br />
+              </Dialog>
+              
+              <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="successed-dialog-title" maxWidth="sm" fullWidth={true}>
+                  <DialogTitle id="successed-dialog-title">successed Purchase</DialogTitle>
+                  <DialogContent>
+                      <Typography variant="body1"> your purchase successed.... You can download your bill now.</Typography>
+                      <Box textAlign="center" mt={2}>
+                          <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
+                          <Button onClick={handleCancel} color="primary">Cancel</Button>
+                      </Box>
+                  </DialogContent>
+              </Dialog>
+      
+              <Dialog open={showBillDialog} onClose={() => setShowBillDialog(false)} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth>
+                  <DialogTitle id="bill-dialog-title">Your Bill</DialogTitle>
+                  <DialogContent>
+                      <iframe src="your-pdf-download-url" style={{ width: '100%', height: '500px' }}></iframe>
+                  </DialogContent>
+                  <Box>
+                  <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
+                 <Button onClick={onClose} color="primary">Close</Button>
+                  </Box>
+              </Dialog>
+              </>
+          );
+      }
+      
 
   const handleOpenImageDialog = (url) => {
     setSelectedImageUrl(url);
@@ -663,7 +632,7 @@ useEffect(() => {
         <Typography
           variant="h5"
           component="h5"
-          style={{ color: "#000", fontWeight: "bold", marginTop: 5 }}
+          style={{ color: "#008000", fontWeight: "bold", marginTop: 5 }}
         >
           {"( "}
           {itemData?.donationAmount
@@ -671,16 +640,16 @@ useEffect(() => {
             : "Any amount"}{" "}
           {" )"}{" "}
           {itemData && itemData.coinName ? itemData.coinName : "MAS"}{" "}
-          {" for "}
-          {itemData?.duration ? itemData?.duration : "Ever"}
+          {/*" for "*/}
+          {/*{itemData?.duration ? itemData?.duration : "Ever"}*/}
         </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           component="p"
-          style={{ marginTop: 5 }}
+          style={{ color: "#000", fontWeight: "bold", marginTop: 5 }}
         >
-          {itemData?.details}
+          {/*{itemData?.details}*/}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -925,23 +894,20 @@ useEffect(() => {
     <Typography variant="h4">{itemData.itemTitle}</Typography>
   </Box>
   <Box mt={2} className={classes.deskiText}>
-    <Typography variant="h4" align="left" color="textSecondary">
+    <Typography variant="h4" align="left" color="#000"  style={{ color: "#008000", fontWeight: "bold", marginTop: 5 }}>
       Price:
       <span>
         {itemData.donationAmount} {itemData.coinName}
       </span>
     </Typography>
-    <Typography variant="h4" align="left" color="textSecondary">
-      Duration: <span>{itemData.duration}</span>
-    </Typography>
     <Grid container spacing={2}>
       <Grid item xs={12} md={3} lg={2}>
-        <Typography variant="h4" align="left" color="textSecondary">
+        <Typography variant="h4" align="left" color="#000">
           Details:
         </Typography>
       </Grid>
       <Grid item xs={12} md={9} lg={10}>
-        <Typography variant="body2" align="left" color="textSecondary">
+        <Typography variant="body2" align="left" color="#000" style={{ color: "#000", fontWeight: "bold", marginTop: 5 }}>
           {itemData.details}
         </Typography>
       </Grid>
