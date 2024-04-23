@@ -359,24 +359,27 @@ useEffect(() => {
       
                   console.log("Order response:", response.data);
                   if (response.status !== 200) {
-      
-                      throw new Error('Order placement failed with status: ' + response.status);
-                  }
-              } catch (error) {
-                  console.error("Order placement error:", error);
-                  if (isMounted.current) {
-                      setError("Failed to place order: " + error.message);
-                  }
-              }
-          };
+                    throw new Error('Order placement failed with status: ' + response.status);
+                }
+                if (isMounted.current) {
+                    setShowConfirmationDialog(true);
+                }
+            } catch (error) {
+                console.error("Order placement error:", error);
+                if (isMounted.current) {
+                    if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+                        setError("Failed to place order: your balance is low");
+                    } else {
+                        setError("Failed to place order: " + error.message);
+                    }
+                }
+            }
+        };
       
           const handleBuy = async () => {
             try {
                 await handleSubmit();
                 await buyNow();
-                if (isMounted.current) {
-                    setShowConfirmationDialog(true);
-                }
             } catch (error) {
                 console.error("Unable to complete purchase:", error.message);
             }
