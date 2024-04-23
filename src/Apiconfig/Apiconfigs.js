@@ -82,6 +82,7 @@ const Apiconfigs = {
     auctionNft: `${url}/order/auctionNft/`,
     myAuctionNftList: `${url}/order/myAuctionNftList`,
     likeDislikeNft: `${url}/user/likeDislikeNft/`,
+    likeDislikeNft1: `${url}/user/likeDislikeNft1/`,
     donation: `${url}/user/donation`,
     listBid: `${url}/bid/listBid`,
     acceptBid: `${url}/bid/acceptBid`,
