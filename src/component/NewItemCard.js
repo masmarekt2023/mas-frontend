@@ -276,6 +276,8 @@ useEffect(() => {
           const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
           const isMounted = useRef(true);
           const [showBillDialog, setShowBillDialog] = useState(false);
+          const [showPurchaseDialog, setshowPurchaseDialog] = useState(false);
+          const [billPdfUrl, setBillPdfUrl] = useState(null);
       
       
           useEffect(() => {
@@ -362,7 +364,9 @@ useEffect(() => {
                     throw new Error('Order placement failed with status: ' + response.status);
                 }
                 if (isMounted.current) {
-                    setShowConfirmationDialog(true);
+                    //setShowConfirmationDialog(true);
+                    //setShowBillDialog(true);
+                    setshowPurchaseDialog(true);
                 }
             } catch (error) {
                 console.error("Order placement error:", error);
@@ -452,18 +456,31 @@ useEffect(() => {
             doc.addImage(barcodeDataUrl, 'PNG', pageWidth - marginRight - barcodeWidth, marginTop, barcodeWidth, 20); // Height adjusted to 20mm
         }
         
-      
-          // Save the PDF
-          doc.save("billing-information.pdf");
-      };
+      // Generate a Blob from the PDF
+    const pdfBlob = doc.output("blob");
+
+    try {
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        setshowPurchaseDialog(true);
+        //setShowBillDialog(true);
+        setBillPdfUrl(pdfUrl);
+    } catch (error) {
+        console.error('Error creating Blob URL:', error);
+    }
+};
           const downloadPDF = () => {
             console.log("Preparing to display bill...");
             
             generatePDF(formData, itemData);
-            handleCancel();  // Assuming you still want to close the confirmation dialog
+            
         };
+        const handlePreviewBill = async () => {
+          setShowBillDialog(true);
+          await generatePDF(formData, itemData); // Generate PDF and set URL
+      };
         const handleCancel = () => {
           setShowConfirmationDialog(false);  // Close dialog on cancel
+          setShowBillDialog(false);
           onClose();  // Also close the main dialog
           setOpen2(false);
           };
@@ -506,7 +523,7 @@ useEffect(() => {
               <Dialog open={showConfirmationDialog} onClose={() => {}} aria-labelledby="successed-dialog-title" maxWidth="sm" fullWidth={true}>
                   <DialogTitle id="successed-dialog-title">successed Purchase</DialogTitle>
                   <DialogContent>
-                      <Typography variant="body1"> your purchase successed.... You can download your bill now.</Typography>
+                      <Typography variant="body1"> your purchase successed.... You can dawnload your bill now.</Typography>
                       <Box textAlign="center" mt={2}>
                           <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
                           <Button onClick={handleCancel} color="primary">Cancel</Button>
@@ -514,16 +531,40 @@ useEffect(() => {
                   </DialogContent>
               </Dialog>
       
-              <Dialog open={showBillDialog} onClose={() => setShowBillDialog(false)} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth>
-                  <DialogTitle id="bill-dialog-title">Your Bill</DialogTitle>
-                  <DialogContent>
-                      <iframe src="your-pdf-download-url" style={{ width: '100%', height: '500px' }}></iframe>
-                  </DialogContent>
-                  <Box>
-                  <Button onClick={downloadPDF} color="secondary" variant="contained">Download Bill</Button>
-                 <Button onClick={onClose} color="primary">Close</Button>
-                  </Box>
-              </Dialog>
+              <Dialog open={showPurchaseDialog} onClose={() => {}} aria-labelledby="bill-dialog-title" maxWidth="sm" fullWidth={true}>
+            <DialogTitle id="bill-dialog-title">Your Bill Preview</DialogTitle>
+            <DialogContent>
+            <Typography variant="h6" component="h2" id="successed-dialog-title" gutterBottom>
+            Successful Purchase
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+            Your purchase was successful. You can view your bill below:
+            </Typography>
+            <Box textAlign="center" mt={2}>
+            <Button onClick={handlePreviewBill} color="secondary" variant="contained">show your Bill now</Button>
+            </Box>
+            </DialogContent>
+            </Dialog>
+
+            <Dialog 
+        open={showBillDialog} 
+        onClose={() => {}}
+        aria-labelledby="bill-dialog-title" 
+        maxWidth="sm" 
+        fullWidth={true}
+          >
+           <DialogContent>
+            <iframe src={billPdfUrl} style={{ width: '100%', height: '500px', border: 'none' }} title="Bill Preview"></iframe>
+            </DialogContent>
+            <br />
+            <Box textAlign="center" mt={2}>
+                <Button onClick={handleCancel} color="primary">Close</Button>
+                </Box>
+                <br />
+                
+        </Dialog>
+
+       
               </>
           );
       }
