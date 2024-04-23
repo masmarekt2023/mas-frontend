@@ -355,7 +355,17 @@ const useStyles = makeStyles((theme) => ({
   profileimg1: {
     width: 'calc(10% - theme.spacing(5))', // Three images per row, adjust for gap
     height: 'auto', // Keeps image aspect ratio
-  }
+  },
+  detailBox: {
+    width: '1200px', // Adjust width as necessary
+    height: '140px',
+    borderRadius: '25px',
+    border: '1px solid #ccc',
+    padding: '20px',
+    backgroundColor: '#fff',
+    overflowY: 'auto', // Allows vertical scrolling
+    overflowX: 'auto' // Prevents horizontal scrolling
+  },
 }));
 
 const currencies = [
@@ -597,42 +607,32 @@ export default function itemDetails() {
                   />
                 </Box>
               )}
+              <br />
+              
               <Box className={`${classes.text1} seats`}>
                 <Typography variant="h2">
-                  {itemDetails?.ItemName ? itemDetails?.ItemName : ""}
+                  {itemDetails?.itemName ? itemDetails?.itemName : ""}
                 </Typography>
-                <Typography
-                  variant="h5"
-                  dangerouslySetInnerHTML={{
-                    __html: itemDetails?.details,
-                  }}
-                  className={classes.textColor}
-                ></Typography>
-                {/* <Typography variant="h5">
+                </Box>
+                <Box>
+                <Typography variant="h5">Details:</Typography>&nbsp;
+                <Box className={classes.detailBox}>
+                 <Typography variant="h5">
                   {itemDetails?.details ? itemDetails?.details : ''}
-                </Typography> */}
+                </Typography> 
+                </Box>
                 <Box mt={1}>
                   <Box
                     display="flex"
                     alignItems="center"
                     className={classes.ItemData}
                   >
-                    <Typography variant="h4">Donation Amount:</Typography>&nbsp;
-                    <Typography variant="h4">
+                    <Typography variant="h5">Price:</Typography>&nbsp;
+                    <Typography variant="h5">
                       {itemDetails?.donationAmount
                         ? itemDetails?.donationAmount
                         : "0"}
                       {itemDetails.coinName}
-                    </Typography>
-                  </Box>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    className={classes.ItemData}
-                  >
-                    <Typography variant="h4">Time Duration:</Typography>&nbsp;
-                    <Typography variant="h4">
-                      {itemDetails?.duration ? itemDetails?.duration : "0"}
                     </Typography>
                   </Box>
                 </Box>
