@@ -387,6 +387,11 @@ useEffect(() => {
         
         const generatePDF = async (formData, itemData) => {
           const doc = new jsPDF();
+
+          // Get current date and time
+          const now = new Date();
+          const formattedDate = now.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+          const formattedTime = now.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' });
       
           const serialNumber = formData.serialNumber;  // Generate serial number
           console.log("serialNumber:",serialNumber);
@@ -425,6 +430,8 @@ useEffect(() => {
           tableRows.push(["Price", `${itemData.donationAmount} ${itemData.coinName}`]);
           tableRows.push(["Details", `${itemData.details}`]);
           tableRows.push(["Serial Number", serialNumber]);
+          tableRows.push(["Date", formattedDate]);  // Add formatted date
+          tableRows.push(["Time", formattedTime]);  // Add formatted time
       
           // Title of the document
           doc.text("Billing Information", 14, 15);
