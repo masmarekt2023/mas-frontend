@@ -20,6 +20,9 @@ import NoDataFound from "src/component/NoDataFound";
 import DataLoading from "src/component/DataLoading";
 import { Pagination } from "@material-ui/lab";
 import { sortAddress } from "src/utils";
+import { FiCopy } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 const useStyles = makeStyles((theme) => ({
   input_fild: {
     backgroundColor: "#ffffff6e",
@@ -277,8 +280,15 @@ export default function TransactionsList() {
                       </TableCell>
 
                       <TableCell style={{ color: "black" }} align="Center">
-                        {row?.transactionHash ? row?.transactionHash : ""}
-                        {row?._id ? row?._id : ""}
+                      <span >
+                      {row?.transactionHash || row?._id || ""}
+                      </span> &nbsp;
+                      <CopyToClipboard
+                           style={{ cursor: "pointer" }}
+                          text={row?.transactionHash || row?._id || ""}
+                        >
+                <FiCopy onClick={() => toast.info("data Copied")} />
+              </CopyToClipboard>
                       </TableCell>
                       <TableCell style={{ color: "black" }} align="Center">
                         {row?.transactionStatus}
