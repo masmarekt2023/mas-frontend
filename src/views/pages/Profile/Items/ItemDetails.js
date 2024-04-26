@@ -652,46 +652,48 @@ export default function itemDetails() {
               </Box>
             </Box>
           </Box>
-          <Grid container spacing={3}>
-            <Grid item md={12} sm={12} xs={12} lg={12}>
-              <Box>
-                
-                
-                
-              </Box>
-            </Grid>
-          </Grid>
-          
         </Container>
       )}
     </Box>
 
-    <Box className={classes.galleryContainer}>
-      {Array.from({ length: 9 }).map((_, index) => (
-        <Box className={classes.profileimg1} key={index}>
-          <img
-            src={itemDetails?.[`mediaUrl${index + 1}`]}
-            alt={`Profile Image ${index + 1}`}
-            style={{ width: "100%", height: "100%" }}
-            onClick={() => handleClickOpen(itemDetails?.[`mediaUrl${index + 1}`])}
-            onError={(e) => (e.target.src = "defaultImage.png")}
-          />
-        </Box>
-      ))}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="image-dialog-title"
-        aria-describedby="image-dialog-description"
-      >
-        <IconButton onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '10px' }}>
-          <CloseIcon />
-        </IconButton>
-        <img src={currentImg} alt="Enlarged view" style={{ width: '100%', height: 'auto' }} />
-      </Dialog>
+    <Box className={classes.galleryContainer} style={{ display: "flex", flexWrap: "wrap" }}>
+  {Array.from({ length: 9 }).map((_, index) => (
+    <Box 
+      key={index} 
+      style={{
+        width: "33.33%", 
+        padding: "5px", 
+        boxSizing: "border-box", 
+        border: "5px solid #808080" // Default border color
+      }}
+      onMouseEnter={e => e.currentTarget.style.border = "5px solid red"} // Change to red on mouse enter
+      onMouseLeave={e => e.currentTarget.style.border = "5px solid #808080"} // Revert to default on mouse leave
+    >
+      <img
+        src={itemDetails?.[`mediaUrl${index + 1}`]}
+        alt={`Profile Image ${index + 1}`}
+        style={{
+          width: "100%", 
+          height: "auto", 
+          display: "block"
+        }}
+        onClick={() => handleClickOpen(itemDetails?.[`mediaUrl${index + 1}`])}
+        onError={(e) => (e.target.src = "defaultImage.png")}
+      />
     </Box>
-
-
+  ))}
+  <Dialog
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="image-dialog-title"
+    aria-describedby="image-dialog-description"
+  >
+    <IconButton onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '10px' }}>
+      <CloseIcon />
+    </IconButton>
+    <img src={currentImg} alt="Enlarged view" style={{ width: '100%', height: 'auto' }} />
+  </Dialog>
+</Box>
     </>
   );
 
