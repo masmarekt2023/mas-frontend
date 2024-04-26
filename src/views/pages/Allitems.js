@@ -53,7 +53,11 @@ const useStyles = makeStyles(() => ({
     "@media(max-width:1280px)": {
       display: "flex",
       justifyContent: "center",
+      transition: 'border 0.3s ease',
     },
+  },
+  gridboxHover: {
+    border: '10px solid red', // Red border on hover
   },
 }));
 
@@ -64,6 +68,7 @@ const AllItemsPage = () => {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const listAllNft1Handler = async () => {
     await axios({
@@ -114,32 +119,33 @@ const AllItemsPage = () => {
                   ""
                 )}
                 <Grid container spacing={2}>
-                  {allNFTList1.map((data, i) => {
-                    return (
-                      <Grid
-                        item
-                        key={i}
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        lg={3}
-                        className={classes.gridbox}
-                      >
-                        <Itemcard
-                          data={data}
-                          index={i}
-                          callbackFn={listAllNft1Handler}
-                        />
-                      </Grid>
-                    );
-                  })}
+                  {allNFTList1.map((data, i) => (
+                    <Grid
+                      item
+                      key={i}
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      className={classes.gridbox}
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      style={hoveredIndex === i ? { border: '10px solid red' } : null}
+                    >
+                      <Itemcard
+                        data={data}
+                        index={i}
+                        callbackFn={listAllNft1Handler}
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
               </Container>
               <Box mb={2} mt={2} display="flex" justifyContent="center">
                 <Pagination
-                    count={pages}
-                    page={page}
-                    onChange={(e, v) => setPage(v)}
+                  count={pages}
+                  page={page}
+                  onChange={(e, v) => setPage(v)}
                 />
               </Box>
             </>
@@ -149,5 +155,6 @@ const AllItemsPage = () => {
     </Box>
   );
 };
+
 
 export default AllItemsPage;
