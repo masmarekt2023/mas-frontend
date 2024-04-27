@@ -155,9 +155,6 @@ export default function ItemCard({ data }) {
     [itemData.mediaUrl4, itemData.mediaUrl5, itemData.mediaUrl6],
     [itemData.mediaUrl7, itemData.mediaUrl8, itemData.mediaUrl9],
   ];
-
-  
-
   /*const getSubscription = async () => {
           try {
             const data = await axios({
@@ -302,13 +299,14 @@ useEffect(() => {
         }, [open]);  // Dependency array includes `open` to trigger the effect when it changes
         
       
-          const handleChange = (e) => {
-              const { name, value } = e.target;
-              setFormData(prevState => ({
-                  ...prevState,
-                  [name]: value,
-              }));
-          };
+        const handleChange = (e) => {
+          const { name, value } = e.target;
+          console.log(`Field: ${name}, Value: ${value}`);
+          setFormData(prevState => ({
+              ...prevState,
+              [name]: value,
+          }));
+      };
       
           const handleSubmit = async () => {
               try {
