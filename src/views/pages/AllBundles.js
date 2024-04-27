@@ -53,7 +53,11 @@ const useStyles = makeStyles(() => ({
     "@media(max-width:1280px)": {
       display: "flex",
       justifyContent: "center",
+      transition: 'border 0.3s ease',
     },
+ gridboxHover: {
+      border: '10px solid red', // Red border on hover
+    },  
   },
 }));
 
@@ -64,6 +68,7 @@ const AllBundlesPage = () => {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const listAllNftHandler = async () => {
     await axios({
@@ -124,6 +129,9 @@ const AllBundlesPage = () => {
                         md={4}
                         lg={3}
                         className={classes.gridbox}
+                        onMouseEnter={() => setHoveredIndex(i)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      style={hoveredIndex === i ? { border: '10px solid red' } : null}
                       >
                         <Bundlecard
                           data={data}
