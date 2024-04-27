@@ -129,9 +129,9 @@ const AllBundlesPage = () => {
                         md={4}
                         lg={3}
                         className={classes.gridbox}
-                        onMouseEnter={() => setHoveredIndex(i)}
-                      onMouseLeave={() => setHoveredIndex(null)}
-                      style={hoveredIndex === i ? { border: '10px solid red' } : null}
+                        //onMouseEnter={() => setHoveredIndex(i)}
+                      //onMouseLeave={() => setHoveredIndex(null)}
+                     // style={hoveredIndex === i ? { border: '10px solid red' } : null}
                       >
                         <Bundlecard
                           data={data}
