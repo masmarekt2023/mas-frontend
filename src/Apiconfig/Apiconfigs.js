@@ -1,7 +1,7 @@
-export let baseURL = "https://13.60.72.116";
+export let baseURL = "https://node.masplatform.net";
 //export let baseURL = "https://mas-server-lk9j.onrender.com";
 export let pageURL = "https://masplatform.net"
-export let socketURL = "wss://13.60.72.116";
+export let socketURL = "wss://node.masplatform.net";
 
 /*if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
    baseURL = "http://localhost:1865";
